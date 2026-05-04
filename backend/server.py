@@ -3,9 +3,11 @@ import base64
 import json
 import os
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # 👈 IMPORTANTE
 from git import Repo
 
 app = Flask(__name__)
+CORS(app)  # 👈 ESTO SOLUCIONA TODO
 
 TOKEN = os.environ.get("GITHUB_TOKEN")
 REPO = os.environ.get("GITHUB_REPO")
@@ -146,4 +148,6 @@ def log(msg):
 def get_logs():
     return jsonify(logs_global)
 
-app.run(host="0.0.0.0", port=10000)
+#app.run(host="0.0.0.0", port=10000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True, port=int(os.environ.get("PORT", 5000)))
