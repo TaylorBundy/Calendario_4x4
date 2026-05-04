@@ -89,7 +89,8 @@ def save_file():
 
         # 💾 Guardar archivo
         with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
+            #f.write(content)
+            json.dump(content, f, indent=2)
 
         # 🔥 Detectar repo correctamente (raíz o subcarpeta)
         repo = Repo(path, search_parent_directories=True)
