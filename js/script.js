@@ -6,6 +6,7 @@ const guarda = document.querySelector(".guardar");
 const actualizar = document.querySelector(".actualizar");
 const botones = document.querySelectorAll("button");
 const btnEliminar = document.querySelector("#editaElimina");
+const eleEdita = document.querySelector(".editaClientes");
 const API = "https://calendario-4x4.onrender.com";
 
 let datos = [];
@@ -14,6 +15,23 @@ let indiceNuevo = null;
 let indiceAnterior = null;
 let idSeleccionado = null;
 let nuevoId = null;
+
+window.addEventListener("DOMContentLoaded", () => {
+  //const eleEdita1 = document.querySelector(".editaClientes");
+  const ele = eleEdita.querySelectorAll("input");
+  ele.forEach((el) => {
+    if (el.type === "text" || el.type === "number") {
+      if (el.value === "") {
+        //console.log(el);
+        actualizar.disabled = true;
+        actualizar.classList.add("desactive");
+        //actualizar.style.background = "#888";
+        //actualizar.style.cursor = "wait";
+      }
+    }
+  });
+  //console.log(eleEdita);
+});
 
 // Contar Registros
 function contarRegistros(array) {
@@ -39,6 +57,9 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaPrecio").value = dato.precio;
   document.getElementById("editaSeña").checked = dato.sena;
   document.getElementById("editaImporteSeña").value = dato.senaRecibida;
+  actualizar.classList.remove("desactive");
+  actualizar.classList.add("active");
+  actualizar.disabled = false;
   //console.log(idSeleccionado);
 
   indiceEditando = index;
@@ -93,6 +114,9 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
       document.getElementById("editaPrecio").value = "";
       document.getElementById("editaSeña").checked = false;
       document.getElementById("editaImporteSeña").value = "";
+      actualizar.classList.remove("active");
+      actualizar.classList.add("desactive");
+      actualizar.disabled = true;
       if (btnEliminar.checked) {
         btnEliminar.checked = false;
       }
@@ -179,9 +203,9 @@ actualizar.addEventListener("click", (e) => {
     senaRecibida: document.getElementById("editaImporteSeña").value,
   };
   if (btnEliminar.checked) {
-    eliminar();
+    //eliminar();
   } else {
-    editar(nuevo);
+    //editar(nuevo);
   }
   limpiarFormulario("editaClientes");
 });
@@ -234,7 +258,7 @@ async function eliminar() {
 
 function limpiarFormulario(formId) {
   const form = document.querySelector(`.${formId}`);
-  console.log(form);
+  //console.log(form);
 
   if (!form) return;
 

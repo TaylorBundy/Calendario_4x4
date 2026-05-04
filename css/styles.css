@@ -79,6 +79,16 @@ button {
   cursor: pointer;
 }
 
+.actualizar.active {
+  background: #28a745;
+  cursor: pointer;
+}
+
+.actualizar.desactive {
+  background: #888;
+  cursor: wait;
+}
+
 #lista {
   /* display: flex; */
   /* flex-direction: column; */
