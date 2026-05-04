@@ -15,6 +15,17 @@ let indiceNuevo = null;
 let indiceAnterior = null;
 let idSeleccionado = null;
 let nuevoId = null;
+const API_KEY = "AIzaSyAVearlKR2iIcQd2eeS8zXqiKB2OITgIxU";
+const CALENDAR_ID = "diegomartinbarbosa2@gmail.com";
+
+const url = `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?key=${API_KEY}`;
+
+fetch(url)
+  .then((res) => res.json())
+  .then((data) => {
+    console.log(data.items);
+    mostrarFechas(data.items);
+  });
 
 window.addEventListener("DOMContentLoaded", () => {
   //const eleEdita1 = document.querySelector(".editaClientes");
@@ -131,22 +142,36 @@ function mostrarDatos() {
 
   datos.forEach((d, index) => {
     const div = document.createElement("div");
+    const divContainer = document.createElement("div");
+    divContainer.className = "divcontainer";
+    const radio = document.createElement("input");
+    // const btnElimina = document.createElement("button");
+    // btnElimina.className = "btnelimina";
+    // btnElimina.textContent = "Eliminar";
+    // btnElimina.id = `card-${index}`;
+    radio.type = "radio";
     div.className = `card-${index}`;
     div.id = "card";
-
+    //div.appendChild(divContainer);
     div.innerHTML = `
-      <strong>${d.cliente}</strong><br>
-      Fecha: ${d.fecha}<br>
-      Vehículos clientes: ${d.vc}<br>
-      Vehículos org: ${d.vo}<br>
-      Comida: ${d.comida ? "Sí" : "No"}<br>
-      Precio: $${d.precio}<br>
-      Seña: ${d.sena ? "Sí" : "No"}<br>
-      Seña Recibida: ${d.senaRecibida}
+    <button class="btnelimina" id="${d.id}"> Eliminar </button>
+    `;
+    divContainer.innerHTML = `
+    <!-- <button class="btnelimina" id="${d.id}"> Eliminar </button> -->
+    <!-- <div class="divcontainer"> -->
+      <h2 class="elCliente"><strong>${d.cliente}</strong></h2><br>
+      <span>Fecha: ${d.fecha}</span>
+      <span>Vehículos clientes: ${d.vc}</span>
+      <span>Vehículos org: ${d.vo}</span>
+      <span>Comida: ${d.comida ? "Sí" : "No"}</span>
+      <span>Precio: $${d.precio}</span>
+      <span>Seña: ${d.sena ? "Sí" : "No"}</span>
+      <span>Seña Recibida: ${d.senaRecibida}</span>
+      <!-- </div> -->
     `;
 
     // 👉 CLICK PARA EDITAR
-    div.addEventListener("click", () => {
+    divContainer.addEventListener("click", () => {
       idSeleccionado = d.id;
       if (div.dataset.selected == "true") {
         div.dataset.selected = "false";
@@ -164,7 +189,23 @@ function mostrarDatos() {
       cargarEnFormulario(d, index, indiceAnterior);
     });
 
+    //labelElimina.appendChild(radio);
+    //div.before(btnElimina);
+
+    div.prepend(divContainer);
+    //divContainer.appendChild(div);
     lista.appendChild(div);
+
+    //console.log(div);
+
+    // lista.insertBefore(document.querySelector(`#card`), divContainer);
+
+    const btnElimina = document.querySelector(`#${d.id}`);
+    btnElimina.addEventListener("click", () => {
+      console.log(d.id);
+      eliminar();
+    });
+    //console.log(btnElimina);
   });
 }
 
@@ -203,9 +244,9 @@ actualizar.addEventListener("click", (e) => {
     senaRecibida: document.getElementById("editaImporteSeña").value,
   };
   if (btnEliminar.checked) {
-    //eliminar();
+    eliminar();
   } else {
-    //editar(nuevo);
+    editar(nuevo);
   }
   limpiarFormulario("editaClientes");
 });
@@ -280,5 +321,19 @@ setInterval(async () => {
   //console.clear();
   logs.forEach((l) => console.log(l));
 }, 5000);
+
+function mostrarFechas(eventos) {
+  const select = document.getElementById("fechas");
+
+  eventos.forEach((ev) => {
+    const fecha = ev.start.dateTime || ev.start.date;
+
+    const option = document.createElement("option");
+    option.value = fecha;
+    option.textContent = `${fecha} - ${ev.summary}`;
+
+    select.appendChild(option);
+  });
+}
 
 cargarDatos();
