@@ -1,0 +1,81 @@
+body {
+  font-family: Arial;
+  background: #1e1e1e;
+  color: white;
+  padding: 20px;
+}
+
+form {
+  background: #2c2c2c;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.cargaClientes,
+.editaClientes {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  padding: 8px;
+  border: 1px solid #888;
+  border-radius: 8px;
+}
+
+#comida,
+#seña {
+  width: unset;
+}
+
+.comida,
+.seña {
+  display: flex;
+  align-items: center;
+}
+
+input {
+  display: block;
+  margin: 10px 0;
+  padding: 8px;
+  width: 80%;
+}
+
+label {
+  width: 80%;
+  margin: auto auto auto 47px;
+}
+
+.actualizar,
+.guardar {
+  width: 20%;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+button {
+  background: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#lista {
+  /* display: flex; */
+  /* flex-direction: column; */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+#card {
+  background: #333;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+#card.selected {
+  background: #152ed9;
+}
