@@ -318,12 +318,13 @@ function mostrarDatos() {
 form.addEventListener("submit", async (e) => {
   //e.preventDefault();
   console.log(e.target);
-  let dataaaa;
+  //let dataaaa;
+  let nuevo;
   const accion = e.submitter.className;
   //const boton = e.id;
   //console.log(boton);
   if (accion.includes("guardar")) {
-    const nuevo = {
+    nuevo = {
       cliente: document.getElementById("cliente").value,
       fecha: document.getElementById("fecha").value,
       vc: document.getElementById("vehiculosClientes").value,
@@ -332,16 +333,16 @@ form.addEventListener("submit", async (e) => {
       precio: document.getElementById("precio").value,
       sena: document.getElementById("seña").checked,
     };
-    dataaaa = JSON.stringify(nuevo);
+    //dataaaa = JSON.stringify(nuevo);
     await fetch(`${API}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataaaa),
+      body: JSON.stringify(nuevo),
     });
   } else if (accion.includes("actualizar")) {
-    const nuevo = {
+    nuevo = {
       cliente: document.getElementById("editaCliente").value,
       fecha: document.getElementById("editaFecha").value,
       vc: document.getElementById("editaVehiculosClientes").value,
@@ -350,7 +351,7 @@ form.addEventListener("submit", async (e) => {
       precio: document.getElementById("editaPrecio").value,
       sena: document.getElementById("editaSeña").checked,
     };
-    dataaaa = JSON.stringify(nuevo);
+    //dataaaa = JSON.stringify(nuevo);
     await fetch(`${API}/editar`, {
       method: "POST",
       headers: {
@@ -358,11 +359,11 @@ form.addEventListener("submit", async (e) => {
       },
       body: JSON.stringify({
         index: indiceEditando,
-        data: dataaaa,
+        data: nuevo,
       }),
     });
   }
-  console.log(dataaaa);
+  console.log(nuevo);
   //   // ⚠️ Esto requiere backend
   //   await fetch("/guardar", {
   //     method: "POST",
