@@ -53,5 +53,16 @@
     "precio": 220000,
     "sena": false,
     "senaRecibida": 5000
+  },
+  {
+    "id": "card-5",
+    "cliente": "rogelio",
+    "fecha": "2026-05-22",
+    "vc": "5",
+    "vo": "1",
+    "comida": false,
+    "precio": "66",
+    "sena": false,
+    "senaRecibida": ""
   }
 ]
