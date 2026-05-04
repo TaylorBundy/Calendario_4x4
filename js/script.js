@@ -370,8 +370,8 @@ form.addEventListener("click", async (e) => {
   //     },
   //     body: JSON.stringify(nuevo),
   //   });
-  //   form.reset();
-  //   cargarDatos();
+  form.reset();
+  cargarDatos();
 });
 
-//cargarDatos();
+cargarDatos();
