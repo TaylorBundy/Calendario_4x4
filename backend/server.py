@@ -3,12 +3,14 @@ import base64
 import json
 import os
 from flask import Flask, request, jsonify
+from git import Repo
 
 app = Flask(__name__)
 
 TOKEN = os.environ.get("GITHUB_TOKEN")
 REPO = os.environ.get("GITHUB_REPO")
 FILE_PATH = os.environ.get("GITHUB_FILE")
+GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
 
 API_URL = f"https://api.github.com/repos/{REPO}/contents/{FILE_PATH}"
 
@@ -66,5 +68,82 @@ def guardar():
     subir_json(datos, sha)
 
     return jsonify({"status": "ok"})
+
+@app.route("/save", methods=["POST"])
+def save_file():
+    try:
+        #import os
+        #from git import Repo
+
+        data = request.json
+        path = data["path"]
+        content = data["content"]
+
+        # 🔧 Normalizar path (clave para Render/Linux)
+        path = os.path.normpath(path).replace("\\", "/")
+
+        log(f"path recibido: {path}")
+
+        # 💾 Guardar archivo
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+        # 🔥 Detectar repo correctamente (raíz o subcarpeta)
+        repo = Repo(path, search_parent_directories=True)
+        log(f"repo root: {repo.working_tree_dir}")
+
+        # 📌 Agregar SOLO el archivo modificado
+        #repo.git.add(path)
+        repo.git.add(A=True)
+
+        # 🧠 Evitar commit vacío
+        if repo.is_dirty(untracked_files=True):
+            repo.index.commit(f"Update {os.path.basename(path)}")
+            log("commit realizado")
+
+            # 🔐 Autenticación para push
+            token = os.getenv("GITHUB_TOKEN")
+            username = os.getenv("GITHUB_USERNAME")
+
+            origin = repo.remote(name="origin")
+            url = origin.url
+
+            # limpiar posibles errores de URL
+            url = url.replace(".git/", ".git")
+
+            url_auth = url.replace(
+                "https://",
+                f"https://{username}:{token}@"
+            )
+
+            #origin.set_url(url_auth)
+
+            # 🚀 Push
+            origin.push()
+            log("push realizado")
+
+        else:
+            log("no hay cambios para commitear")
+
+        return jsonify({
+            "status": "guardado y subido"
+        })
+
+    except Exception as e:
+        log(f"ERROR: {str(e)}")
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        }), 500
+    
+logs_global = []
+
+def log(msg):
+    print(msg)
+    logs_global.append(msg)
+
+@app.route("/logs")
+def get_logs():
+    return jsonify(logs_global)
 
 app.run(host="0.0.0.0", port=10000)
