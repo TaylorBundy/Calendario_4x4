@@ -28,12 +28,14 @@ form {
 #comida,
 #editaComida,
 #seña,
-#editaSeña {
+#editaSeña,
+#editaElimina {
   width: unset;
 }
 
 .comida,
-.seña {
+.seña,
+.elimina {
   display: flex;
   align-items: center;
 }

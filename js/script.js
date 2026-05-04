@@ -5,6 +5,7 @@ const totalReservas = document.querySelector(".totalReservas");
 const guarda = document.querySelector(".guardar");
 const actualizar = document.querySelector(".actualizar");
 const botones = document.querySelectorAll("button");
+const btnEliminar = document.querySelector("#editaElimina");
 const API = "https://calendario-4x4.onrender.com";
 
 let datos = [];
@@ -163,6 +164,10 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
       document.getElementById("editaComida").checked = false;
       document.getElementById("editaPrecio").value = "";
       document.getElementById("editaSeña").checked = false;
+      document.getElementById("editaImporteSeña").value = "";
+      if (btnEliminar.checked) {
+        btnEliminar.checked = false;
+      }
     }
     // } else {
     //   if (elementoSelected1.className.includes("selected")) {
@@ -362,8 +367,16 @@ actualizar.addEventListener("click", (e) => {
     sena: document.getElementById("editaSeña").checked,
     senaRecibida: document.getElementById("editaImporteSeña").value,
   };
-  editar(nuevo);
-  console.log(nuevo);
+  if (btnEliminar.checked) {
+    eliminar();
+    //console.log("si");
+    //console.log(idSeleccionado);
+  } else {
+    //console.log("no");
+    editar(nuevo);
+  }
+  //editar(nuevo);
+  //console.log(nuevo);
 });
 // Guardar
 // form.addEventListener("submit", async (e) => {
@@ -462,6 +475,26 @@ async function editar(contenido) {
   data.logs.forEach((l) => console.log(l));
 
   alert("Editado");
+}
+
+async function eliminar() {
+  //console.log(JSON.stringify(contenido));
+  //const contenido = document.getElementById("editor").value;
+  await fetch(`${API}/eliminar`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      path: "data/data.json",
+      id: idSeleccionado,
+    }),
+  });
+  //const data = await res.json();
+
+  //data.logs.forEach((l) => console.log(l));
+
+  //alert("Editado");
 }
 
 setInterval(async () => {

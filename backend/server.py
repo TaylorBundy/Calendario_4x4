@@ -115,6 +115,70 @@ def editar():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route("/eliminar", methods=["POST"])
+def eliminar():
+    try:
+        data = request.json
+        path = data["path"]
+        id_eliminar = data["id"]
+
+        TOKEN = os.getenv("GITHUB_TOKEN")
+        REPO = os.getenv("GITHUB_REPO")
+
+        API_URL = f"https://api.github.com/repos/{REPO}/contents/{path}"
+
+        headers = {
+            "Authorization": f"token {TOKEN}",
+            "Accept": "application/vnd.github+json"
+        }
+
+        # 📥 Obtener archivo actual
+        r = requests.get(API_URL, headers=headers)
+
+        if r.status_code != 200:
+            return jsonify({"error": "No se pudo leer archivo"}), 500
+
+        data_github = r.json()
+        sha = data_github["sha"]
+
+        contenido = base64.b64decode(
+            data_github["content"]
+        ).decode("utf-8")
+
+        datos = json.loads(contenido)
+
+        # 🗑️ Filtrar (eliminar por ID)
+        nuevos_datos = [d for d in datos if d.get("id") != id_eliminar]
+
+        # ⚠️ Validar si realmente se eliminó algo
+        if len(datos) == len(nuevos_datos):
+            return jsonify({"error": "ID no encontrado"}), 404
+
+        # 📤 Subir archivo actualizado
+        contenido_str = json.dumps(nuevos_datos, indent=2)
+        contenido_b64 = base64.b64encode(
+            contenido_str.encode("utf-8")
+        ).decode("utf-8")
+
+        body = {
+            "message": f"Eliminado ID {id_eliminar}",
+            "content": contenido_b64,
+            "sha": sha
+        }
+
+        r = requests.put(API_URL, headers=headers, json=body)
+
+        if r.status_code not in [200, 201]:
+            return jsonify({
+                "error": "Error al subir",
+                "github": r.json()
+            }), 500
+
+        return jsonify({"status": "eliminado correctamente"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # ➕ GUARDAR
 # @app.route("/guardar", methods=["POST"])
