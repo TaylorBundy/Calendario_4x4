@@ -64,5 +64,16 @@
     "precio": "66",
     "sena": false,
     "senaRecibida": ""
+  },
+  {
+    "id": "card-6",
+    "cliente": "aaaa",
+    "fecha": "2026-05-27",
+    "vc": "1",
+    "vo": "1",
+    "comida": false,
+    "precio": "1",
+    "sena": false,
+    "senaRecibida": ""
   }
 ]
