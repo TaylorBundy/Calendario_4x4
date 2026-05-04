@@ -78,6 +78,7 @@ def save_file():
         #from git import Repo
 
         data = request.json
+        log(f"data: {data}")
         path = data["path"]
         content = data["content"]
 

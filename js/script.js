@@ -405,6 +405,7 @@ actualizar.addEventListener("click", (e) => {
 // });
 
 async function guardar(contenido) {
+  console.log(JSON.stringify(contenido));
   //const contenido = document.getElementById("editor").value;
   const res = await fetch(`${API}/save`, {
     method: "POST",
