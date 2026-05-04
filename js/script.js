@@ -315,7 +315,7 @@ function mostrarDatos() {
 }
 
 // Guardar
-form.addEventListener("click", async (e) => {
+form.addEventListener("submit", async (e) => {
   //e.preventDefault();
   console.log(e.target);
   let dataaaa;
