@@ -196,57 +196,57 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   form.querySelector(".actualizar").innerText = "Actualizar";
 }
 
-function mostrarDatos2() {
-  lista.innerHTML = "";
+// function mostrarDatos2() {
+//   lista.innerHTML = "";
 
-  datos.forEach((d) => {
-    const div = document.createElement("div");
-    div.className = "card";
+//   datos.forEach((d) => {
+//     const div = document.createElement("div");
+//     div.className = "card";
 
-    div.innerHTML = `
-      <strong>${d.cliente}</strong><br>
-      Fecha: ${d.fecha}<br>
-      Vehículos clientes: ${d.vc}<br>
-      Vehículos org: ${d.vo}<br>
-      Comida: ${d.comida ? "Sí" : "No"}<br>
-      Precio: $${d.precio}<br>
-      Seña: ${d.sena ? "Sí" : "No"}
-    `;
+//     div.innerHTML = `
+//       <strong>${d.cliente}</strong><br>
+//       Fecha: ${d.fecha}<br>
+//       Vehículos clientes: ${d.vc}<br>
+//       Vehículos org: ${d.vo}<br>
+//       Comida: ${d.comida ? "Sí" : "No"}<br>
+//       Precio: $${d.precio}<br>
+//       Seña: ${d.sena ? "Sí" : "No"}
+//     `;
 
-    lista.appendChild(div);
-  });
-}
+//     lista.appendChild(div);
+//   });
+// }
 
-function mostrarDatos3() {
-  lista.innerHTML = "";
+// function mostrarDatos3() {
+//   lista.innerHTML = "";
 
-  // Ordenar por fecha (más cercana primero)
-  const hoy = new Date();
+//   // Ordenar por fecha (más cercana primero)
+//   const hoy = new Date();
 
-  datos.sort((a, b) => {
-    const fechaA = new Date(a.fecha);
-    const fechaB = new Date(b.fecha);
+//   datos.sort((a, b) => {
+//     const fechaA = new Date(a.fecha);
+//     const fechaB = new Date(b.fecha);
 
-    return fechaA - fechaB; // ascendente
-  });
+//     return fechaA - fechaB; // ascendente
+//   });
 
-  datos.forEach((d) => {
-    const div = document.createElement("div");
-    div.className = "card";
+//   datos.forEach((d) => {
+//     const div = document.createElement("div");
+//     div.className = "card";
 
-    div.innerHTML = `
-      <strong>${d.cliente}</strong><br>
-      Fecha: ${d.fecha}<br>
-      Vehículos clientes: ${d.vc}<br>
-      Vehículos org: ${d.vo}<br>
-      Comida: ${d.comida ? "Sí" : "No"}<br>
-      Precio: $${d.precio}<br>
-      Seña: ${d.sena ? "Sí" : "No"}
-    `;
+//     div.innerHTML = `
+//       <strong>${d.cliente}</strong><br>
+//       Fecha: ${d.fecha}<br>
+//       Vehículos clientes: ${d.vc}<br>
+//       Vehículos org: ${d.vo}<br>
+//       Comida: ${d.comida ? "Sí" : "No"}<br>
+//       Precio: $${d.precio}<br>
+//       Seña: ${d.sena ? "Sí" : "No"}
+//     `;
 
-    lista.appendChild(div);
-  });
-}
+//     lista.appendChild(div);
+//   });
+// }
 
 function mostrarDatos() {
   lista.innerHTML = "";
@@ -315,67 +315,94 @@ function mostrarDatos() {
 }
 
 let nuevo;
-// Guardar
-form.addEventListener("submit", async (e) => {
-  //e.preventDefault();
-  console.log(e.target);
-  //let dataaaa;
-  const accion = e.submitter.className;
-  //const boton = e.id;
-  //console.log(boton);
-  if (accion.includes("guardar")) {
-    nuevo = {
-      cliente: document.getElementById("cliente").value,
-      fecha: document.getElementById("fecha").value,
-      vc: document.getElementById("vehiculosClientes").value,
-      vo: document.getElementById("vehiculosOrg").value,
-      comida: document.getElementById("comida").checked,
-      precio: document.getElementById("precio").value,
-      sena: document.getElementById("seña").checked,
-    };
-    guardar(nuevo);
-    //dataaaa = JSON.stringify(nuevo);
-    // await fetch(`${API}/save`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(nuevo),
-    // });
-  } else if (accion.includes("actualizar")) {
-    nuevo = {
-      cliente: document.getElementById("editaCliente").value,
-      fecha: document.getElementById("editaFecha").value,
-      vc: document.getElementById("editaVehiculosClientes").value,
-      vo: document.getElementById("editaVehiculosOrg").value,
-      comida: document.getElementById("editaComida").checked,
-      precio: document.getElementById("editaPrecio").value,
-      sena: document.getElementById("editaSeña").checked,
-    };
-    //dataaaa = JSON.stringify(nuevo);
-    await fetch(`${API}/editar`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        index: indiceEditando,
-        data: nuevo,
-      }),
-    });
-  }
+guarda.addEventListener("click", () => {
+  nuevo = {
+    cliente: document.getElementById("cliente").value,
+    fecha: document.getElementById("fecha").value,
+    vc: document.getElementById("vehiculosClientes").value,
+    vo: document.getElementById("vehiculosOrg").value,
+    comida: document.getElementById("comida").checked,
+    precio: document.getElementById("precio").value,
+    sena: document.getElementById("seña").checked,
+  };
+  //guardar(nuevo);
   console.log(nuevo);
-  //   // ⚠️ Esto requiere backend
-  //   await fetch("/guardar", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(nuevo),
-  //   });
-  form.reset();
-  cargarDatos();
 });
+
+actualizar.addEventListener("click", () => {
+  nuevo = {
+    cliente: document.getElementById("editaCliente").value,
+    fecha: document.getElementById("editaFecha").value,
+    vc: document.getElementById("editaVehiculosClientes").value,
+    vo: document.getElementById("editaVehiculosOrg").value,
+    comida: document.getElementById("editaComida").checked,
+    precio: document.getElementById("editaPrecio").value,
+    sena: document.getElementById("editaSeña").checked,
+  };
+  //guardar(nuevo);
+  console.log(nuevo);
+});
+// Guardar
+// form.addEventListener("submit", async (e) => {
+//   //e.preventDefault();
+//   console.log(e.target);
+//   //let dataaaa;
+//   const accion = e.submitter.className;
+//   //const boton = e.id;
+//   //console.log(boton);
+//   if (accion.includes("guardar")) {
+//     nuevo = {
+//       cliente: document.getElementById("cliente").value,
+//       fecha: document.getElementById("fecha").value,
+//       vc: document.getElementById("vehiculosClientes").value,
+//       vo: document.getElementById("vehiculosOrg").value,
+//       comida: document.getElementById("comida").checked,
+//       precio: document.getElementById("precio").value,
+//       sena: document.getElementById("seña").checked,
+//     };
+//     guardar(nuevo);
+//     //dataaaa = JSON.stringify(nuevo);
+//     // await fetch(`${API}/save`, {
+//     //   method: "POST",
+//     //   headers: {
+//     //     "Content-Type": "application/json",
+//     //   },
+//     //   body: JSON.stringify(nuevo),
+//     // });
+//   } else if (accion.includes("actualizar")) {
+//     nuevo = {
+//       cliente: document.getElementById("editaCliente").value,
+//       fecha: document.getElementById("editaFecha").value,
+//       vc: document.getElementById("editaVehiculosClientes").value,
+//       vo: document.getElementById("editaVehiculosOrg").value,
+//       comida: document.getElementById("editaComida").checked,
+//       precio: document.getElementById("editaPrecio").value,
+//       sena: document.getElementById("editaSeña").checked,
+//     };
+//     //dataaaa = JSON.stringify(nuevo);
+//     await fetch(`${API}/editar`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         index: indiceEditando,
+//         data: nuevo,
+//       }),
+//     });
+//   }
+//   console.log(nuevo);
+//   //   // ⚠️ Esto requiere backend
+//   //   await fetch("/guardar", {
+//   //     method: "POST",
+//   //     headers: {
+//   //       "Content-Type": "application/json",
+//   //     },
+//   //     body: JSON.stringify(nuevo),
+//   //   });
+//   form.reset();
+//   cargarDatos();
+// });
 
 async function guardar(contenido) {
   //const contenido = document.getElementById("editor").value;
@@ -394,4 +421,4 @@ async function guardar(contenido) {
   alert("Guardado");
 }
 
-cargarDatos();
+//cargarDatos();
