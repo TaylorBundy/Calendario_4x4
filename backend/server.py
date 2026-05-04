@@ -74,71 +74,128 @@ def guardar():
 @app.route("/save", methods=["POST"])
 def save_file():
     try:
-        #import os
-        #from git import Repo
-
         data = request.json
-        log(f"data: {data}")
-        path = data["path"]
-        content = data["content"]
+        path = data["path"]              # ej: data/data.json
+        content = data["content"]        # JSON (dict o list)
 
-        # 🔧 Normalizar path (clave para Render/Linux)
-        path = os.path.normpath(path).replace("\\", "/")
+        TOKEN = os.getenv("GITHUB_TOKEN")
+        REPO = os.getenv("GITHUB_REPO")  # usuario/repositorio
 
-        log(f"path recibido: {path}")
+        API_URL = f"https://api.github.com/repos/{REPO}/contents/{path}"
 
-        # 💾 Guardar archivo
-        with open(path, "w", encoding="utf-8") as f:
-            #f.write(content)
-            json.dump(content, f, indent=2)
+        headers = {
+            "Authorization": f"token {TOKEN}",
+            "Accept": "application/vnd.github+json"
+        }
 
-        # 🔥 Detectar repo correctamente (raíz o subcarpeta)
-        repo = Repo(path, search_parent_directories=True)
-        log(f"repo root: {repo.working_tree_dir}")
+        # 📥 Obtener archivo actual (para SHA)
+        r = requests.get(API_URL, headers=headers)
 
-        # 📌 Agregar SOLO el archivo modificado
-        #repo.git.add(path)
-        repo.git.add(A=True)
-
-        # 🧠 Evitar commit vacío
-        if repo.is_dirty(untracked_files=True):
-            repo.index.commit(f"Update {os.path.basename(path)}")
-            log("commit realizado")
-
-            # 🔐 Autenticación para push
-            token = os.getenv("GITHUB_TOKEN")
-            username = os.getenv("GITHUB_USERNAME")
-
-            origin = repo.remote(name="origin")
-            url = origin.url
-
-            # limpiar posibles errores de URL
-            url = url.replace(".git/", ".git")
-
-            url_auth = url.replace(
-                "https://",
-                f"https://{username}:{token}@"
-            )
-
-            #origin.set_url(url_auth)
-
-            # 🚀 Push
-            origin.push()
-            log("push realizado")
-
+        if r.status_code == 200:
+            data_github = r.json()
+            sha = data_github["sha"]
         else:
-            log("no hay cambios para commitear")
+            sha = None  # si no existe el archivo
+
+        # 📤 Convertir contenido a base64
+        contenido_str = json.dumps(content, indent=2)
+        contenido_b64 = base64.b64encode(contenido_str.encode("utf-8")).decode("utf-8")
+
+        body = {
+            "message": f"Update {path}",
+            "content": contenido_b64
+        }
+
+        if sha:
+            body["sha"] = sha  # necesario para actualizar
+
+        # 🚀 Subir a GitHub
+        r = requests.put(API_URL, headers=headers, json=body)
+
+        if r.status_code not in [200, 201]:
+            return jsonify({
+                "status": "error",
+                "github_response": r.json()
+            }), 500
 
         return jsonify({
-            "status": "guardado y subido"
+            "status": "guardado y subido correctamente"
         })
 
     except Exception as e:
-        log(f"ERROR: {str(e)}")
         return jsonify({
             "status": "error",
             "error": str(e)
         }), 500
+
+# @app.route("/save", methods=["POST"])
+# def save_file():
+#     try:
+#         #import os
+#         #from git import Repo
+
+#         data = request.json
+#         log(f"data: {data}")
+#         path = data["path"]
+#         content = data["content"]
+
+#         # 🔧 Normalizar path (clave para Render/Linux)
+#         path = os.path.normpath(path).replace("\\", "/")
+
+#         log(f"path recibido: {path}")
+
+#         # 💾 Guardar archivo
+#         with open(path, "w", encoding="utf-8") as f:
+#             #f.write(content)
+#             json.dump(content, f, indent=2)
+
+#         # 🔥 Detectar repo correctamente (raíz o subcarpeta)
+#         repo = Repo(path, search_parent_directories=True)
+#         log(f"repo root: {repo.working_tree_dir}")
+
+#         # 📌 Agregar SOLO el archivo modificado
+#         #repo.git.add(path)
+#         repo.git.add(A=True)
+
+#         # 🧠 Evitar commit vacío
+#         if repo.is_dirty(untracked_files=True):
+#             repo.index.commit(f"Update {os.path.basename(path)}")
+#             log("commit realizado")
+
+#             # 🔐 Autenticación para push
+#             token = os.getenv("GITHUB_TOKEN")
+#             username = os.getenv("GITHUB_USERNAME")
+
+#             origin = repo.remote(name="origin")
+#             url = origin.url
+
+#             # limpiar posibles errores de URL
+#             url = url.replace(".git/", ".git")
+
+#             url_auth = url.replace(
+#                 "https://",
+#                 f"https://{username}:{token}@"
+#             )
+
+#             #origin.set_url(url_auth)
+
+#             # 🚀 Push
+#             origin.push()
+#             log("push realizado")
+
+#         else:
+#             log("no hay cambios para commitear")
+
+#         return jsonify({
+#             "status": "guardado y subido"
+#         })
+
+#     except Exception as e:
+#         log(f"ERROR: {str(e)}")
+#         return jsonify({
+#             "status": "error",
+#             "error": str(e)
+#         }), 500
     
 logs_global = []
 
