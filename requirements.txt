@@ -1,2 +1,5 @@
 flask
 requests
+gitpython
+flask-cors
+python-dotenv
