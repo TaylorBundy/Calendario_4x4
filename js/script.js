@@ -406,7 +406,7 @@ actualizar.addEventListener("click", (e) => {
 
 async function guardar(contenido) {
   //const contenido = document.getElementById("editor").value;
-  const res = await fetch(`${API}/save`, {
+  const res = await fetch(`${API}/guardar`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
