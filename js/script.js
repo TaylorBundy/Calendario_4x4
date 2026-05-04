@@ -333,7 +333,7 @@ form.addEventListener("submit", async (e) => {
       sena: document.getElementById("seña").checked,
     };
     dataaaa = JSON.stringify(nuevo);
-    await fetch(`${API}/guardar`, {
+    await fetch(`${API}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
