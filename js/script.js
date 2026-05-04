@@ -410,7 +410,7 @@ async function guardar(contenido) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      path: "data/data.json",
+      path: "repos/Calendario_4x4/data/data.json",
       content: contenido,
     }),
   });
@@ -420,5 +420,13 @@ async function guardar(contenido) {
 
   alert("Guardado");
 }
+
+setInterval(async () => {
+  const res = await fetch(`${API}/logs`);
+  const logs = await res.json();
+
+  //console.clear();
+  logs.forEach((l) => console.log(l));
+}, 5000);
 
 cargarDatos();
