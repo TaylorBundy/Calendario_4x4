@@ -352,6 +352,7 @@ guarda.addEventListener("click", () => {
 
 actualizar.addEventListener("click", (e) => {
   nuevo = {
+    id: idSeleccionado,
     cliente: document.getElementById("editaCliente").value,
     fecha: document.getElementById("editaFecha").value,
     vc: document.getElementById("editaVehiculosClientes").value,
@@ -442,6 +443,25 @@ async function guardar(contenido) {
   data.logs.forEach((l) => console.log(l));
 
   alert("Guardado");
+}
+
+async function editar(contenido) {
+  console.log(JSON.stringify(contenido));
+  //const contenido = document.getElementById("editor").value;
+  const res = await fetch(`${API}/save`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      path: "data/data.json",
+      id: idSeleccionado,
+      content: contenido,
+    }),
+  });
+  const data = await res.json();
+
+  data.logs.forEach((l) => console.log(l));
+
+  alert("Editado");
 }
 
 setInterval(async () => {

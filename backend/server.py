@@ -43,33 +43,91 @@ def subir_json(nuevo_json, sha):
     return r.json()
 
 # ✏️ EDITAR
+# @app.route("/editar", methods=["POST"])
+# def editar():
+#     data = request.json
+#     index = data["index"]
+#     nuevo = data["data"]
+#     print(REPO)
+
+#     datos, sha = obtener_json()
+
+#     datos[index] = nuevo
+
+#     subir_json(datos, sha)
+
+#     return jsonify({"status": "editado"})
 @app.route("/editar", methods=["POST"])
 def editar():
-    data = request.json
-    index = data["index"]
-    nuevo = data["data"]
-    print(REPO)
+    try:
+        data = request.json
+        path = data["path"]
+        id_buscar = data["id"]
+        nuevo = data["content"]
 
-    datos, sha = obtener_json()
+        TOKEN = os.getenv("GITHUB_TOKEN")
+        REPO = os.getenv("GITHUB_REPO")
 
-    datos[index] = nuevo
+        API_URL = f"https://api.github.com/repos/{REPO}/contents/{path}"
 
-    subir_json(datos, sha)
+        headers = {
+            "Authorization": f"token {TOKEN}",
+            "Accept": "application/vnd.github+json"
+        }
 
-    return jsonify({"status": "editado"})
+        # 📥 Obtener archivo
+        r = requests.get(API_URL, headers=headers)
+        data_github = r.json()
+        sha = data_github["sha"]
+
+        contenido = base64.b64decode(
+            data_github["content"]
+        ).decode("utf-8")
+
+        datos = json.loads(contenido)
+
+        # ✏️ Buscar por ID
+        encontrado = False
+        for i, d in enumerate(datos):
+            if d.get("id") == id_buscar:
+                datos[i] = nuevo
+                encontrado = True
+                break
+
+        if not encontrado:
+            return jsonify({"error": "ID no encontrado"}), 404
+
+        # 📤 Subir cambios
+        contenido_str = json.dumps(datos, indent=2)
+        contenido_b64 = base64.b64encode(
+            contenido_str.encode("utf-8")
+        ).decode("utf-8")
+
+        body = {
+            "message": f"Editado ID {id_buscar}",
+            "content": contenido_b64,
+            "sha": sha
+        }
+
+        requests.put(API_URL, headers=headers, json=body)
+
+        return jsonify({"status": "ok"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # ➕ GUARDAR
-@app.route("/guardar", methods=["POST"])
-def guardar():
-    nuevo = request.json
+# @app.route("/guardar", methods=["POST"])
+# def guardar():
+#     nuevo = request.json
 
-    datos, sha = obtener_json()
+#     datos, sha = obtener_json()
 
-    datos.append(nuevo)
+#     datos.append(nuevo)
 
-    subir_json(datos, sha)
+#     subir_json(datos, sha)
 
-    return jsonify({"status": "ok"})
+#     return jsonify({"status": "ok"})
 
 # @app.route("/save", methods=["POST"])
 # def save_file():
