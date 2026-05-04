@@ -332,7 +332,7 @@ form.addEventListener("click", async (e) => {
       sena: document.getElementById("seña").checked,
     };
     dataaaa = JSON.stringify(nuevo);
-    await fetch(`${API_URL}/guardar`, {
+    await fetch(`${API}/guardar`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -350,7 +350,7 @@ form.addEventListener("click", async (e) => {
       sena: document.getElementById("editaSeña").checked,
     };
     dataaaa = JSON.stringify(nuevo);
-    await fetch(`${API_URL}/editar`, {
+    await fetch(`${API}/editar`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
