@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
-    <h1>Calendario Excursiones 4x4</h1>
+    <h1 class="titulo">Calendario Excursiones 4x4</h1>
 
     <form id="formulario">
       <div class="cargaClientes">
@@ -27,17 +27,17 @@
           id="vehiculosOrg"
           placeholder="Vehículos organizadores"
         />
+        <label>Precio Acordado:</label>
+        <input type="number" id="precio" placeholder="Precio acordado" />
+        <label class="seña"
+          >Deja seña: <input type="checkbox" id="seña"
+        /></label>
+        <label>Importe Seña:</label>
+        <input type="number" id="importeSeña" placeholder="Seña Recibida" />
 
         <label class="comida"
           >Incluye comida: <input type="checkbox" id="comida"
         /></label>
-
-        <input type="number" id="precio" placeholder="Precio acordado" />
-
-        <label class="seña"
-          >Deja seña: <input type="checkbox" id="seña"
-        /></label>
-        <input type="number" id="importeSeña" placeholder="Seña Recibida" />
 
         <button class="guardar" type="button">Guardar</button>
       </div>
@@ -59,21 +59,22 @@
           id="editaVehiculosOrg"
           placeholder="Vehículos organizadores"
         />
-
-        <label class="comida"
-          >Incluye comida: <input type="checkbox" id="editaComida"
-        /></label>
-
+        <label>Precio Acordado:</label>
         <input type="number" id="editaPrecio" placeholder="Precio acordado" />
-
         <label class="seña"
           >Deja seña: <input type="checkbox" id="editaSeña"
         /></label>
+        <label>Importe Seña:</label>
         <input
           type="number"
           id="editaImporteSeña"
           placeholder="Seña Recibida"
         />
+
+        <label class="comida"
+          >Incluye comida: <input type="checkbox" id="editaComida"
+        /></label>
+
         <label class="elimina"
           >Eliminar: <input type="radio" id="editaElimina"
         /></label>
