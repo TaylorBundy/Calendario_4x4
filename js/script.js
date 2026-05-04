@@ -193,7 +193,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   //}
 
   // opcional: cambiar texto botón
-  form.querySelector(".actualizar").innerText = "Actualizar";
+  //form.querySelector(".actualizar").innerText = "Actualizar";
 }
 
 // function mostrarDatos2() {
@@ -325,11 +325,11 @@ guarda.addEventListener("click", () => {
     precio: document.getElementById("precio").value,
     sena: document.getElementById("seña").checked,
   };
-  //guardar(nuevo);
+  guardar(nuevo);
   console.log(nuevo);
 });
 
-actualizar.addEventListener("click", () => {
+actualizar.addEventListener("click", (e) => {
   nuevo = {
     cliente: document.getElementById("editaCliente").value,
     fecha: document.getElementById("editaFecha").value,
@@ -421,4 +421,4 @@ async function guardar(contenido) {
   alert("Guardado");
 }
 
-//cargarDatos();
+cargarDatos();
