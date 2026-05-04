@@ -1,5 +1,6 @@
 const form = document.getElementById("formulario");
 const lista = document.getElementById("lista");
+const elementos = lista.children;
 const totalReservas = document.querySelector(".totalReservas");
 const guarda = document.querySelector(".guardar");
 const actualizar = document.querySelector(".actualizar");
@@ -10,6 +11,8 @@ let datos = [];
 let indiceEditando = null;
 let indiceNuevo = null;
 let indiceAnterior = null;
+let idSeleccionado = null;
+let nuevoId = null;
 
 // Contar Registros
 function contarRegistros(array) {
@@ -35,6 +38,8 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaComida").checked = dato.comida;
   document.getElementById("editaPrecio").value = dato.precio;
   document.getElementById("editaSeña").checked = dato.sena;
+  document.getElementById("editaImporteSeña").value = dato.senaRecibida;
+  console.log(idSeleccionado);
 
   indiceEditando = index;
   indiceNuevo = indiceEditando;
@@ -267,12 +272,15 @@ function mostrarDatos() {
       Vehículos org: ${d.vo}<br>
       Comida: ${d.comida ? "Sí" : "No"}<br>
       Precio: $${d.precio}<br>
-      Seña: ${d.sena ? "Sí" : "No"}
+      Seña: ${d.sena ? "Sí" : "No"}<br>
+      Seña Recibida: ${d.senaRecibida}
     `;
 
     // 👉 CLICK PARA EDITAR
     //div.addEventListener("click", () => cargarEnFormulario(d, index));
     div.addEventListener("click", () => {
+      idSeleccionado = d.id;
+      //console.log(idSeleccionado);
       if (div.dataset.selected == "true") {
         div.dataset.selected = "false";
         // if (div.className.includes("selected")) {
@@ -316,7 +324,15 @@ function mostrarDatos() {
 
 let nuevo;
 guarda.addEventListener("click", () => {
+  if (elementos.length > 0) {
+    const ultimo = elementos[elementos.length - 1];
+    const numero = parseInt(ultimo.className.match(/card-(\d+)/)[1]);
+    //console.log(ultimo.className);
+    //console.log(numero);
+    nuevoId = numero + 1;
+  }
   nuevo = {
+    id: `card-${nuevoId}`,
     cliente: document.getElementById("cliente").value,
     fecha: document.getElementById("fecha").value,
     vc: document.getElementById("vehiculosClientes").value,
@@ -324,9 +340,14 @@ guarda.addEventListener("click", () => {
     comida: document.getElementById("comida").checked,
     precio: document.getElementById("precio").value,
     sena: document.getElementById("seña").checked,
+    senaRecibida: document.getElementById("importeSeña").value,
   };
   guardar(nuevo);
   console.log(nuevo);
+
+  //   for (let i = 0; i < elementos.length; i++) {
+  //     console.log(elementos[i].className);
+  //   }
 });
 
 actualizar.addEventListener("click", (e) => {
@@ -338,6 +359,7 @@ actualizar.addEventListener("click", (e) => {
     comida: document.getElementById("editaComida").checked,
     precio: document.getElementById("editaPrecio").value,
     sena: document.getElementById("editaSeña").checked,
+    senaRecibida: document.getElementById("editaImporteSeña").value,
   };
   //guardar(nuevo);
   console.log(nuevo);
