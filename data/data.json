@@ -1,6 +1,6 @@
 [
   {
-    "cliente": "Juan Pérez",
+    "cliente": "Juan P\u00e9rez",
     "fecha": "2026-05-10",
     "vc": 3,
     "vo": 2,
@@ -9,7 +9,7 @@
     "sena": true
   },
   {
-    "cliente": "María González",
+    "cliente": "Mar\u00eda Gonz\u00e1lez",
     "fecha": "2026-05-12",
     "vc": 2,
     "vo": 1,
@@ -27,7 +27,7 @@
     "sena": true
   },
   {
-    "cliente": "Carlos Fernández",
+    "cliente": "Carlos Fern\u00e1ndez",
     "fecha": "2026-05-18",
     "vc": 1,
     "vo": 1,
@@ -42,6 +42,15 @@
     "vo": 2,
     "comida": true,
     "precio": 220000,
+    "sena": false
+  },
+  {
+    "cliente": "rogelio",
+    "fecha": "2026-05-06",
+    "vc": "5",
+    "vo": "1",
+    "comida": true,
+    "precio": "75",
     "sena": false
   }
 ]
