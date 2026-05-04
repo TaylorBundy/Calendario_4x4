@@ -410,7 +410,7 @@ async function guardar(contenido) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      path: "repos/Calendario_4x4/data/data.json",
+      path: "data/data.json",
       content: contenido,
     }),
   });
