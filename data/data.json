@@ -1,9 +1,47 @@
-{
-  "cliente": "rogelio",
-  "fecha": "2026-05-06",
-  "vc": "5",
-  "vo": "1",
-  "comida": true,
-  "precio": "75",
-  "sena": false
-}
+[
+  {
+    "cliente": "Juan Pérez",
+    "fecha": "2026-05-10",
+    "vc": 3,
+    "vo": 2,
+    "comida": true,
+    "precio": 150000,
+    "sena": true
+  },
+  {
+    "cliente": "María González",
+    "fecha": "2026-05-12",
+    "vc": 2,
+    "vo": 1,
+    "comida": false,
+    "precio": 90000,
+    "sena": false
+  },
+  {
+    "cliente": "Empresa Aventura Sur",
+    "fecha": "2026-05-15",
+    "vc": 5,
+    "vo": 3,
+    "comida": true,
+    "precio": 300000,
+    "sena": true
+  },
+  {
+    "cliente": "Carlos Fernández",
+    "fecha": "2026-05-18",
+    "vc": 1,
+    "vo": 1,
+    "comida": false,
+    "precio": 50000,
+    "sena": true
+  },
+  {
+    "cliente": "Grupo Los Andes",
+    "fecha": "2026-05-20",
+    "vc": 4,
+    "vo": 2,
+    "comida": true,
+    "precio": 220000,
+    "sena": false
+  }
+]
