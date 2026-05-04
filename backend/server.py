@@ -71,64 +71,64 @@ def guardar():
 
     return jsonify({"status": "ok"})
 
-@app.route("/save", methods=["POST"])
-def save_file():
-    try:
-        data = request.json
-        path = data["path"]              # ej: data/data.json
-        content = data["content"]        # JSON (dict o list)
+# @app.route("/save", methods=["POST"])
+# def save_file():
+#     try:
+#         data = request.json
+#         path = data["path"]              # ej: data/data.json
+#         content = data["content"]        # JSON (dict o list)
 
-        TOKEN = os.getenv("GITHUB_TOKEN")
-        REPO = os.getenv("GITHUB_REPO")  # usuario/repositorio
+#         TOKEN = os.getenv("GITHUB_TOKEN")
+#         REPO = os.getenv("GITHUB_REPO")  # usuario/repositorio
 
-        API_URL = f"https://api.github.com/repos/{REPO}/contents/{path}"
+#         API_URL = f"https://api.github.com/repos/{REPO}/contents/{path}"
 
-        headers = {
-            "Authorization": f"token {TOKEN}",
-            "Accept": "application/vnd.github+json"
-        }
+#         headers = {
+#             "Authorization": f"token {TOKEN}",
+#             "Accept": "application/vnd.github+json"
+#         }
 
-        # 📥 Obtener archivo actual (para SHA)
-        r = requests.get(API_URL, headers=headers)
+#         # 📥 Obtener archivo actual (para SHA)
+#         r = requests.get(API_URL, headers=headers)
 
-        if r.status_code == 200:
-            data_github = r.json()
-            sha = data_github["sha"]
-        else:
-            sha = None  # si no existe el archivo
+#         if r.status_code == 200:
+#             data_github = r.json()
+#             sha = data_github["sha"]
+#         else:
+#             sha = None  # si no existe el archivo
 
-        # 📤 Convertir contenido a base64
-        contenido_str = json.dumps(content, indent=2)
-        contenido_b64 = base64.b64encode(contenido_str.encode("utf-8")).decode("utf-8")
+#         # 📤 Convertir contenido a base64
+#         contenido_str = json.dumps(content, indent=2)
+#         contenido_b64 = base64.b64encode(contenido_str.encode("utf-8")).decode("utf-8")
 
-        body = {
-            "message": f"Update {path}",
-            "content": contenido_b64
-        }
+#         body = {
+#             "message": f"Update {path}",
+#             "content": contenido_b64
+#         }
 
-        if sha:
-            body["sha"] = sha  # necesario para actualizar
+#         if sha:
+#             body["sha"] = sha  # necesario para actualizar
 
-        # 🚀 Subir a GitHub
-        r = requests.put(API_URL, headers=headers, json=body)
+#         # 🚀 Subir a GitHub
+#         r = requests.put(API_URL, headers=headers, json=body)
 
-        if r.status_code not in [200, 201]:
-            return jsonify({
-                "status": "error",
-                "github_response": r.json()
-            }), 500
+#         if r.status_code not in [200, 201]:
+#             return jsonify({
+#                 "status": "error",
+#                 "github_response": r.json()
+#             }), 500
 
-        return jsonify({
-            "status": "guardado y subido correctamente"
-        })
+#         return jsonify({
+#             "status": "guardado y subido correctamente"
+#         })
 
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "error": str(e)
-        }), 500
+#     except Exception as e:
+#         return jsonify({
+#             "status": "error",
+#             "error": str(e)
+#         }), 500
     
-@app.route("/saves", methods=["POST"])
+@app.route("/save", methods=["POST"])
 def save_file():
     try:
         data = request.json
