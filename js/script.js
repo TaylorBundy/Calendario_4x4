@@ -189,7 +189,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   //}
 
   // opcional: cambiar texto botón
-  form.querySelector("button").innerText = "Actualizar";
+  form.querySelector(".actualizar").innerText = "Actualizar";
 }
 
 function mostrarDatos2() {
