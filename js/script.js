@@ -314,12 +314,12 @@ function mostrarDatos() {
   });
 }
 
+let nuevo;
 // Guardar
 form.addEventListener("submit", async (e) => {
   //e.preventDefault();
   console.log(e.target);
   //let dataaaa;
-  let nuevo;
   const accion = e.submitter.className;
   //const boton = e.id;
   //console.log(boton);
@@ -333,14 +333,15 @@ form.addEventListener("submit", async (e) => {
       precio: document.getElementById("precio").value,
       sena: document.getElementById("seña").checked,
     };
+    guardar(nuevo);
     //dataaaa = JSON.stringify(nuevo);
-    await fetch(`${API}/save`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(nuevo),
-    });
+    // await fetch(`${API}/save`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(nuevo),
+    // });
   } else if (accion.includes("actualizar")) {
     nuevo = {
       cliente: document.getElementById("editaCliente").value,
@@ -375,5 +376,22 @@ form.addEventListener("submit", async (e) => {
   form.reset();
   cargarDatos();
 });
+
+async function guardar(contenido) {
+  //const contenido = document.getElementById("editor").value;
+  const res = await fetch(`${API}/save`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      path: "data/data.json",
+      content: contenido,
+    }),
+  });
+  const data = await res.json();
+
+  data.logs.forEach((l) => console.log(l));
+
+  alert("Guardado");
+}
 
 cargarDatos();
