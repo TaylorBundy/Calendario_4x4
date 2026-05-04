@@ -319,9 +319,10 @@ form.addEventListener("submit", async (e) => {
   //e.preventDefault();
   console.log(e.target);
   let dataaaa;
+  const accion = e.submitter.className;
   //const boton = e.id;
   //console.log(boton);
-  if (e.target.className.includes("guardar")) {
+  if (accion.includes("guardar")) {
     const nuevo = {
       cliente: document.getElementById("cliente").value,
       fecha: document.getElementById("fecha").value,
@@ -339,7 +340,7 @@ form.addEventListener("submit", async (e) => {
       },
       body: JSON.stringify(dataaaa),
     });
-  } else if (e.target.className.includes("actualizar")) {
+  } else if (accion.includes("actualizar")) {
     const nuevo = {
       cliente: document.getElementById("editaCliente").value,
       fecha: document.getElementById("editaFecha").value,
