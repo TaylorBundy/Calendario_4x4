@@ -203,6 +203,7 @@ function mostrarDatos() {
     const btnElimina = document.querySelector(`#${d.id}`);
     btnElimina.addEventListener("click", () => {
       console.log(d.id);
+      idSeleccionado = d.id;
       eliminar();
     });
     //console.log(btnElimina);
