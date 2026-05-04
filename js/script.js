@@ -1,6 +1,10 @@
 const form = document.getElementById("formulario");
 const lista = document.getElementById("lista");
 const totalReservas = document.querySelector(".totalReservas");
+const guarda = document.querySelector(".guardar");
+const actualizar = document.querySelector(".actualizar");
+const botones = document.querySelectorAll("button");
+const API = "https://calendario-4x4.onrender.com";
 
 let datos = [];
 let indiceEditando = null;
@@ -311,30 +315,63 @@ function mostrarDatos() {
 }
 
 // Guardar
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const nuevo = {
-    cliente: document.getElementById("cliente").value,
-    fecha: document.getElementById("fecha").value,
-    vc: document.getElementById("vehiculosClientes").value,
-    vo: document.getElementById("vehiculosOrg").value,
-    comida: document.getElementById("comida").checked,
-    precio: document.getElementById("precio").value,
-    sena: document.getElementById("seña").checked,
-  };
-
-  // ⚠️ Esto requiere backend
-  await fetch("/guardar", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(nuevo),
-  });
-
-  form.reset();
-  cargarDatos();
+form.addEventListener("click", async (e) => {
+  //e.preventDefault();
+  console.log(e.target);
+  let dataaaa;
+  //const boton = e.id;
+  //console.log(boton);
+  if (e.target.className.includes("guardar")) {
+    const nuevo = {
+      cliente: document.getElementById("cliente").value,
+      fecha: document.getElementById("fecha").value,
+      vc: document.getElementById("vehiculosClientes").value,
+      vo: document.getElementById("vehiculosOrg").value,
+      comida: document.getElementById("comida").checked,
+      precio: document.getElementById("precio").value,
+      sena: document.getElementById("seña").checked,
+    };
+    dataaaa = JSON.stringify(nuevo);
+    await fetch(`${API_URL}/guardar`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataaaa),
+    });
+  } else if (e.target.className.includes("actualizar")) {
+    const nuevo = {
+      cliente: document.getElementById("editaCliente").value,
+      fecha: document.getElementById("editaFecha").value,
+      vc: document.getElementById("editaVehiculosClientes").value,
+      vo: document.getElementById("editaVehiculosOrg").value,
+      comida: document.getElementById("editaComida").checked,
+      precio: document.getElementById("editaPrecio").value,
+      sena: document.getElementById("editaSeña").checked,
+    };
+    dataaaa = JSON.stringify(nuevo);
+    await fetch(`${API_URL}/editar`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        index: indiceEditando,
+        data: dataaaa,
+      }),
+    });
+  }
+  console.log(dataaaa);
+  //   // ⚠️ Esto requiere backend
+  //   await fetch("/guardar", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(nuevo),
+  //   });
+  //   form.reset();
+  //   cargarDatos();
 });
 
-cargarDatos();
+//cargarDatos();
