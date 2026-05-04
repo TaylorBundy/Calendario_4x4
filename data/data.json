@@ -13,13 +13,13 @@
   {
     "id": "card-1",
     "cliente": "Mar\u00eda Gonz\u00e1lez",
-    "fecha": "2026-05-12",
-    "vc": 2,
-    "vo": 1,
+    "fecha": "2026-08-13",
+    "vc": "11",
+    "vo": "1",
     "comida": false,
-    "precio": 90000,
+    "precio": "75",
     "sena": false,
-    "senaRecibida": 5000
+    "senaRecibida": ""
   },
   {
     "id": "card-2",
@@ -53,16 +53,5 @@
     "precio": 220000,
     "sena": false,
     "senaRecibida": 5000
-  },
-  {
-    "id": "card-5",
-    "cliente": "rogelio",
-    "fecha": "2026-05-06",
-    "vc": "5",
-    "vo": "1",
-    "comida": true,
-    "precio": "75",
-    "sena": true,
-    "senaRecibida": "5000"
   }
 ]
