@@ -106,3 +106,34 @@ button {
 #card.selected {
   background: #152ed9;
 }
+
+@media only screen and (min-width: 360px) and (max-width: 1154px) {
+  form {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cargaClientes,
+  .editaClientes {
+    width: 60%;
+  }
+  #card {
+    background: #333;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60%;
+    border: 1px solid #888;
+    margin: auto;
+    font-size: 18px;
+  }
+  #lista {
+    background: #2c2c2c;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+}
