@@ -362,7 +362,7 @@ actualizar.addEventListener("click", (e) => {
     sena: document.getElementById("editaSeña").checked,
     senaRecibida: document.getElementById("editaImporteSeña").value,
   };
-  //guardar(nuevo);
+  editar(nuevo);
   console.log(nuevo);
 });
 // Guardar
@@ -448,7 +448,7 @@ async function guardar(contenido) {
 async function editar(contenido) {
   console.log(JSON.stringify(contenido));
   //const contenido = document.getElementById("editor").value;
-  const res = await fetch(`${API}/save`, {
+  const res = await fetch(`${API}/editar`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
