@@ -44,7 +44,7 @@ def editar():
     data = request.json
     index = data["index"]
     nuevo = data["data"]
-    print(nuevo)
+    print(REPO)
 
     datos, sha = obtener_json()
 
