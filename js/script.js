@@ -202,7 +202,7 @@ function mostrarDatos() {
 
     const btnElimina = document.querySelector(`#${d.id}`);
     btnElimina.addEventListener("click", () => {
-      console.log(d.id);
+      //console.log(d.id);
       idSeleccionado = d.id;
       eliminar();
     });
@@ -262,7 +262,12 @@ async function guardar(contenido) {
     }),
   });
   const data = await res.json();
-
+  if (res.ok && data.status === "registro agregado") {
+    console.log("Guardado correctamente");
+    await cargarDatos(); // 👈 recargás la lista
+  } else {
+    console.error("Error al guardar", data);
+  }
   data.logs.forEach((l) => console.log(l));
 
   alert("Guardado");

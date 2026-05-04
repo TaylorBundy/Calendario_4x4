@@ -118,7 +118,12 @@ button {
   border-radius: 8px;
   padding: 8px;
   right: 10px;
-  top: 10px;
+  bottom: 10px;
+}
+.elCliente {
+  margin: 0;
+  /* width: 50%; */
+  text-align: center;
 }
 
 @media only screen and (min-width: 360px) and (max-width: 1154px) {
