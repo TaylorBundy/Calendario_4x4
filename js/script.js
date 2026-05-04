@@ -7,6 +7,7 @@ const actualizar = document.querySelector(".actualizar");
 const botones = document.querySelectorAll("button");
 const btnEliminar = document.querySelector("#editaElimina");
 const eleEdita = document.querySelector(".editaClientes");
+const recargar = document.querySelector(".recargar");
 const API = "https://calendario-4x4.onrender.com";
 
 let datos = [];
@@ -28,6 +29,10 @@ fetch(url)
   });
 
 window.addEventListener("DOMContentLoaded", () => {
+  recargar.addEventListener("click", () => {
+    cargarDatos();
+    console.log(datos);
+  });
   //const eleEdita1 = document.querySelector(".editaClientes");
   const ele = eleEdita.querySelectorAll("input");
   ele.forEach((el) => {
@@ -265,6 +270,7 @@ async function guardar(contenido) {
   if (res.ok && data.status === "registro agregado") {
     console.log("Guardado correctamente");
     await cargarDatos(); // 👈 recargás la lista
+    console.log(datos);
   } else {
     console.error("Error al guardar", data);
   }
