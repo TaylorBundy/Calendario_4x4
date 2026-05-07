@@ -14,8 +14,10 @@
         <label>Cliente/Organizador:</label>
         <input type="text" id="cliente" placeholder="Cliente" />
 
-        <label>Fecha salida:</label>
-        <input type="date" id="fecha" />
+        <label>Fecha Inicio:</label>
+        <input type="date" id="fechaInicio" />
+        <label>Fecha Fin:</label>
+        <input type="date" id="fechaFin" />
         <label>Total Vehículos:</label>
         <input
           type="number"
@@ -46,8 +48,10 @@
         <label>Cliente/Organizador:</label>
         <input type="text" id="editaCliente" placeholder="Cliente" />
 
-        <label>Fecha salida:</label>
-        <input type="date" id="editaFecha" />
+        <label>Fecha Inicio:</label>
+        <input type="date" id="editaFechaInicio" />
+        <label>Fecha Fin:</label>
+        <input type="date" id="editaFechaFin" />
         <label>Total Vehículos:</label>
         <input
           type="number"
@@ -84,9 +88,11 @@
       </div>
     </form>
 
-    <h2>Reservas</h2>
-    <h3 class="totalReservas"></h3>
-    <div id="lista"></div>
+    <div class="listaContainer">
+      <h2>Reservas</h2>
+      <h3 class="totalReservas"></h3>
+      <div id="lista"></div>
+    </div>
     <form id="formFechas">
       <select id="fechas"></select>
     </form>

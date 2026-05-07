@@ -66,7 +66,8 @@ async function cargarDatos() {
 
 function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaCliente").value = dato.cliente;
-  document.getElementById("editaFecha").value = dato.fecha;
+  document.getElementById("editaFechaInicio").value = dato.fechaInicio;
+  document.getElementById("editaFechaFin").value = dato.fechaFin;
   document.getElementById("editaVehiculosClientes").value = dato.vc;
   document.getElementById("editaVehiculosOrg").value = dato.vo;
   document.getElementById("editaComida").checked = dato.comida;
@@ -123,7 +124,8 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
       elementoActual.dataset.selected == "false"
     ) {
       document.getElementById("editaCliente").value = "";
-      document.getElementById("editaFecha").value = "";
+      document.getElementById("editaFechaInicio").value = "";
+      document.getElementById("editaFechaFin").value = "";
       document.getElementById("editaVehiculosClientes").value = "";
       document.getElementById("editaVehiculosOrg").value = "";
       document.getElementById("editaComida").checked = false;
@@ -165,7 +167,8 @@ function mostrarDatos() {
     <!-- <button class="btnelimina" id="${d.id}"> Eliminar </button> -->
     <!-- <div class="divcontainer"> -->
       <h2 class="elCliente"><strong>${d.cliente}</strong></h2><br>
-      <span>Fecha: ${d.fecha}</span>
+      <span>Fecha Inicio: ${d.fechaInicio}</span>
+      <span>Fecha Fin: ${d.fechaFin}</span>
       <span>Vehículos clientes: ${d.vc}</span>
       <span>Vehículos org: ${d.vo}</span>
       <span>Comida: ${d.comida ? "Sí" : "No"}</span>
@@ -225,7 +228,8 @@ guarda.addEventListener("click", () => {
   nuevo = {
     id: `card-${nuevoId}`,
     cliente: document.getElementById("cliente").value,
-    fecha: document.getElementById("fecha").value,
+    fechaInicio: document.getElementById("fechaInicio").value,
+    fechaFin: document.getElementById("fechaFin").value,
     vc: document.getElementById("vehiculosClientes").value,
     vo: document.getElementById("vehiculosOrg").value,
     comida: document.getElementById("comida").checked,
@@ -241,7 +245,8 @@ actualizar.addEventListener("click", (e) => {
   nuevo = {
     id: idSeleccionado,
     cliente: document.getElementById("editaCliente").value,
-    fecha: document.getElementById("editaFecha").value,
+    fechaInicio: document.getElementById("editaFechaInicio").value,
+    fechaFin: document.getElementById("editaFechaFin").value,
     vc: document.getElementById("editaVehiculosClientes").value,
     vo: document.getElementById("editaVehiculosOrg").value,
     comida: document.getElementById("editaComida").checked,

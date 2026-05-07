@@ -2,7 +2,8 @@
   {
     "id": "card-0",
     "cliente": "Juan P\u00e9rez",
-    "fecha": "2026-05-10",
+    "fechaInicio": "2026-05-10",
+    "fechaFin": "",
     "vc": 3,
     "vo": 2,
     "comida": true,
@@ -13,7 +14,8 @@
   {
     "id": "card-1",
     "cliente": "Belezas do vale Expediciones",
-    "fecha": "2026-08-13",
+    "fechaInicio": "2026-08-13",
+    "fechaFin": "2026-08-14",
     "vc": "11",
     "vo": "1",
     "comida": false,
@@ -24,7 +26,8 @@
   {
     "id": "card-2",
     "cliente": "Empresa Aventura Sur",
-    "fecha": "2026-05-15",
+    "fechaInicio": "2026-05-15",
+    "fechaFin": "",
     "vc": 5,
     "vo": 3,
     "comida": true,
@@ -35,7 +38,8 @@
   {
     "id": "card-3",
     "cliente": "Carlos Fern\u00e1ndez",
-    "fecha": "2026-05-18",
+    "fechaInicio": "2026-05-18",
+    "fechaFin": "",
     "vc": 1,
     "vo": 1,
     "comida": false,
@@ -46,7 +50,8 @@
   {
     "id": "card-4",
     "cliente": "Grupo Los Andes",
-    "fecha": "2026-05-20",
+    "fechaInicio": "2026-05-20",
+    "fechaFin": "",
     "vc": 4,
     "vo": 2,
     "comida": true,
@@ -57,7 +62,8 @@
   {
     "id": "card-5",
     "cliente": "rogelio",
-    "fecha": "2026-05-22",
+    "fechaInicio": "2026-05-22",
+    "fechaFin": "",
     "vc": "5",
     "vo": "1",
     "comida": false,
@@ -68,7 +74,8 @@
   {
     "id": "card-6",
     "cliente": "aaaa",
-    "fecha": "2026-05-27",
+    "fechaInicio": "2026-05-27",
+    "fechaFin": "",
     "vc": "1",
     "vo": "1",
     "comida": false,

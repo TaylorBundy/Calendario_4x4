@@ -3,6 +3,8 @@ body {
   background: #1e1e1e;
   color: white;
   padding: 0 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .titulo {
@@ -141,8 +143,24 @@ button {
   /* width: 50%; */
   text-align: center;
 }
+#formulario {
+  order: 1;
+}
+.listaContainer {
+  order: 2;
+}
+
+#formFechas {
+  order: 3;
+}
 
 @media only screen and (min-width: 360px) and (max-width: 1154px) {
+  #formulario {
+    order: 2;
+  }
+  .listaContainer {
+    order: 1;
+  }
   form {
     flex-direction: column;
     gap: 8px;
