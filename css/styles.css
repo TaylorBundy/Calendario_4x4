@@ -6,18 +6,38 @@ body {
   display: flex;
   flex-direction: column;
 }
-
+header {
+  background: #2c2c2c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+header .logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  /* font-size: 1.5rem; */
+  /* font-weight: bold; */
+  /* background: url('Imagenes/logo-header.webp') no-repeat center center/cover; */
+}
+header img {
+  height: 40px;
+}
 .titulo {
   text-align: center;
 }
 
-form {
+#formulario {
   background: #2c2c2c;
   padding: 15px;
   border-radius: 10px;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
   display: flex;
   position: relative;
+  order: 1;
 }
 
 .cargaClientes,
@@ -132,6 +152,7 @@ button {
 .divcontainer {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .btnelimina {
   position: absolute;
@@ -164,35 +185,73 @@ button {
   color: #00ff3a;
   font-size: 1em;
 }
-#formulario {
+/* #formulario {
   order: 1;
-}
+} */
 .listaContainer {
   order: 2;
   margin-bottom: 10px;
 }
 
-#formFechas {
+.fechasGoogle {
   order: 3;
+  background: #2c2c2c;
+  border-radius: 10px;
+  padding: 15px;
 }
 
 .clienteNuevo,
-.clienteSel {
+.clienteSel,
+.fechasCalendar {
   margin: 5px 0;
+  font-size: 1.2em;
+}
+.imgContainer {
+  position: absolute;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+.imgContainer img {
+  /* position: relative; */
+  width: 40%;
+}
+
+.cargaClientes .imgContainer,
+.editaClientes .imgContainer {
+  width: 30%;
+  left: 0;
+  height: unset;
+  justify-content: unset;
+}
+#fechas {
   font-size: 1.2em;
 }
 
 @media only screen and (min-width: 360px) and (max-width: 1154px) {
-  #formulario {
-    order: 2;
+  header {
+    margin-bottom: unset;
   }
+  header .logo {
+    gap: 10px;
+  }
+  /* #formulario {
+    order: 2;
+  } */
   .listaContainer {
     order: 1;
     margin-bottom: 30px;
   }
-  form {
+  /* .imgContainer img {
+    width: 40%;
+  } */
+  #formulario {
     flex-direction: column;
     gap: 8px;
+    margin-bottom: 10px;
+    order: 2;
   }
   .cargaClientes,
   .editaClientes {
@@ -237,7 +296,8 @@ button {
     font-size: 1.5em;
   }
   .clienteNuevo,
-  .clienteSel {
+  .clienteSel,
+  .fechasCalendar {
     /* margin: 5px 0; */
     font-size: 2.2em;
     text-align: center;
@@ -302,5 +362,16 @@ button {
   .reservasContainer h2,
   .reservasContainer h3 {
     margin: 0;
+  }
+  #fechas {
+    font-size: 2.5em;
+  }
+  .fechasGoogle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #formFechas {
+    width: 80%;
   }
 }

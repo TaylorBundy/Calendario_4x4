@@ -3,14 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <title>Calendario 4x4</title>
+    <link rel="shortcut icon" id="favicon" href="images/favicon.webp" />
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
-    <h1 class="titulo">Calendario Excursiones 4x4</h1>
+    <!-- Encabezado -->
+    <header>
+      <div class="logo">
+        <img src="Images/logo-header.webp" alt="" />
+        <!-- Pehuén Aventuras 4x4 -->
+        <h1 class="titulo">Calendario Excursiones 4x4</h1>
+      </div>
+      <!-- <nav>
+        <ul>
+          <li><a href="#inicio">Inicio</a></li>
+          <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
+          <li><a href="#galeria">Galería</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </nav> -->
+    </header>
+    <!-- <h1 class="titulo">Calendario Excursiones 4x4</h1> -->
 
     <form id="formulario">
       <button class="recargar" type="button">Recargar</button>
       <div class="cargaClientes">
+        <div class="imgContainer">
+          <img src="images/fondo-transparente.webp" alt="" id="fondoHero" />
+        </div>
         <h2 class="clienteNuevo">Crear Cliente Nuevo:</h2>
         <label>Cliente/Organizador:</label>
         <input type="text" id="cliente" placeholder="Cliente" />
@@ -46,6 +66,9 @@
         <button class="guardar" type="button">Guardar</button>
       </div>
       <div class="editaClientes">
+        <div class="imgContainer">
+          <img src="images/fondo-transparente.webp" alt="" id="fondoHero" />
+        </div>
         <h2 class="clienteSel">Editar Cliente Seleccionado:</h2>
         <label>Cliente/Organizador:</label>
         <input type="text" id="editaCliente" placeholder="Cliente" />
@@ -97,9 +120,15 @@
       </div>
       <div id="lista"></div>
     </div>
-    <form id="formFechas">
-      <select id="fechas"></select>
-    </form>
+    <div class="fechasGoogle">
+      <h2 class="fechasCalendar">Fechas en Google Calendar:</h2>
+      <form id="formFechas">
+        <select id="fechas">
+          <option value="">Seleccione una fecha:</option>
+        </select>
+      </form>
+      <div id="lista2"></div>
+    </div>
 
     <script src="js/script.js"></script>
   </body>

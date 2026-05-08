@@ -1,6 +1,8 @@
 const form = document.getElementById("formulario");
 const lista = document.getElementById("lista");
+const lista2 = document.getElementById("lista2");
 const elementos = lista.children;
+const cards = Array.from(lista.children);
 const totalReservas = document.querySelector(".totalReservas");
 const guarda = document.querySelector(".guardar");
 const actualizar = document.querySelector(".actualizar");
@@ -11,24 +13,218 @@ const recargar = document.querySelector(".recargar");
 const API = "https://calendario-4x4.onrender.com";
 
 let datos = [];
+let clientes = null;
+let fechasInicio = null;
+const reservas = [];
 let indiceEditando = null;
 let indiceNuevo = null;
 let indiceAnterior = null;
 let idSeleccionado = null;
 let nuevoId = null;
+let nuevoNumero = null;
+let indiceSelect = null;
 const API_KEY = "AIzaSyAVearlKR2iIcQd2eeS8zXqiKB2OITgIxU";
 const CALENDAR_ID = "diegomartinbarbosa2@gmail.com";
 
 const url = `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?key=${API_KEY}`;
+let precioMatch;
+let moneda;
+function procesarDescripcionEvento(texto) {
+  //console.log(texto);
+  const resultado = {
+    vehiculos: null,
+    organizadores: null,
+    precio: null,
+    moneda: null,
+    comida: null,
+  };
+
+  // =========================
+  // VEHÍCULOS
+  // =========================
+  const vehiculosMatch = texto.match(
+    /(\d+)\s*veh[ií]culos?(?!\s*organizadores)|vehiculos/i,
+  );
+
+  if (vehiculosMatch) {
+    resultado.vehiculos = Number(vehiculosMatch[1]);
+  }
+
+  // =========================
+  // ORGANIZADORES
+  // =========================
+  const organizadoresMatch = texto.match(
+    /(\d+)\s*veh[ií]culos?\s*organizadores/i,
+  );
+
+  if (organizadoresMatch) {
+    resultado.organizadores = Number(organizadoresMatch[1]);
+  }
+
+  // =========================
+  // PRECIO
+  // =========================
+  const precioRegex =
+    /(?:precio\s*pactado|precio\s*por\s*veh[ií]culo)?[\s:]*\$?\s*(\d+)\s*(usd|u\$s|d[oó]lares?|dolares|pesos?)?(?:\s*por\s*veh[ií]culo)?/i;
+  const patronesPrecio = [
+    /(\d+)\s*(usd|u\$s|d[oó]lares?|dolares|pesos?)\s*por\s*veh[ií]culo/i,
+
+    /precio\s*(?:pactado|por\s*veh[ií]culo)?[:\s]*\$?\s*(\d+)/i,
+
+    /\$\s*(\d+)/i,
+  ];
+
+  for (const regex of patronesPrecio) {
+    const match = texto.match(regex);
+
+    if (match) {
+      precioMatch = match;
+    }
+  }
+
+  if (precioMatch) {
+    resultado.precio = Number(precioMatch[1]);
+
+    if (precioMatch[2]) {
+      moneda = precioMatch[2].toLowerCase();
+
+      if (
+        moneda.includes("usd") ||
+        moneda.includes("u$s") ||
+        moneda.includes("dólar") ||
+        moneda.includes("dolar") ||
+        moneda.includes("dolares")
+      ) {
+        resultado.moneda = "USD";
+      } else if (moneda.includes("peso")) {
+        resultado.moneda = "ARS";
+      }
+    }
+  }
+
+  // =========================
+  // COMIDA
+  // =========================
+  console.log(texto);
+  if (/no\s*incluye\s*comida/i.test(texto.toLowerCase())) {
+    resultado.comida = false;
+  } else if (/incluye\s*comida|con\s*comida/i.test(texto.toLowerCase())) {
+    resultado.comida = true;
+  }
+
+  return resultado;
+}
+
+// function obtenerPrecio2(texto) {
+//   const regex =
+//     /(?:precio\s*pactado|precio\s*por\s*veh[ií]culo)?[\s:]*\$?\s*(\d+)\s*(?:usd|u\$s|d[oó]lares?)?(?:\s*por\s*veh[ií]culo)?/i;
+
+//   const match = texto.match(regex);
+
+//   return match ? Number(match[1]) : null;
+// }
+
+// function obtenerPrecio(texto) {
+//   const patrones = [
+//     /(\d+)\s*d[oó]lares?\s*por\s*veh[ií]culo/i,
+//     /precio\s*por\s*veh[ií]culo[:\s]*\$?\s*(\d+)/i,
+//     /precio\s*pactado[:\s]*\$?\s*(\d+)/i,
+//   ];
+
+//   for (const regex of patrones) {
+//     const match = texto.match(regex);
+
+//     if (match) {
+//       return Number(match[1]);
+//     }
+//   }
+
+//   return null;
+// }
 
 fetch(url)
   .then((res) => res.json())
   .then((data) => {
-    console.log(data.items);
+    console.log(data);
+    const items = data.items;
+    items.forEach((ev) => {
+      const fechaIn = ev?.start.date;
+      const fechaFn = ev?.end.date;
+      const nomCli = ev?.summary;
+      const descrip = procesarDescripcionEvento(ev?.description);
+      const cliente = `cliente: ${nomCli}`;
+      const fechaInicio = `start: ${fechaIn}`;
+      const fechaFin = `end: ${fechaFn}`;
+      const vehiculosClientes = `vehiculos: ${descrip.vehiculos}`;
+      const vehiculosOrganizadores = `vehiculos organizadores: ${descrip.organizadores}`;
+      const comida = `comida: ${descrip.comida}`;
+      const moneda = `moneda: ${descrip.moneda}`;
+      const precio = `precio: ${descrip.precio}`;
+      // console.log(cliente);
+      // console.log(fechaInicio);
+      // console.log(fechaFin);
+      // console.log(vehiculosClientes);
+      // console.log(vehiculosOrganizadores);
+      // console.log(precio);
+      // console.log(moneda);
+      // console.log(comida);
+      //console.log(`descripcion: ${ev?.description}`);
+      //console.log(descrip);
+    });
     mostrarFechas(data.items);
   });
 
 window.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    lista.querySelectorAll(".divcontainer").forEach((card) => {
+      //console.log(card.querySelector("h2"));
+      reservas.push({
+        cliente: card.querySelector("h2")?.textContent.trim().toLowerCase(),
+        fecha: card
+          .querySelector("#fechaInicio")
+          ?.textContent.trim()
+          .toLowerCase(),
+      });
+    });
+    // const elementos = lista.children;
+    // const todosLista = lista.querySelectorAll("#card");
+    // todosLista.forEach((el) => {
+    //   const nombreClase = el.className;
+
+    //   //console.log(nombreClase.split("-"));
+    // });
+    // for (let i = 0; i < elementos.length; i++) {
+    //   console.log(elementos[i].className);
+    // }
+    // if (elementos.length > 0) {
+    //   const ultimo = elementos[elementos.length - 1];
+    //   console.log(ultimo.className);
+    // }
+    const ultimo = lista.lastElementChild;
+    const dataId = ultimo.dataset.id;
+    //const nomCliente = lista.querySelectorAll(".divcontainer");
+    //const fechasss = lista.querySelectorAll("#fechaInicio");
+    //const clientes2 = nomCliente;
+    // clientes2.forEach((elemento, index) => {
+    //   const cliente = elemento.querySelector("h2").textContent;
+    //   const fecha = elemento.querySelector("#fechaInicio").textContent;
+    //   clientes = cliente;
+    //   console.log(`cliente: ${cliente} - fecha: ${fecha}`);
+    //   // console.log(fecha);
+    //   // console.log(cliente);
+    //   //console.log(el.textContent);
+    // });
+    //console.log(clientes);
+    // fechasss.forEach((el) => {
+    //   console.log(el.textContent);
+    // });
+
+    nuevoNumero = Number(dataId.split("-")[1]) + 1;
+  }, 2000);
+  // clientes.forEach((el) => {
+  //   console.log(el);
+  // });
+
   recargar.addEventListener("click", () => {
     cargarDatos();
     console.log(datos);
@@ -152,12 +348,17 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
 function mostrarDatos() {
   lista.innerHTML = "";
 
-  datos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+  datos.sort((a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio));
 
   datos.forEach((d, index) => {
     const div = document.createElement("div");
     const divContainer = document.createElement("div");
     divContainer.className = "divcontainer";
+    const imgContainer = document.createElement("div");
+    imgContainer.className = "imgContainer";
+    const imgDiv = document.createElement("img");
+    imgDiv.className = "img";
+    imgDiv.src = "images/fondo-transparente.webp";
     const radio = document.createElement("input");
     // const btnElimina = document.createElement("button");
     // btnElimina.className = "btnelimina";
@@ -166,6 +367,7 @@ function mostrarDatos() {
     radio.type = "radio";
     div.className = `card-${index}`;
     div.id = "card";
+    div.dataset.id = `card-${index}`;
     //div.appendChild(divContainer);
     div.innerHTML = `
     <button class="btnelimina" id="${d.id}"> Eliminar </button>
@@ -174,7 +376,7 @@ function mostrarDatos() {
     <!-- <button class="btnelimina" id="${d.id}"> Eliminar </button> -->
     <!-- <div class="divcontainer"> -->
       <h2 class="elCliente"><strong>${d.cliente}</strong></h2><br>
-      <span class="datosTitulos"><strong>Fecha Inicio:</strong> <span class="datosVisibles">${d.fechaInicio}</span></span>
+      <span class="datosTitulos"><strong>Fecha Inicio:</strong> <span class="datosVisibles" id="fechaInicio">${d.fechaInicio}</span></span>
       <span class="datosTitulos"><strong>Fecha Fin:</strong> <span class="datosVisibles">${d.fechaFin}</span></span>
       <span class="datosTitulos"><strong>Vehículos clientes:</strong> <span class="datosVisibles">${d.vc}</span></span>
       <span class="datosTitulos"><strong>Vehículos org:</strong> <span class="datosVisibles">${d.vo}</span></span>
@@ -195,12 +397,14 @@ function mostrarDatos() {
       }
       const clases = div.className;
       const numero = parseInt(clases.match(/card-(\d+)/)[1]);
+      console.log(numero);
       if (indiceAnterior === null) {
         indiceAnterior = numero;
       }
       if (indiceNuevo === null) {
         indiceNuevo = numero;
       }
+      console.log(idSeleccionado);
       cargarEnFormulario(d, index, indiceAnterior);
     });
 
@@ -208,6 +412,8 @@ function mostrarDatos() {
     //div.before(btnElimina);
 
     div.prepend(divContainer);
+    divContainer.prepend(imgContainer);
+    imgContainer.appendChild(imgDiv);
     //divContainer.appendChild(div);
     lista.appendChild(div);
 
@@ -223,6 +429,177 @@ function mostrarDatos() {
     });
     //console.log(btnElimina);
   });
+}
+
+function mostrarDatosGoogle(d, index = 0) {
+  const resultados = reservas.filter((r) =>
+    r.cliente.toLowerCase().includes(clientes),
+  );
+  // resultados.forEach((el) => {
+  //   console.log(el);
+  // });
+  const clienteExiste = resultados[0].cliente;
+  const fechaExiste = resultados[0].fecha;
+  //console.log(clienteExiste);
+  //console.log(fechaExiste);
+  //if (clienteExiste && fechaExiste) return;
+
+  // console.log(clientes);
+  // const existe = reservas.filter((r) => {
+  //   console.log(r.cliente);
+  //   r.cliente === d.cliente.toLowerCase();
+  // });
+  // console.log(existe);
+  // if (existe) {
+  //   console.log(existe);
+  // }
+  //if (clientes && fechasInicio) return;
+  //nuevoNumero = nuevoNumero + 1;
+  //console.log(d.cliente);
+  //lista.innerHTML = "";
+  // lista.sort((a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio));
+
+  const div = document.createElement("div");
+  const divContainer = document.createElement("div");
+
+  divContainer.className = "divcontainer";
+
+  const imgContainer = document.createElement("div");
+  imgContainer.className = "imgContainer";
+
+  const imgDiv = document.createElement("img");
+  imgDiv.className = "img";
+  imgDiv.src = "images/fondo-transparente.webp";
+
+  div.className = `card-${nuevoNumero}`;
+  div.dataset.id = `card-${nuevoNumero}`;
+  div.id = "card";
+
+  div.innerHTML = `
+    <button class="btnelimina" id="card-${nuevoNumero}">
+      Eliminar
+    </button>
+  `;
+
+  divContainer.innerHTML = `
+      <h2 class="elCliente">
+        <strong>${d.cliente || ""}</strong>
+      </h2><br>
+
+      <span class="datosTitulos">
+        <strong>Fecha Inicio:</strong>
+        <span class="datosVisibles" id="fechaInicio">
+          ${d.fechaInicio || ""}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Fecha Fin:</strong>
+        <span class="datosVisibles">
+          ${d.fechaFin || ""}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Vehículos clientes:</strong>
+        <span class="datosVisibles">
+          ${d.vc || ""}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Vehículos org:</strong>
+        <span class="datosVisibles">
+          ${d.vo || ""}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Comida:</strong>
+        <span class="datosVisibles">
+          ${d.comida ? "Sí" : "No"}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Precio:</strong>
+        <span class="datosVisibles">
+          $${d.precio || ""}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Seña:</strong>
+        <span class="datosVisibles">
+          ${d.sena ? "Sí" : "No"}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Seña Recibida:</strong>
+        <span class="datosVisibles">
+          ${d.senaRecibida || ""}
+        </span>
+      </span>
+  `;
+
+  // CLICK EN LA CARD
+  divContainer.addEventListener("click", () => {
+    idSeleccionado = `card-${index}`;
+    //console.log(idSeleccionado);
+
+    div.dataset.selected = div.dataset.selected === "true" ? "false" : "true";
+    const clases = div.className;
+    const numero = parseInt(clases.match(/card-(\d+)/)[1]);
+    //console.log(numero);
+    if (indiceAnterior === null) {
+      indiceAnterior = numero;
+    }
+    if (indiceNuevo === null) {
+      indiceNuevo = numero;
+    }
+
+    cargarEnFormulario(d, index, indiceAnterior);
+  });
+
+  div.prepend(divContainer);
+
+  divContainer.prepend(imgContainer);
+
+  imgContainer.appendChild(imgDiv);
+
+  lista.appendChild(div);
+
+  // BOTÓN ELIMINAR
+  const btnElimina = div.querySelector(".btnelimina");
+
+  btnElimina.addEventListener("click", () => {
+    idSeleccionado = d.id;
+    eliminar();
+  });
+  ordenarPorFecha();
+}
+
+function procesarEventoGoogle(ev) {
+  const descripcion = ev.description || "";
+
+  const datosExtraidos = procesarDescripcionEvento(descripcion);
+
+  return {
+    id: ev.id,
+    cliente: ev.summary || "",
+    fechaInicio: ev.start.dateTime || ev.start.date,
+
+    fechaFin: ev.end.dateTime || ev.end.date,
+
+    vc: datosExtraidos.vehiculos,
+    vo: datosExtraidos.organizadores,
+    comida: datosExtraidos.comida,
+    precio: datosExtraidos.precio,
+
+    sena: false,
+    senaRecibida: "",
+  };
 }
 
 let nuevo;
@@ -282,7 +659,7 @@ async function guardar(contenido) {
   if (res.ok && data.status === "registro agregado") {
     console.log("Guardado correctamente");
     await cargarDatos(); // 👈 recargás la lista
-    console.log(datos);
+    //console.log(datos);
   } else {
     console.error("Error al guardar", data);
   }
@@ -346,7 +723,7 @@ setInterval(async () => {
   logs.forEach((l) => console.log(l));
 }, 5000);
 
-function mostrarFechas(eventos) {
+function mostrarFechas2(eventos) {
   const select = document.getElementById("fechas");
 
   eventos.forEach((ev) => {
@@ -359,5 +736,56 @@ function mostrarFechas(eventos) {
     select.appendChild(option);
   });
 }
+const select = document.getElementById("fechas");
+select.selectedIndex = -1;
+// select.addEventListener("mousedown", () => {
+//   console.log("Abrió el select");
+//   console.log(`selectedindex: ${select.selectedIndex}`);
+// });
+
+function mostrarFechas(eventos) {
+  //const select = document.getElementById("fechas");
+
+  // Limpiar opciones anteriores
+  //select.innerHTML = "";
+
+  eventos.forEach((ev, index) => {
+    const fecha = ev.start.dateTime || ev.start.date;
+
+    const option = document.createElement("option");
+
+    option.value = index;
+    option.textContent = `${fecha} - ${ev.summary}`;
+
+    select.appendChild(option);
+  });
+
+  // Cuando cambia la selección
+  select.onchange = () => {
+    const eventoSeleccionado = eventos[select.value];
+    const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
+    clientes = datosProcesados.cliente.toLowerCase();
+    fechasInicio = datosProcesados.fechaInicio.toLowerCase();
+    //console.log(`cliente: ${clientes} - fechaInicio: ${fechasInicio}`);
+
+    mostrarDatosGoogle(datosProcesados, nuevoNumero);
+  };
+}
+
+function ordenarPorFecha() {
+  const cards = Array.from(lista.children);
+
+  cards.sort((a, b) => {
+    const fechaA = new Date(a.querySelector("#fechaInicio").textContent);
+    const fechaB = new Date(b.querySelector("#fechaInicio").textContent);
+
+    return fechaA - fechaB;
+  });
+
+  // volver a insertar ordenados
+  cards.forEach((card) => lista.appendChild(card));
+}
+
+//console.log(reservas);
 
 cargarDatos();
