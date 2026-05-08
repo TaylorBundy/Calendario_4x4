@@ -15,7 +15,7 @@ form {
   background: #2c2c2c;
   padding: 15px;
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   display: flex;
   position: relative;
 }
@@ -99,7 +99,25 @@ button {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 10px;
 }
-
+.datosVisibles {
+  /* color: #c04005; */
+  color: #ff5000;
+}
+.datosTitulos {
+  color: #152ed9;
+  font-size: 0.8em;
+}
+.reservasVisibles {
+  /* color: #c04005; */
+  color: #ff0000;
+}
+.reservasTitulos {
+  color: #5300a1;
+  /* font-size: 0.8em; */
+}
+.reservasContainer h2 {
+  color: #5300a1;
+}
 #card {
   background: #333;
   padding: 10px;
@@ -108,7 +126,8 @@ button {
 }
 
 #card.selected {
-  background: #152ed9;
+  /* background: #152ed9; */
+  background: #888;
 }
 .divcontainer {
   display: flex;
@@ -142,16 +161,25 @@ button {
   margin: 0;
   /* width: 50%; */
   text-align: center;
+  color: #00ff3a;
+  font-size: 1em;
 }
 #formulario {
   order: 1;
 }
 .listaContainer {
   order: 2;
+  margin-bottom: 10px;
 }
 
 #formFechas {
   order: 3;
+}
+
+.clienteNuevo,
+.clienteSel {
+  margin: 5px 0;
+  font-size: 1.2em;
 }
 
 @media only screen and (min-width: 360px) and (max-width: 1154px) {
@@ -160,6 +188,7 @@ button {
   }
   .listaContainer {
     order: 1;
+    margin-bottom: 30px;
   }
   form {
     flex-direction: column;
@@ -191,6 +220,28 @@ button {
     display: flex;
     flex-direction: column;
   }
+  .datosVisibles {
+    /* color: #c04005; */
+    color: #ff5000;
+  }
+  .datosTitulos {
+    color: #152ed9;
+    font-size: 1.5em;
+  }
+  .reservasVisibles {
+    /* color: #c04005; */
+    color: #ff0000;
+  }
+  .reservasTitulos {
+    color: #5300a1;
+    font-size: 1.5em;
+  }
+  .clienteNuevo,
+  .clienteSel {
+    /* margin: 5px 0; */
+    font-size: 2.2em;
+    text-align: center;
+  }
   label {
     font-size: 2.2em;
     margin: unset;
@@ -213,14 +264,17 @@ button {
     right: 30px;
     top: unset;
     bottom: 10px;
+    font-weight: bold;
   }
   .titulo {
-    font-size: 2.5em;
+    font-size: 3em;
   }
   .elCliente {
     margin: 0;
     /* width: 50%; */
     text-align: center;
+    color: #00ff3a;
+    font-size: 1.8em;
   }
   .divcontainer {
     /* display: flex;
@@ -236,5 +290,17 @@ button {
   .recargar {
     top: -30px;
     font-size: 2em;
+  }
+  .reservasContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* gap: 10px; */
+    font-size: 2em;
+  }
+  .reservasContainer h2,
+  .reservasContainer h3 {
+    margin: 0;
   }
 }

@@ -60,7 +60,10 @@ async function cargarDatos() {
   const res = await fetch("data/data.json");
   datos = await res.json();
   const total = contarRegistros(datos);
-  totalReservas.textContent = `Total de reservas: ${total}`;
+  //totalReservas.textContent = `Total de reservas: ${total}`;
+  totalReservas.innerHTML = `
+    <span class="reservasTitulos"><strong>Total de reservas:</strong> <span class="reservasVisibles">${total}</span></span>
+    `;
   mostrarDatos();
 }
 
@@ -74,6 +77,8 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaPrecio").value = dato.precio;
   document.getElementById("editaSeña").checked = dato.sena;
   document.getElementById("editaImporteSeña").value = dato.senaRecibida;
+  document.querySelector(`.clienteSel`).textContent =
+    `Editar Cliente Seleccionado: ${dato.cliente}`;
   actualizar.classList.remove("desactive");
   actualizar.classList.add("active");
   actualizar.disabled = false;
@@ -132,6 +137,8 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
       document.getElementById("editaPrecio").value = "";
       document.getElementById("editaSeña").checked = false;
       document.getElementById("editaImporteSeña").value = "";
+      document.querySelector(`.clienteSel`).textContent =
+        `Editar Cliente Seleccionado: `;
       actualizar.classList.remove("active");
       actualizar.classList.add("desactive");
       actualizar.disabled = true;
@@ -167,14 +174,14 @@ function mostrarDatos() {
     <!-- <button class="btnelimina" id="${d.id}"> Eliminar </button> -->
     <!-- <div class="divcontainer"> -->
       <h2 class="elCliente"><strong>${d.cliente}</strong></h2><br>
-      <span>Fecha Inicio: ${d.fechaInicio}</span>
-      <span>Fecha Fin: ${d.fechaFin}</span>
-      <span>Vehículos clientes: ${d.vc}</span>
-      <span>Vehículos org: ${d.vo}</span>
-      <span>Comida: ${d.comida ? "Sí" : "No"}</span>
-      <span>Precio: $${d.precio}</span>
-      <span>Seña: ${d.sena ? "Sí" : "No"}</span>
-      <span>Seña Recibida: ${d.senaRecibida}</span>
+      <span class="datosTitulos"><strong>Fecha Inicio:</strong> <span class="datosVisibles">${d.fechaInicio}</span></span>
+      <span class="datosTitulos"><strong>Fecha Fin:</strong> <span class="datosVisibles">${d.fechaFin}</span></span>
+      <span class="datosTitulos"><strong>Vehículos clientes:</strong> <span class="datosVisibles">${d.vc}</span></span>
+      <span class="datosTitulos"><strong>Vehículos org:</strong> <span class="datosVisibles">${d.vo}</span></span>
+      <span class="datosTitulos"><strong>Comida:</strong> <span class="datosVisibles">${d.comida ? "Sí" : "No"}</span></span>
+      <span class="datosTitulos"><strong>Precio:</strong> <span class="datosVisibles">$${d.precio}</span></span>
+      <span class="datosTitulos"><strong>Seña:</strong> <span class="datosVisibles">${d.sena ? "Sí" : "No"}</span></span>
+      <span class="datosTitulos"><strong>Seña Recibida:</strong> <span class="datosVisibles">${d.senaRecibida}</span></span>
       <!-- </div> -->
     `;
 
