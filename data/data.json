@@ -12,18 +12,6 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-3",
-    "cliente": "Carlos Fern\u00e1ndez",
-    "fechaInicio": "2026-05-18",
-    "fechaFin": "",
-    "vc": 1,
-    "vo": 1,
-    "comida": false,
-    "precio": 50000,
-    "sena": true,
-    "senaRecibida": 5000
-  },
-  {
     "id": "card-4",
     "cliente": "Grupo Los Andes",
     "fechaInicio": "2026-05-20",
