@@ -15,7 +15,10 @@ const API = "https://calendario-4x4.onrender.com";
 let datos = [];
 let clientes = null;
 let fechasInicio = null;
+const clientesCalendar = [];
 const reservas = [];
+let existe = null;
+let noexiste = null;
 let indiceEditando = null;
 let indiceNuevo = null;
 let indiceAnterior = null;
@@ -105,7 +108,7 @@ function procesarDescripcionEvento(texto) {
   // =========================
   // COMIDA
   // =========================
-  console.log(texto);
+  //console.log(texto);
   if (/no\s*incluye\s*comida/i.test(texto.toLowerCase())) {
     resultado.comida = false;
   } else if (/incluye\s*comida|con\s*comida/i.test(texto.toLowerCase())) {
@@ -145,7 +148,7 @@ function procesarDescripcionEvento(texto) {
 fetch(url)
   .then((res) => res.json())
   .then((data) => {
-    console.log(data);
+    //console.log(data);
     const items = data.items;
     items.forEach((ev) => {
       const fechaIn = ev?.start.date;
@@ -160,8 +163,15 @@ fetch(url)
       const comida = `comida: ${descrip.comida}`;
       const moneda = `moneda: ${descrip.moneda}`;
       const precio = `precio: ${descrip.precio}`;
-      // console.log(cliente);
-      // console.log(fechaInicio);
+      //console.log(cliente);
+      //console.log(fechaInicio);
+      clientesCalendar.push({
+        cliente: cliente.toLowerCase(),
+        fecha: fechaInicio.toLowerCase(),
+      });
+      clientes = nomCli.toLowerCase();
+      fechasInicio = fechaInicio.toLowerCase();
+      console.log(clientes);
       // console.log(fechaFin);
       // console.log(vehiculosClientes);
       // console.log(vehiculosOrganizadores);
@@ -220,6 +230,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // });
 
     nuevoNumero = Number(dataId.split("-")[1]) + 1;
+    //console.log(clientesCalendar);
   }, 2000);
   // clientes.forEach((el) => {
   //   console.log(el);
@@ -227,7 +238,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   recargar.addEventListener("click", () => {
     cargarDatos();
-    console.log(datos);
+    //console.log(datos);
   });
   //const eleEdita1 = document.querySelector(".editaClientes");
   const ele = eleEdita.querySelectorAll("input");
@@ -397,14 +408,14 @@ function mostrarDatos() {
       }
       const clases = div.className;
       const numero = parseInt(clases.match(/card-(\d+)/)[1]);
-      console.log(numero);
+      //console.log(numero);
       if (indiceAnterior === null) {
         indiceAnterior = numero;
       }
       if (indiceNuevo === null) {
         indiceNuevo = numero;
       }
-      console.log(idSeleccionado);
+      //console.log(idSeleccionado);
       cargarEnFormulario(d, index, indiceAnterior);
     });
 
@@ -432,19 +443,36 @@ function mostrarDatos() {
 }
 
 function mostrarDatosGoogle(d, index = 0) {
-  const resultados = reservas.filter((r) =>
-    r.cliente.toLowerCase().includes(clientes),
-  );
-  // resultados.forEach((el) => {
+  console.log(d);
+
+  // reservas.forEach((el) => {
   //   console.log(el);
   // });
-  const clienteExiste = resultados[0].cliente;
-  const fechaExiste = resultados[0].fecha;
-  //console.log(clienteExiste);
-  //console.log(fechaExiste);
-  //if (clienteExiste && fechaExiste) return;
+  setTimeout(() => {
+    const resultados = reservas.filter((r) =>
+      r.cliente.toLowerCase().includes(clientes),
+    );
+    const resultados2 = reservas.filter((r) => {
+      console.log(r.cliente.toLowerCase());
+      r.cliente.toLowerCase().includes(clientes);
+    });
+    // resultados.forEach((el) => {
+    //   console.log(el);
+    // });
+    console.log(resultados2);
+    console.log(resultados);
+    if (resultados) {
+      const clienteExiste = resultados[0].cliente;
+      const fechaExiste = resultados[0].fecha;
+      console.log(clienteExiste);
+      console.log(fechaExiste);
+      if (clienteExiste && fechaExiste) return;
+    }
+  }, 3000);
 
-  // console.log(clientes);
+  //console.log(fechaExiste);
+
+  console.log(clientes);
   // const existe = reservas.filter((r) => {
   //   console.log(r.cliente);
   //   r.cliente === d.cliente.toLowerCase();
@@ -744,32 +772,135 @@ select.selectedIndex = -1;
 // });
 
 function mostrarFechas(eventos) {
-  //const select = document.getElementById("fechas");
+  //console.log(eventos);
+  // const resultados = clientesCalendar.filter((r) =>
+  //   r.cliente.toLowerCase().includes(reservas),
+  // );
+  //console.log(clientes);
+  // const resultados = reservas.filter((r) =>
+  //   r.cliente.toLowerCase().includes(clientesCalendar.cliente),
+  // );
+  // const clientesReservas = reservas.map((c) => c.cliente.toLowerCase());
+  // setTimeout(() => {
+  //   console.log(clientesReservas);
+  // }, 2000);
+  setTimeout(() => {
+    const clientesCalendar2 = clientesCalendar.map((c) => ({
+      cliente: c.cliente.replace("cliente:", "").trim().toLowerCase(),
+      fecha: c.fecha.replace("start:", "").trim().toLowerCase(),
+    }));
 
-  // Limpiar opciones anteriores
-  //select.innerHTML = "";
+    const clientesCards3 = reservas.map((c) => ({
+      cliente: c.cliente.replace("cliente:", "").trim().toLowerCase(),
+      fecha: c.fecha.replace("fecha:", "").trim().toLowerCase(),
+    }));
+    // console.log(clientesCalendar2);
+    // console.log(clientesCards3);
+    clientesCalendar2.forEach((calendar) => {
+      existe = clientesCards3.some(
+        (card) =>
+          card.cliente === calendar.cliente && card.fecha === calendar.fecha,
+      );
 
-  eventos.forEach((ev, index) => {
-    const fecha = ev.start.dateTime || ev.start.date;
+      if (existe) {
+        //console.log("YA EXISTE:", calendar);
+        return;
+      } else {
+        //console.log("NO EXISTE:", calendar);
+      }
+    });
+    const faltantes = clientesCalendar2.filter(
+      (calendar) =>
+        !clientesCards3.some(
+          (card) =>
+            card.cliente === calendar.cliente && card.fecha === calendar.fecha,
+        ),
+    );
+    noexiste = faltantes;
 
-    const option = document.createElement("option");
+    //console.log(noexiste);
+    //console.log(existe);
+    //if (existe) return;
+    //}, 2000);
 
-    option.value = index;
-    option.textContent = `${fecha} - ${ev.summary}`;
+    // resultados.forEach((el) => {
+    //   console.log(el);
+    // });
+    //console.log(resultados);
+    // const clienteExiste = resultados.cliente;
+    // const fechaExiste = resultados.fecha;
+    // console.log(clienteExiste);
+    // console.log(fechaExiste);
+    // // resultados.forEach((ev) => {
+    // //   console.log(ev.cliente);
+    // //   clientes = ev.cliente;
+    // //   fechasInicio = ev.fechaInicio;
+    // // });
+    // //const clienteExiste = resultados[0].cliente;
+    // //const fechaExiste = resultados[0].fecha;
+    // console.log(clientesCalendar);
+    // //console.log(clienteExiste);
+    // //console.log(fechaExiste);
+    // console.log(resultados);
+    //console.log(reservas);
+    //console.log(`cliente: ${clientes} - fecha: ${fechasInicio}`);
+    //console.log(reservas);
+    //const select = document.getElementById("fechas");
 
-    select.appendChild(option);
-  });
+    // Limpiar opciones anteriores
+    //select.innerHTML = "";
 
-  // Cuando cambia la selección
-  select.onchange = () => {
-    const eventoSeleccionado = eventos[select.value];
-    const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-    clientes = datosProcesados.cliente.toLowerCase();
-    fechasInicio = datosProcesados.fechaInicio.toLowerCase();
-    //console.log(`cliente: ${clientes} - fechaInicio: ${fechasInicio}`);
+    // eventos.forEach((ev, index) => {
+    //   const fecha = ev.start.dateTime || ev.start.date;
 
-    mostrarDatosGoogle(datosProcesados, nuevoNumero);
-  };
+    //   const option = document.createElement("option");
+
+    //   option.value = index;
+    //   option.textContent = `${fecha} - ${ev.summary}`;
+
+    //   select.appendChild(option);
+    // });
+
+    // recorrer eventos originales
+    eventos.forEach((ev, index) => {
+      const datos = procesarEventoGoogle(ev);
+      //console.log(datos);
+      //console.log(index);
+
+      const cliente = datos.cliente.trim().toLowerCase();
+
+      const fecha = datos.fechaInicio.trim().toLowerCase();
+
+      // verificar si existe
+      const existe = clientesCards3.some(
+        (card) => card.cliente === cliente && card.fecha === fecha,
+      );
+
+      // si YA existe → no agregar
+      //if (existe) return;
+
+      // ✅ SOLO FALTANTES
+      const option = document.createElement("option");
+
+      option.value = index;
+      option.textContent = `${fecha} - ${cliente}`;
+
+      select.appendChild(option);
+    });
+
+    // Cuando cambia la selección
+    select.onchange = () => {
+      const eventoSeleccionado = eventos[select.value];
+      //console.log(eventoSeleccionado);
+      const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
+      //console.log(datosProcesados.cliente);
+      clientes = datosProcesados.cliente.toLowerCase();
+      fechasInicio = datosProcesados.fechaInicio.toLowerCase();
+      console.log(`cliente: ${clientes} - fechaInicio: ${fechasInicio}`);
+
+      mostrarDatosGoogle(datosProcesados, nuevoNumero);
+    };
+  }, 2000);
 }
 
 function ordenarPorFecha() {
