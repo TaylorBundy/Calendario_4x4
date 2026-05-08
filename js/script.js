@@ -291,9 +291,13 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   indiceEditando = index;
   indiceNuevo = indiceEditando;
   const elementoSelected = document.querySelector(`.card-${index}`);
+  //console.log(elementoSelected);
   const elementoSelected1 = document.querySelector(`.card-${indiceAnteriors}`);
   const elementoActual = document.querySelector(`.card-${index}`);
   const elementoAnterior = document.querySelector(`.card-${indiceAnteriors}`);
+  if (elementoSelected.className.includes("nuevo")) {
+    actualizar.textContent = "guardar";
+  }
 
   if (indiceNuevo != indiceAnterior) {
     indiceNuevo = index;
@@ -506,6 +510,7 @@ function mostrarDatosGoogle(d, index = 0) {
   imgDiv.src = "images/fondo-transparente.webp";
 
   div.className = `card-${nuevoNumero}`;
+  div.classList.add("nuevo");
   div.dataset.id = `card-${nuevoNumero}`;
   div.id = "card";
 
@@ -672,10 +677,15 @@ actualizar.addEventListener("click", (e) => {
     sena: document.getElementById("editaSeña").checked,
     senaRecibida: document.getElementById("editaImporteSeña").value,
   };
-  if (btnEliminar.checked) {
-    eliminar();
+  if (actualizar.textContent === "guardar") {
+    console.log(idSeleccionado);
+    guardar(nuevo);
   } else {
-    editar(nuevo);
+    if (btnEliminar.checked) {
+      eliminar();
+    } else {
+      editar(nuevo);
+    }
   }
   limpiarFormulario("editaClientes");
 });
