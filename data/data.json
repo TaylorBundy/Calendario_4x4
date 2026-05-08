@@ -72,18 +72,6 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-6",
-    "cliente": "aaaa",
-    "fechaInicio": "2026-05-27",
-    "fechaFin": "",
-    "vc": "1",
-    "vo": "1",
-    "comida": false,
-    "precio": "1",
-    "sena": false,
-    "senaRecibida": ""
-  },
-  {
     "id": "card-7",
     "cliente": "Sabastano",
     "fechaInicio": "2026-06-30",
