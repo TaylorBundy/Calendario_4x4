@@ -94,5 +94,17 @@
     "precio": "50",
     "sena": false,
     "senaRecibida": ""
+  },
+  {
+    "id": "card-8",
+    "cliente": "Sabastano",
+    "fechaInicio": "2026-07-04",
+    "fechaFin": "2026-07-06",
+    "vc": "6",
+    "vo": "1",
+    "comida": false,
+    "precio": "50",
+    "sena": false,
+    "senaRecibida": ""
   }
 ]
