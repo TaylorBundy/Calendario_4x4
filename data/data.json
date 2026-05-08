@@ -12,18 +12,6 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-2",
-    "cliente": "Empresa Aventura Sur",
-    "fechaInicio": "2026-05-15",
-    "fechaFin": "",
-    "vc": 5,
-    "vo": 3,
-    "comida": true,
-    "precio": 300000,
-    "sena": true,
-    "senaRecibida": 5000
-  },
-  {
     "id": "card-3",
     "cliente": "Carlos Fern\u00e1ndez",
     "fechaInicio": "2026-05-18",
