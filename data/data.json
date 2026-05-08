@@ -60,18 +60,6 @@
     "senaRecibida": 5000
   },
   {
-    "id": "card-5",
-    "cliente": "rogelio",
-    "fechaInicio": "2026-05-22",
-    "fechaFin": "",
-    "vc": "5",
-    "vo": "1",
-    "comida": false,
-    "precio": "66",
-    "sena": false,
-    "senaRecibida": ""
-  },
-  {
     "id": "card-7",
     "cliente": "Sabastano",
     "fechaInicio": "2026-06-30",
