@@ -1,17 +1,5 @@
 [
   {
-    "id": "card-0",
-    "cliente": "Juan P\u00e9rez",
-    "fechaInicio": "2026-05-10",
-    "fechaFin": "",
-    "vc": 3,
-    "vo": 2,
-    "comida": true,
-    "precio": 150000,
-    "sena": true,
-    "senaRecibida": 5000
-  },
-  {
     "id": "card-1",
     "cliente": "Belezas do vale Expediciones",
     "fechaInicio": "2026-08-13",
