@@ -70,5 +70,17 @@
     "precio": "50",
     "sena": false,
     "senaRecibida": ""
+  },
+  {
+    "id": "card-6",
+    "cliente": "Juliana Hoffmann",
+    "fechaInicio": "2026-07-29",
+    "fechaFin": "2026-07-30",
+    "vc": "9",
+    "vo": "1",
+    "comida": false,
+    "precio": "75",
+    "sena": false,
+    "senaRecibida": ""
   }
 ]
