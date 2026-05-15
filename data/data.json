@@ -82,5 +82,17 @@
     "precio": "75",
     "sena": false,
     "senaRecibida": ""
+  },
+  {
+    "id": "card-7",
+    "cliente": "Pichu",
+    "fechaInicio": "2026-07-14",
+    "fechaFin": "2026-07-14",
+    "vc": "4",
+    "vo": "1",
+    "comida": true,
+    "precio": "75",
+    "sena": false,
+    "senaRecibida": ""
   }
 ]
