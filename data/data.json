@@ -12,7 +12,7 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-7",
+    "id": "card-2",
     "cliente": "Sabastano",
     "fechaInicio": "2026-06-30",
     "fechaFin": "2026-07-02",
@@ -24,7 +24,7 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-8",
+    "id": "card-3",
     "cliente": "Sabastano",
     "fechaInicio": "2026-07-04",
     "fechaFin": "2026-07-06",
@@ -36,7 +36,7 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-9",
+    "id": "card-4",
     "cliente": "Patagonia 4x4",
     "fechaInicio": "2026-07-27",
     "fechaFin": "2026-07-28",
@@ -48,7 +48,7 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-4",
+    "id": "card-5",
     "cliente": "Tecof",
     "fechaInicio": "2026-07-09",
     "fechaFin": "2026-07-11",
@@ -60,7 +60,7 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-4",
+    "id": "card-6",
     "cliente": "Britos",
     "fechaInicio": "2026-07-20",
     "fechaFin": "2026-07-25",
@@ -72,7 +72,7 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-6",
+    "id": "card-7",
     "cliente": "Juliana hoffmann",
     "fechaInicio": "2026-07-29",
     "fechaFin": "2026-07-30",
@@ -84,7 +84,7 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-7",
+    "id": "card-8",
     "cliente": "Pichu",
     "fechaInicio": "2026-07-14",
     "fechaFin": "2026-07-14",
