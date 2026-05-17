@@ -218,6 +218,7 @@ fetch(url)
       });
       clientes = nomCli.toLowerCase();
       fechasInicio = fechaInicio.toLowerCase();
+
       //console.log(clientes);
       // console.log(fechaFin);
       // console.log(vehiculosClientes);
@@ -334,8 +335,8 @@ async function cargarDatos() {
 }
 
 function cargarEnFormulario(dato, index, indiceAnteriors) {
-  console.log(dato);
-  console.log(comidaCheck);
+  // console.log(dato);
+  // console.log(comidaCheck);
   // if (dato.comida == "No" || dato.comida == "false") {
   //   comidaCheck = false;
   // } else {
@@ -390,7 +391,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   // console.log(origen);
   if (origen === "select") {
     document.querySelectorAll("#card").forEach((card) => {
-      console.log(card);
+      // console.log(card);
       //card.classList.remove("selected");
       if (card.className.includes("nuevo")) {
         actualizar.textContent = "guardar";
@@ -443,9 +444,9 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   //   elementoSelected = document.querySelector(`.${idCalendar}`);
   // }
   //const elementoSelected = document.querySelector(`.${idCalendar}`);
-  console.log(elementoSelected);
+  // console.log(elementoSelected);
   const elementoSelected1 = document.querySelector(`.card-${indiceAnteriors}`);
-  console.log(elementoSelected1);
+  // console.log(elementoSelected1);
   const elementoActual = document.querySelector(`.card-${index}`);
   const elementoAnterior = document.querySelector(`.card-${indiceAnteriors}`);
   if (elementoSelected == null) return;
@@ -454,7 +455,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   }
 
   if (indiceNuevo != indiceAnterior) {
-    console.log(`linea390`);
+    // console.log(`linea390`);
     indiceNuevo = index;
     indiceAnterior = indiceNuevo;
     // if (elementoSelected1.dataset.selected == "true") {
@@ -491,7 +492,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
     //   elementoSelected.dataset.selected = "false";
     // }
   } else if (indiceNuevo == indiceAnterior) {
-    console.log(`linea426`);
+    // console.log(`linea426`);
     // if (elementoSelected1.dataset.selected == "true") {
     //   if (elementoSelected1.className.includes("selected")) {
     //     elementoSelected1.classList.remove("selected");
@@ -509,17 +510,19 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
       indiceEditando == indiceAnterior &&
       elementoActual.dataset.selected == "false"
     ) {
-      document.getElementById("editaCliente").value = "";
-      document.getElementById("editaFechaInicio").value = "";
-      document.getElementById("editaFechaFin").value = "";
-      document.getElementById("editaVehiculosClientes").value = "";
-      document.getElementById("editaVehiculosOrg").value = "";
-      document.getElementById("editaComida").checked = false;
-      document.getElementById("editaPrecio").value = "";
-      document.getElementById("editaSeña").checked = false;
-      document.getElementById("editaImporteSeña").value = "";
-      document.querySelector(`.clienteSel`).textContent =
-        `Editar Cliente Seleccionado: `;
+      // document.getElementById("editaCliente").value = "";
+      // document.getElementById("editaFechaInicio").value = "";
+      // document.getElementById("editaFechaFin").value = "";
+      // document.getElementById("editaVehiculosClientes").value = "";
+      // document.getElementById("editaVehiculosOrg").value = "";
+      // document.getElementById("editaComida").checked = false;
+      // document.getElementById("editaPrecio").value = "";
+      // document.getElementById("editaSeña").checked = false;
+      // document.getElementById("editaImporteSeña").value = "";
+      // document.querySelector(`.clienteSel`).textContent =
+      //   `Editar Cliente Seleccionado: `;
+      limpiarFormulario(eleEdita);
+      // console.log("linea525");
       actualizar.classList.remove("active");
       actualizar.classList.add("desactive");
       actualizar.disabled = true;
@@ -644,10 +647,12 @@ function mostrarDatos() {
     // 👉 CLICK PARA EDITAR
     divContainer.addEventListener("click", (e) => {
       idSeleccionado = d.id;
-      console.log(e.target.closest('div[id="card"]'));
+      // console.log(e.target.closest('div[id="card"]'));
       const card = e.target.closest("#card");
       if (!card) return;
-      seleccionarCard(card);
+      const form = document.querySelector(".editaClientes");
+      // console.log(form);
+      seleccionarCard(card, eleEdita);
       if (card.dataset.selected === "true") {
         // card.dataset.selected = "false";
         // card.classList.remove("selected");
@@ -712,10 +717,10 @@ function mostrarDatos() {
       // } else {
       //   señaCheck = true;
       // }
-      console.log(idSeleccionado);
-      console.log(d);
-      console.log(index);
-      console.log(indiceAnterior);
+      // console.log(idSeleccionado);
+      // console.log(d);
+      // console.log(index);
+      // console.log(indiceAnterior);
       estado = "EXISTE";
       // document.querySelectorAll("#card").forEach((card) => {
       //   //console.log(card);
@@ -746,7 +751,7 @@ function mostrarDatos() {
       idSeleccionado = d.id;
       if (btnElimina.textContent == "Eliminar") {
         eliminar();
-        console.log("eliminar");
+        // console.log("eliminar");
         if (option) {
           option.remove();
         }
@@ -924,7 +929,8 @@ function mostrarDatosGoogle(d, index = 0) {
     idSeleccionado = `card-${index}`;
     const card = e.target.closest("#card");
     if (!card) return;
-    seleccionarCard(card);
+    const form = document.querySelector(".editaClientes");
+    seleccionarCard(card, eleEdita);
     //console.log(idSeleccionado);
 
     //div.dataset.selected = div.dataset.selected === "true" ? "false" : "true";
@@ -966,7 +972,7 @@ function mostrarDatosGoogle(d, index = 0) {
     if (btnElimina.textContent == "Eliminar") {
       eliminar();
     } else if (btnElimina.textContent == "Guardar") {
-      console.log(datosNuevos);
+      // console.log(datosNuevos);
       guardar(datosNuevos);
     }
   });
@@ -974,7 +980,8 @@ function mostrarDatosGoogle(d, index = 0) {
   // console.log(btnElimina);
   const card = document.querySelector(`#card[data-id="card-${nuevoNumero}"]`);
   if (!card) return;
-  seleccionarCard(card);
+  const form = document.querySelector(".editaClientes");
+  seleccionarCard(card, eleEdita);
   ordenarPorFecha();
 }
 
@@ -1041,16 +1048,16 @@ actualizar.addEventListener("click", (e) => {
   };
   if (actualizar.textContent === "guardar") {
     // console.log(idSeleccionado);
-    guardar(nuevo);
+    //guardar(nuevo);
   } else {
     // console.log(idSeleccionado);
     if (btnEliminar.checked) {
-      eliminar();
+      //eliminar();
     } else {
-      editar(nuevo);
+      //editar(nuevo);
     }
   }
-  limpiarFormulario("editaClientes");
+  limpiarFormulario(eleEdita);
   eleEdita.style.background = "#2c2c2c";
 });
 
@@ -1106,9 +1113,10 @@ async function eliminar() {
   });
 }
 
-function limpiarFormulario(formId) {
-  const form = document.querySelector(`.${formId}`);
-  //console.log(form);
+function limpiarFormulario2(formId) {
+  const form = document.querySelector(`${formId}`);
+  // console.log(form);
+  //form.reset();
 
   if (!form) return;
 
@@ -1119,6 +1127,20 @@ function limpiarFormulario(formId) {
       el.checked = false;
     } else {
       el.value = "";
+    }
+  });
+}
+
+function limpiarFormulario(contenedor) {
+  if (!contenedor) return;
+
+  const inputs = contenedor.querySelectorAll("input");
+
+  inputs.forEach((input) => {
+    if (input.type === "checkbox" || input.type === "radio") {
+      input.checked = false;
+    } else {
+      input.value = "";
     }
   });
 }
@@ -1289,22 +1311,12 @@ function mostrarFechas(eventos) {
 
     noexiste = faltantes;
     eventos.forEach((ev, index) => {
+      // console.log(index);
       const datos = procesarEventoGoogle(ev);
       const cliente = datos.cliente.toLowerCase();
       const fecha = datos.fechaInicio.toLowerCase();
       const precio = datos.precio;
       idcCalendar = datos.id;
-      //console.log(cliente);
-      //const opciones = [];
-      // opciones.length = 0;
-      // opciones.push({
-      //   fecha: fecha,
-      //   cliente: cliente,
-      //   index,
-      //   id: idcCalendar,
-      // });
-      //opciones.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-      //console.log(opciones);
 
       // verificar si existe
       const existe = clientesCards3.some(
@@ -1312,29 +1324,6 @@ function mostrarFechas(eventos) {
           (card.cliente === cliente && card.fecha === fecha) ||
           card.precio === precio,
       );
-      // clientesCards3.forEach((card) => {
-      //   console.log({
-      //     cardCliente: card.cliente,
-      //     cliente,
-      //     igualCliente: card.cliente?.toLowerCase().trim() === cliente.trim(),
-
-      //     cardFecha: card.fecha,
-      //     fecha,
-      //     igualFecha: card.fecha?.toLowerCase().trim() === fecha.trim(),
-
-      //     cardPrecio: card.precio,
-      //     precio,
-      //     igualPrecio: card.precio == precio,
-      //   });
-      // });
-      // const existe = clientesCards3.some((card) => {
-      //   return (
-      //     (card.cliente?.toLowerCase().trim() === cliente.trim() &&
-      //       card.fecha?.toLowerCase().trim() === fecha.trim()) ||
-      //     card.precio == precio
-      //   );
-      // });
-      //console.log(existe);
 
       // si YA existe → no agregar
       if (existe) return;
@@ -1418,6 +1407,7 @@ function mostrarFechas(eventos) {
         idCalendar = datos[index].id;
         numero = parseInt(idCalendar.match(/card-(\d+)/)[1]);
       }
+      // console.log(idCalendar);
       idSeleccionado = idCalendar;
       // console.log(noexiste);
       // console.log(nuevoNumero);
@@ -1434,7 +1424,7 @@ function mostrarFechas(eventos) {
 
       // procesar
       const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-      console.log(datosProcesados);
+      // console.log(datosProcesados);
 
       // normalizar
       const cliente = datosProcesados.cliente
@@ -1484,9 +1474,9 @@ function mostrarFechas(eventos) {
       comidaCheck = valorComida.trim();
       //comidaCheck = !(valorComida === "no" || valorComida === "false");
       señaCheck = valorSeña.trim(); //!(valorSeña === "No" || valorSeña === "false");
-      console.log(valorComida);
-      console.log("VALOR:", datosProcesados.comida);
-      console.log("TIPO:", typeof datosProcesados.comida);
+      // console.log(valorComida);
+      // console.log("VALOR:", datosProcesados.comida);
+      // console.log("TIPO:", typeof datosProcesados.comida);
 
       // =========================
       // SI NO EXISTE
@@ -1516,40 +1506,10 @@ function mostrarFechas(eventos) {
         return;
       }
 
-      // =========================
-      // SI EXISTE
-      // =========================
-      // const cambio = cambios2[index];
-      // const reserva = reservas.find(
-      //   (r) =>
-      //     r.cliente.trim().toLowerCase() ===
-      //       cambio.cliente.trim().toLowerCase() &&
-      //     r.fecha.replace("fecha:", "").trim().toLowerCase() ===
-      //       cambio.fecha.trim().toLowerCase(),
-      // );
-      //const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-      //console.log(eventoSeleccionado);
-      // const datosProcesados2 = procesarEventoGoogle(datos[index].id);
-
-      // console.log(datosProcesados2);
-
-      // console.log(index);
-      // const numero = parseInt(idCalendar.match(/card-(\d+)/)[1]);
-
-      // console.log(numero);
-      // const eventoSeleccionado2 = eventos[idCalendar];
-      // console.log(eventoSeleccionado2);
-      //const datosProcesados2 = procesarEventoGoogle(numero);
-
-      // const optionSeleccionado = select.options[select.selectedIndex];
-
-      // // buscar index del evento
-      //console.log(numeroIDSelect);
-      //if (indiceSelect === null) {
       indiceSelect = index;
       //}
       numeroIDSelect = `card-${indiceSelect}`;
-      //console.log(numeroIDSelect);
+      // console.log(numeroIDSelect);
       // } else {
       //   indiceSelect =
       // }
@@ -1563,11 +1523,18 @@ function mostrarFechas(eventos) {
         indiceNuevo = index;
         // console.log(`indiceA: ${indiceAnterior} - indiceN: ${indiceNuevo}`);
         const card = document.querySelector(`.${numeroIDSelect}`);
-        const botonEliminar = document.querySelector(`#${idSeleccionado}`);
+        //const botonEliminar = document.querySelector(`#${idSeleccionado}`);
         // console.log(nuevoNumero);
         // resaltar
         if (card) {
-          console.log(señaCheck);
+          const idCard = obtenerIdCardPorCliente(
+            cliente,
+            datosProcesados.fechaInicio,
+          );
+          // console.log(idCard);
+          const card2 = document.querySelector(`.${idCard}`);
+          const botonEliminar = document.querySelector(`.${idCard} > button`);
+          // console.log(señaCheck);
           nuevo = {
             id: idSeleccionado,
             cliente: datosProcesados.cliente,
@@ -1589,34 +1556,27 @@ function mostrarFechas(eventos) {
           if (nuevo.sena == "false") {
             nuevo.sena = "No";
           }
-          console.log(nuevo.sena);
+          // console.log(nuevo.sena);
 
-          card.querySelector(".elCliente").textContent = nuevo.cliente;
-          card.querySelector("#fechaInicio").textContent = nuevo.fechaInicio;
-          card.querySelector("#fechaFin").textContent = fechaFin;
-          card.querySelector("#vc").textContent = nuevo.vc;
-          card.querySelector("#vo").textContent = nuevo.vo;
-          card.querySelector("#comida").textContent = nuevo.comida;
-          card.querySelector("#precio").textContent =
+          card2.querySelector(".elCliente").textContent = nuevo.cliente;
+          card2.querySelector("#fechaInicio").textContent = nuevo.fechaInicio;
+          card2.querySelector("#fechaFin").textContent = fechaFin;
+          card2.querySelector("#vc").textContent = nuevo.vc;
+          card2.querySelector("#vo").textContent = nuevo.vo;
+          card2.querySelector("#comida").textContent = nuevo.comida;
+          card2.querySelector("#precio").textContent =
             `${nuevo.moneda} ${nuevo.precio}`;
-          card.querySelector("#seña").textContent = nuevo.sena;
-          card.querySelector("#señaRecibida").textContent = nuevo.senaRecibida;
-          console.log(card);
-          seleccionarCard(card);
-          // if (card.className.includes("selected")) {
-          //   card.classList.remove("selected");
-          //   card.dataset.selected = "false";
-          //   //card.classList.add("selected");
-          // } else {
-          //   card.classList.add("selected");
-          //   //card.dataset.selected = "true";
-          // }
-          //card.classList.add("selected");
+          card2.querySelector("#seña").textContent = nuevo.sena;
+          card2.querySelector("#señaRecibida").textContent = nuevo.senaRecibida;
+          // console.log(card);
+          const form = document.querySelector("editaClientes");
+          seleccionarCard(card2, eleEdita);
+
           botonEliminar.textContent = "Actualizar";
           actualizar.textContent = "Actualizar";
 
           // scroll automático
-          card.scrollIntoView({
+          card2.scrollIntoView({
             behavior: "smooth",
             block: "center",
           });
@@ -1624,13 +1584,21 @@ function mostrarFechas(eventos) {
       } else if (indiceNuevo == indiceAnterior) {
         // console.log(numeroIDSelect);
         //console.log(`indiceA: ${indiceAnterior} - indiceN: ${indiceNuevo}`);
-        //console.log(idSeleccionado);
+        // console.log(idSeleccionado);
         const card = document.querySelector(`.${numeroIDSelect}`);
-        const botonEliminar = document.querySelector(`#${idSeleccionado}`);
+        //const botonEliminar = document.querySelector(`#${idSeleccionado}`);
         // resaltar
         if (card) {
-          console.log(señaCheck);
-          console.log(card);
+          const idCard = obtenerIdCardPorCliente(
+            cliente,
+            datosProcesados.fechaInicio,
+          );
+          // console.log(idCard);
+          const card2 = document.querySelector(`.${idCard}`);
+          const botonEliminar = document.querySelector(`.${idCard} > button`);
+          //console.log(botonEliminar2);
+          // console.log(señaCheck);
+          // console.log(card);
           // console.log(datosProcesados);
           nuevo = {
             id: idSeleccionado,
@@ -1648,265 +1616,49 @@ function mostrarFechas(eventos) {
           const fechaFin = restarDias(nuevo.fechaFin, 1);
           datosNuevos.push(nuevo);
 
-          card.querySelector(".elCliente").textContent = nuevo.cliente;
-          card.querySelector("#fechaInicio").textContent = nuevo.fechaInicio;
-          card.querySelector("#fechaFin").textContent = fechaFin;
-          card.querySelector("#vc").textContent = nuevo.vc;
-          card.querySelector("#vo").textContent = nuevo.vo;
-          card.querySelector("#comida").textContent = nuevo.comida;
-          card.querySelector("#precio").textContent =
+          card2.querySelector(".elCliente").textContent = nuevo.cliente;
+          card2.querySelector("#fechaInicio").textContent = nuevo.fechaInicio;
+          card2.querySelector("#fechaFin").textContent = fechaFin;
+          card2.querySelector("#vc").textContent = nuevo.vc;
+          card2.querySelector("#vo").textContent = nuevo.vo;
+          card2.querySelector("#comida").textContent = nuevo.comida;
+          card2.querySelector("#precio").textContent =
             `${nuevo.moneda} ${nuevo.precio}`;
-          card.querySelector("#seña").textContent = nuevo.sena;
-          card.querySelector("#señaRecibida").textContent = nuevo.senaRecibida;
-          console.log(card);
-          seleccionarCard(card);
-          // console.log(nuevo);
-          // if (card.dataset.selected == "true") {
-          //   card.dataset.selected = "false";
-          // } else {
-          //   card.dataset.selected = "true";
-          // }
-          // card.dataset.selected =
-          //   card.dataset.selected === "true" ? "false" : "true";
-          // if (card.className.includes("selected")) {
-          //   card.classList.remove("selected");
-          //   card.dataset.selected = "false";
-          //   //card.classList.add("selected");
-          // } else {
-          //   // console.log("sera aca");
-          //   card.classList.add("selected");
-          //   //card.dataset.selected = "true";
-          // }
-          //card.classList.add("selected");
+          card2.querySelector("#seña").textContent = nuevo.sena;
+          card2.querySelector("#señaRecibida").textContent = nuevo.senaRecibida;
+
+          // console.log(card2);
+          const form = document.querySelector(".editaClientes");
+          seleccionarCard(card2, eleEdita);
           botonEliminar.textContent = "Actualizar";
           actualizar.textContent = "Actualizar";
 
           // scroll automático
-          card.scrollIntoView({
+          card2.scrollIntoView({
             behavior: "smooth",
             block: "center",
           });
+          if (card2.dataset.selected === "true") {
+            limpiarFormulario(eleEdita);
+          }
         }
       }
 
       estado = "EXISTE";
-      // console.log(reserva);
-      // console.log(indiceSelect);
-
-      //console.log(`indiceA: ${indiceAnterior} - indiceN: ${indiceNuevo}`);
-      // const nuevoIDD = parseInt(indiceNuevo.match(/card-(\d+)/)[1]);
-      // console.log(`nuevoIDD: ${nuevoIDD}`);
-      // if (elementoSelected1.dataset.selected == "true") {
-      //   if (elementoSelected1.className.includes("selected")) {
-      //     elementoSelected1.classList.remove("selected");
-      //     elementoSelected1.dataset.selected = "false";
-      //   } else {
-      //     elementoSelected1.classList.add("selected");
-      //   }
-      // }
-      // const lalala = document.querySelector(`.card-${indiceSelect}`);
-      // lalala.dataset.selected =
-      //   lalala.dataset.selected === "true" ? "false" : "true";
       if (indiceAnterior === null) {
         indiceAnterior = numero;
       }
       if (indiceNuevo === null) {
         indiceNuevo = numero;
       }
+
       eleEdita.style.background = "#2c2c2c";
       cargarEnFormulario(datosProcesados, idCalendar, indiceAnterior);
       // console.log("YA EXISTE");
 
       //console.log(reservaExistente);
     };
-
-    // select.onchange = () => {
-    //   console.log(noexiste);
-    //   const index = select.value;
-
-    //   const cambio = cambios2[index];
-
-    //   const reserva = reservas.find(
-    //     (r) =>
-    //       r.cliente.trim().toLowerCase() ===
-    //         cambio.cliente.trim().toLowerCase() &&
-    //       r.fecha.replace("fecha:", "").trim().toLowerCase() ===
-    //         cambio.fecha.trim().toLowerCase(),
-    //   );
-
-    //   console.log(reserva);
-    // };
-    // select.onchange = () => {
-    //   const index = select.value;
-    //   if (existe) {
-    //     console.log(`no existe: ${index}`);
-    //   }
-    //   const cambio = cambios2[index];
-    //   console.log(clientes);
-    //   const eventoSeleccionado = eventos[select.value];
-    //   console.log(eventoSeleccionado);
-    //   const datosProcesados = procesarEventoGoogle(cambio);
-
-    //   //const cambio = cambios2[index];
-
-    //   //console.log(cambio);
-    // };
-    // select.onchange = () => {
-    //   const eventoSeleccionado = eventos[select.value];
-    //   console.log(eventoSeleccionado);
-    //   const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-    //   console.log(datosProcesados.cliente);
-    //   //clientes = datosProcesados.cliente.toLowerCase();
-    //   clientes = noexiste[0].cliente;
-    //   fechasInicio = datosProcesados.fechaInicio.toLowerCase();
-    //   console.log(`cliente: ${clientes} - fechaInicio: ${fechasInicio}`);
-
-    //   mostrarDatosGoogle(datosProcesados, nuevoNumero);
-    // };
   }, 2000);
-
-  // =========================
-  // RECORRER EVENTOS
-  // =========================
-
-  // eventos.forEach((ev, index) => {
-  //   const datos = procesarEventoGoogle(ev);
-
-  //   // NORMALIZAR EVENTO
-  //   const evento = {
-  //     cliente: String(datos.cliente || "")
-  //       .replace("cliente:", "")
-  //       .trim()
-  //       .toLowerCase(),
-
-  //     fecha: String(datos.fechaInicio || "")
-  //       .replace("start:", "")
-  //       .trim()
-  //       .toLowerCase(),
-
-  //     precio: String(datos.precio || "")
-  //       .replace(`${moneda} `, "")
-  //       .trim()
-  //       .toLowerCase(),
-
-  //     moneda: String(datos.moneda || moneda || "")
-  //       .trim()
-  //       .toLowerCase(),
-
-  //     comida: Boolean(datos.comida),
-  //     reservas: Number(datos.reservas || 0),
-  //   };
-
-  //   // =========================
-  //   // BUSCAR RESERVA
-  //   // =========================
-
-  //   const reservaExistente = clientesCards3.find(
-  //     (r) =>
-  //       r.cliente === clientesCalendar2.cliente &&
-  //       r.fecha === clientesCalendar2.fecha,
-  //   );
-  //   console.log(reservaExistente);
-
-  //   // =========================
-  //   // EVENTO NUEVO
-  //   // =========================
-
-  //   if (!reservaExistente) {
-  //     modificados.push({
-  //       tipo: "nuevo",
-  //       datos: evento,
-  //     });
-
-  //     agregarOption(
-  //       select,
-  //       `🟢 NUEVO - ${evento.fecha} - ${evento.cliente}`,
-  //       index,
-  //     );
-
-  //     return;
-  //   }
-
-  //   // =========================
-  //   // COMPARAR
-  //   // =========================
-
-  //   const resultado = compararReservas(reservaExistente, evento);
-
-  //   const cambios = [];
-
-  //   Object.entries(resultado).forEach(([campo, igual]) => {
-  //     if (!igual) {
-  //       cambios.push(campo);
-  //     }
-  //   });
-
-  //   // =========================
-  //   // SI NO HAY CAMBIOS
-  //   // =========================
-
-  //   if (cambios.length === 0) {
-  //     return;
-  //   }
-
-  //   // =========================
-  //   // MODIFICADO
-  //   // =========================
-
-  //   modificados.push({
-  //     tipo: "modificado",
-  //     anterior: reservaExistente,
-  //     nuevo: evento,
-  //     cambios,
-  //   });
-
-  //   agregarOption(
-  //     select,
-  //     `🟡 MODIFICADO - ${evento.fecha} - ${evento.cliente}`,
-  //     index,
-  //   );
-  // });
-
-  // // =========================
-  // // SIN EVENTOS
-  // // =========================
-
-  // if (select.options.length === 0) {
-  //   agregarOption(select, "No hay cambios ni eventos nuevos", "", {
-  //     disabled: true,
-  //     selected: true,
-  //   });
-  // }
-
-  // // =========================
-  // // CHANGE
-  // // =========================
-
-  // select.onchange = () => {
-  //   const index = select.value;
-
-  //   if (index === "") return;
-
-  //   const eventoSeleccionado = eventos[index];
-
-  //   const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-
-  //   clientes = datosProcesados.cliente
-  //     .replace("cliente:", "")
-  //     .trim()
-  //     .toLowerCase();
-
-  //   fechasInicio = datosProcesados.fechaInicio
-  //     .replace("start:", "")
-  //     .trim()
-  //     .toLowerCase();
-
-  //   mostrarDatosGoogle(datosProcesados, nuevoNumero);
-  // };
-
-  // // debug
-  // console.log("MODIFICADOS:", modificados);
-  // console.log("NUEVOS:", noexiste);
 }
 
 // function mostrarFechas2(eventos) {
@@ -2232,13 +1984,32 @@ function agregarOption(select, texto, valor, idc, options = {}) {
 }
 
 // Funcion para seleccionar una card y resaltarla
-function seleccionarCard(card) {
+function seleccionarCard(card, formulario) {
   if (!card) return;
 
   // si ya estaba seleccionada → deseleccionar
   if (card.dataset.selected === "true") {
     card.dataset.selected = "false";
     card.classList.remove("selected");
+    limpiarFormulario(eleEdita);
+    // const form = document.querySelector(`${formulario}`);
+    // const elementos = form.querySelectorAll("input, select, textarea");
+    // console.log(elementos);
+    // form.querySelectorAll("input, textarea, select").forEach((el) => {
+    //   if (el.type === "checkbox" || el.type === "radio") {
+    //     el.checked = false;
+    //   } else {
+    //     el.value = "";
+    //   }
+    // });
+
+    // elementos.forEach((el) => {
+    //   if (el.type === "checkbox" || el.type === "radio") {
+    //     el.checked = false;
+    //   } else {
+    //     el.value = "";
+    //   }
+    // });
     return;
   }
 
@@ -2251,6 +2022,33 @@ function seleccionarCard(card) {
   // seleccionar nueva
   card.dataset.selected = "true";
   card.classList.add("selected");
+  //limpiarFormulario(formulario);
+}
+
+function obtenerIdCardPorCliente(cliente, fechaBuscada) {
+  const cards = document.querySelectorAll("#card");
+
+  for (const card of cards) {
+    const nombre = card
+      .querySelector(".elCliente")
+      .textContent.trim()
+      .toLowerCase();
+    const fecha = card
+      .querySelector("#fechaInicio")
+      .textContent.trim()
+      .toLowerCase();
+
+    //console.log(fecha);
+
+    if (
+      nombre === cliente.trim().toLowerCase() &&
+      fecha === fechaBuscada.trim().toLowerCase()
+    ) {
+      return card.dataset.id;
+    }
+  }
+
+  return null;
 }
 
 let a = "";
