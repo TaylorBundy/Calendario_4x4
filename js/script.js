@@ -39,6 +39,8 @@ let numeroIDSelect = null;
 let origen = null;
 let comidaCheck = false;
 let señaCheck = false;
+let idCard = null;
+let idCard2 = null;
 //let indiceSelect = null;
 const API_KEY = "AIzaSyAVearlKR2iIcQd2eeS8zXqiKB2OITgIxU";
 const CALENDAR_ID = "diegomartinbarbosa2@gmail.com";
@@ -747,8 +749,9 @@ function mostrarDatos() {
     btnElimina.addEventListener("click", () => {
       const option = select.options[select.selectedIndex];
 
-      //console.log(d.id);
+      console.log(d.id);
       idSeleccionado = d.id;
+      idCard = idSeleccionado;
       if (btnElimina.textContent == "Eliminar") {
         eliminar();
         // console.log("eliminar");
@@ -757,7 +760,7 @@ function mostrarDatos() {
         }
       } else if (btnElimina.textContent == "Actualizar") {
         nuevo = {
-          id: idSeleccionado,
+          id: idCard2,
           cliente: document.getElementById("editaCliente").value,
           fechaInicio: document.getElementById("editaFechaInicio").value,
           fechaFin: document.getElementById("editaFechaFin").value,
@@ -769,7 +772,7 @@ function mostrarDatos() {
           senaRecibida: document.getElementById("editaImporteSeña").value,
         };
         editar(nuevo);
-        // console.log("actualizar");
+        console.log(idCard2);
         //console.log(nuevo);
         if (option) {
           option.remove();
@@ -1035,7 +1038,7 @@ guarda.addEventListener("click", () => {
 
 actualizar.addEventListener("click", (e) => {
   nuevo = {
-    id: idSeleccionado,
+    id: idCard2,
     cliente: document.getElementById("editaCliente").value,
     fechaInicio: document.getElementById("editaFechaInicio").value,
     fechaFin: document.getElementById("editaFechaFin").value,
@@ -1050,7 +1053,7 @@ actualizar.addEventListener("click", (e) => {
     // console.log(idSeleccionado);
     guardar(nuevo);
   } else {
-    // console.log(idSeleccionado);
+    console.log(idCard2);
     if (btnEliminar.checked) {
       eliminar();
     } else {
@@ -1089,7 +1092,7 @@ async function editar(contenido) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       path: "data/data.json",
-      id: idSeleccionado,
+      id: idCard2,
       content: contenido,
     }),
   });
@@ -1108,7 +1111,7 @@ async function eliminar() {
     },
     body: JSON.stringify({
       path: "data/data.json",
-      id: idSeleccionado,
+      id: idCard2,
     }),
   });
 }
@@ -1527,16 +1530,17 @@ function mostrarFechas(eventos) {
         // console.log(nuevoNumero);
         // resaltar
         if (card) {
-          const idCard = obtenerIdCardPorCliente(
+          idCard = obtenerIdCardPorCliente(
             cliente,
             datosProcesados.fechaInicio,
           );
-          // console.log(idCard);
+          console.log(idCard);
           const card2 = document.querySelector(`.${idCard}`);
           const botonEliminar = document.querySelector(`.${idCard} > button`);
+          idCard2 = botonEliminar.id;
           // console.log(señaCheck);
           nuevo = {
-            id: idSeleccionado,
+            id: idCard2,
             cliente: datosProcesados.cliente,
             fechaInicio: datosProcesados.fechaInicio,
             fechaFin: datosProcesados.fechaFin,
@@ -1589,19 +1593,20 @@ function mostrarFechas(eventos) {
         //const botonEliminar = document.querySelector(`#${idSeleccionado}`);
         // resaltar
         if (card) {
-          const idCard = obtenerIdCardPorCliente(
+          idCard = obtenerIdCardPorCliente(
             cliente,
             datosProcesados.fechaInicio,
           );
-          // console.log(idCard);
+          console.log(idCard);
           const card2 = document.querySelector(`.${idCard}`);
           const botonEliminar = document.querySelector(`.${idCard} > button`);
-          //console.log(botonEliminar2);
+          console.log(botonEliminar);
+          idCard2 = botonEliminar.id;
           // console.log(señaCheck);
           // console.log(card);
           // console.log(datosProcesados);
           nuevo = {
-            id: idSeleccionado,
+            id: idCard2,
             cliente: datosProcesados.cliente,
             fechaInicio: datosProcesados.fechaInicio,
             fechaFin: datosProcesados.fechaFin,
