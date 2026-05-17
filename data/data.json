@@ -97,13 +97,13 @@
   },
   {
     "id": "card-9",
-    "cliente": "Sabastano",
-    "fechaInicio": "2026-07-04",
-    "fechaFin": "2026-07-05",
-    "vc": "4",
-    "vo": "2",
-    "comida": true,
-    "precio": "100000",
+    "cliente": "Mingo",
+    "fechaInicio": "2026-06-24",
+    "fechaFin": "2026-06-24",
+    "vc": "9",
+    "vo": "",
+    "comida": false,
+    "precio": "50",
     "sena": false,
     "senaRecibida": ""
   }
