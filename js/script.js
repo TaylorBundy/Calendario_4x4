@@ -1048,13 +1048,13 @@ actualizar.addEventListener("click", (e) => {
   };
   if (actualizar.textContent === "guardar") {
     // console.log(idSeleccionado);
-    //guardar(nuevo);
+    guardar(nuevo);
   } else {
     // console.log(idSeleccionado);
     if (btnEliminar.checked) {
-      //eliminar();
+      eliminar();
     } else {
-      //editar(nuevo);
+      editar(nuevo);
     }
   }
   limpiarFormulario(eleEdita);
