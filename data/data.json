@@ -96,14 +96,14 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-2",
-    "cliente": "Sabastano",
-    "fechaInicio": "2026-06-30",
-    "fechaFin": "2026-07-02",
-    "vc": "4",
-    "vo": "2",
-    "comida": true,
-    "precio": "100000",
+    "id": "card-9",
+    "cliente": "Mingo",
+    "fechaInicio": "2026-06-24",
+    "fechaFin": "2026-06-24",
+    "vc": "9",
+    "vo": "",
+    "comida": false,
+    "precio": "50",
     "sena": false,
     "senaRecibida": ""
   }
