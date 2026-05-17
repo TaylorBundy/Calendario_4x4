@@ -232,7 +232,7 @@ button {
 
 @media only screen and (min-width: 360px) and (max-width: 1154px) {
   header {
-    margin-bottom: unset;
+    margin-bottom: 10px;
   }
   header .logo {
     gap: 10px;
@@ -241,22 +241,33 @@ button {
     order: 2;
   } */
   .listaContainer {
-    order: 1;
+    order: 2;
     margin-bottom: 30px;
   }
   /* .imgContainer img {
     width: 40%;
   } */
   #formulario {
-    flex-direction: column;
-    gap: 8px;
+    /* flex-direction: column; */
+    gap: 10px;
     margin-bottom: 10px;
-    order: 2;
+    order: 3;
   }
   .cargaClientes,
   .editaClientes {
     width: unset;
     margin: unset;
+    padding: unset;
+    /* margin-bottom: 10px; */
+  }
+  .cargaClientes .imgContainer,
+  .editaClientes .imgContainer {
+    width: 80%;
+    right: 0;
+    bottom: 0;
+    left: unset;
+    /* height: unset; */
+    justify-content: right;
   }
   #card {
     position: relative;
@@ -299,21 +310,28 @@ button {
   .clienteSel,
   .fechasCalendar {
     /* margin: 5px 0; */
-    font-size: 2.2em;
+    font-size: 2em;
     text-align: center;
   }
   label {
-    font-size: 2.2em;
+    font-size: 1.8em;
     margin: unset;
+    width: 90%;
   }
   input {
-    font-size: 2.2em;
+    font-size: 2em;
+    width: 90%;
+  }
+  .elimina {
+    left: 10px;
+    bottom: 5px;
   }
   .actualizar,
   .guardar {
     font-size: 2em;
-    width: 30%;
+    width: fit-content;
     margin-top: 5px;
+    margin: 10px;
   }
   .btnelimina {
     position: absolute;
@@ -370,8 +388,37 @@ button {
     display: flex;
     flex-direction: column;
     align-items: center;
+    order: 1;
   }
   #formFechas {
     width: 80%;
+    text-align: center;
+  }
+  .top {
+    position: fixed;
+    display: flex;
+    /* justify-content: right; */
+    width: 5vh;
+    height: 5vh;
+    /* left: 0; */
+    right: 40px;
+    bottom: 20px;
+    z-index: 10;
+  }
+  #myBtn {
+    display: none;
+    position: relative;
+    height: inherit;
+    width: inherit;
+    /* right: 80px; */
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 50px;
+    background: #333333eb
+      url("https://cdn-icons-png.flaticon.com/512/5290/5290862.png") no-repeat
+      center/contain;
+    color: white;
+    font-size: 18px;
+    z-index: 10;
   }
 }
