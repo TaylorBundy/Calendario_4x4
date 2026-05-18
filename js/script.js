@@ -233,7 +233,7 @@ window.addEventListener("DOMContentLoaded", () => {
         compararCards(card);
       });
     });
-    console.log(nuevo);
+    //console.log(nuevo);
     // reservas.forEach((elemento, index) => {
     //   console.log(elemento);
     // });
@@ -551,7 +551,7 @@ function mostrarDatos() {
   datos.sort((a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio));
 
   datos.forEach((d, index) => {
-    console.log(d);
+    //console.log(d);
     const div = document.createElement("div");
     const divContainer = document.createElement("div");
     divContainer.className = "divcontainer";
@@ -1193,7 +1193,7 @@ setInterval(async () => {
 select.selectedIndex = -1;
 
 function mostrarFechas(eventos) {
-  console.log(eventos);
+  //console.log(eventos);
   const opciones = [];
   setTimeout(() => {
     // limpiar select
