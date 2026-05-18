@@ -519,7 +519,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   }
 }
 function mostrarDatos2(listaDestino, mostrarOcultas = false) {
-  console.log(listaDestino);
+  //console.log(listaDestino);
   listaDestino.innerHTML = "";
 
   const ahora = new Date();
