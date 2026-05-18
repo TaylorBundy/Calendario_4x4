@@ -6,7 +6,7 @@ const cards = Array.from(lista.children);
 const totalReservas = document.querySelector(".totalReservas");
 const guarda = document.querySelector(".guardar");
 const actualizar = document.querySelector(".actualizar");
-const probar = document.querySelector(".probar");
+//const probar = document.querySelector(".probar");
 const botones = document.querySelectorAll("button");
 const btnEliminar = document.querySelector("#editaElimina");
 const eleEdita = document.querySelector(".editaClientes");
@@ -161,12 +161,21 @@ btnOcultas.addEventListener("click", () => {
   const visible = lista2.style.display === "grid";
 
   //lista2.style.display = visible ? "none" : "block";
+  if (visible) {
+    lista2.style.display = "none";
+    mostrarDatos2(lista2, false);
+    btnOcultas.textContent = "Mostrar reservas ocultas";
+  } else {
+    lista2.style.display = "grid";
+    mostrarDatos2(lista2, true);
+    btnOcultas.textContent = "Ocultar reservas ocultas";
+  }
 
-  btnOcultas.textContent = visible
-    ? "Mostrar reservas ocultas"
-    : "Ocultar reservas ocultas";
-  //ocultas.forEach((item) => {
-  mostrarDatos2(lista2, true);
+  // btnOcultas.textContent = visible
+  //   ? "Mostrar reservas ocultas"
+  //   : "Ocultar reservas ocultas";
+  // //ocultas.forEach((item) => {
+  // mostrarDatos2(lista2, true);
   //});
 });
 datos.forEach((item) => {
@@ -267,14 +276,14 @@ window.addEventListener("DOMContentLoaded", () => {
     cargarDatos();
     //console.log(datos);
   });
-  probar.addEventListener("click", () => {
-    console.log(idCard2);
-    console.log(`nuevo: ${nuevoNumero} - mayor: ${numeroMayor}`);
-    lista.querySelectorAll("#card").forEach((card) => {
-      //console.log(card.querySelector("h2"));
-      console.log(card.dataset.id);
-    });
-  });
+  // probar.addEventListener("click", () => {
+  //   console.log(idCard2);
+  //   console.log(`nuevo: ${nuevoNumero} - mayor: ${numeroMayor}`);
+  //   lista.querySelectorAll("#card").forEach((card) => {
+  //     //console.log(card.querySelector("h2"));
+  //     console.log(card.dataset.id);
+  //   });
+  // });
   //const eleEdita1 = document.querySelector(".editaClientes");
   const ele = eleEdita.querySelectorAll("input");
   ele.forEach((el) => {
