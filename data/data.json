@@ -106,5 +106,18 @@
     "precio": "50",
     "sena": false,
     "senaRecibida": ""
-  }
+  },
+    {
+      "id": "card-10",
+      "cliente": "Prueba fecha",
+      "fechaInicio": "2026-05-17",
+      "fechaFin": "2026-05-18",
+      "vc": 9,
+      "vo": null,
+      "comida": "No",
+      "precio": 50,
+      "moneda": "USD",
+      "sena": "No",
+      "senaRecibida": ""
+    }
 ]
