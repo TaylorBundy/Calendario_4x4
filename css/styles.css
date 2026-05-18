@@ -112,7 +112,8 @@ button {
   cursor: wait;
 }
 
-#lista {
+#lista,
+#lista2 {
   /* display: flex; */
   /* flex-direction: column; */
   display: grid;

@@ -51,6 +51,8 @@ let cardAnterior = null;
 let cardNueva = null;
 let nombreAnterior = null;
 let nombreNuevo = null;
+const visibles = [];
+const ocultas = [];
 //let indiceSelect = null;
 const API_KEY = "AIzaSyAVearlKR2iIcQd2eeS8zXqiKB2OITgIxU";
 const CALENDAR_ID = "diegomartinbarbosa2@gmail.com";
@@ -154,6 +156,39 @@ function procesarDescripcionEvento(texto) {
 
   return resultado;
 }
+const btnOcultas = document.querySelector("#btnOcultas");
+btnOcultas.addEventListener("click", () => {
+  const visible = lista2.style.display === "grid";
+
+  //lista2.style.display = visible ? "none" : "block";
+
+  btnOcultas.textContent = visible
+    ? "Mostrar reservas ocultas"
+    : "Ocultar reservas ocultas";
+  //ocultas.forEach((item) => {
+  mostrarDatos2(lista2, true);
+  //});
+});
+datos.forEach((item) => {
+  const ahora = new Date();
+
+  const [anio, mes, dia] = item.fechaFin.split("-");
+
+  const fechaFin = new Date(anio, mes - 1, dia);
+
+  fechaFin.setHours(23, 59, 59, 999);
+
+  if (ahora <= fechaFin) {
+    visibles.push(item);
+  } else {
+    ocultas.push(item);
+  }
+});
+// visibles.forEach((item) => {
+//   mostrarDatos2(lista2, true);
+// });
+
+// mostrarDatos2(lista2, true);
 // Funcion para restar 1 dia a la fecha obtenida del calendario
 function restarDias(fecha, dias) {
   const nuevaFecha = new Date(fecha);
@@ -183,14 +218,7 @@ fetch(url)
       const precio = `precio: ${descrip?.precio}`;
       const id = ev?.id;
       idCalendar = ev?.id;
-      //console.log(idCalendar);
-      //console.log(cliente);
       const resultado = restarDias(fechaFin.replace("end: ", ""), 1);
-
-      // console.log(resultado);
-      // console.log(
-      //   `cliente: ${cliente} - precio: ${precio} - fechaFin: ${fechaFin}`,
-      // );
       clientesCalendar.push({
         id: id.toLowerCase().trim(),
         cliente: cliente.toLowerCase().trim(),
@@ -201,22 +229,14 @@ fetch(url)
       //console.log(clientesCalendar);
       clientes = nomCli.toLowerCase();
       fechasInicio = fechaInicio.toLowerCase();
-
-      //console.log(clientes);
-      // console.log(fechaFin);
-      // console.log(vehiculosClientes);
-      // console.log(vehiculosOrganizadores);
-      //console.log(precio);
-      // console.log(moneda);
-      // console.log(comida);
-      //console.log(`descripcion: ${ev?.description}`);
-      //console.log(descrip);
     });
     mostrarFechas(data.items);
   });
 
 window.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
+    // console.log(visibles);
+    // console.log(ocultas);
     lista.querySelectorAll(".divcontainer").forEach((card) => {
       //console.log(card.querySelector("h2"));
       reservas.push({
@@ -233,72 +253,15 @@ window.addEventListener("DOMContentLoaded", () => {
         compararCards(card);
       });
     });
-    //console.log(nuevo);
-    // reservas.forEach((elemento, index) => {
-    //   console.log(elemento);
-    // });
-    // const elementos = lista.children;
-    // const todosLista = lista.querySelectorAll("#card");
-    // todosLista.forEach((el) => {
-    //   const nombreClase = el.className;
-
-    //   //console.log(nombreClase.split("-"));
-    // });
-    // for (let i = 0; i < elementos.length; i++) {
-    //   console.log(elementos[i].className);
-    // }
-    // if (elementos.length > 0) {
-    //   const ultimo = elementos[elementos.length - 1];
-    //   console.log(ultimo.className);
-    // }
-    // const ultimo = lista.lastElementChild;
-    // console.log(ultimo);
-    // const dataId = ultimo.dataset.id;
-    // console.log(dataId);
-    // // document.querySelectorAll("#card").forEach((card) => {
-    // //   console.log(card);
-    // //   const botonEliminar = card.querySelector(`button`);
-    // //   numero = parseInt(botonEliminar.id.match(/card-(\d+)/)[1]);
-    // //   console.log(numero);
-    // // });
-    // document.querySelectorAll("#card").forEach((card) => {
-    //   const botonEliminar = card.querySelector("button");
-
-    //   if (!botonEliminar?.id) return;
-
-    //   const match = botonEliminar.id.match(/card-(\d+)/);
-
-    //   if (!match) return;
-
-    //   const numero = parseInt(match[1]);
-
-    //   if (numero > numeroMayor) {
-    //     numeroMayor = numero;
-    //   }
-    // });
-    // console.log(numeroMayor);
-    // numeroMayor = numeroMayor + 1;
-
-    // nuevoNumero = Number(dataId.split("-")[1]) + 1;
     if (plataforma.includes("Android")) {
       creaTop();
       window.onscroll = function () {
         scrollFunction();
       };
     }
-    //const { nuevo2, mayor } = obtenerNumeros();
-    //const [nuevo2, mayor] = obtenerNumeros();
     const numeros = obtenerNumeros();
     numeroInicial = numeros.mayor;
-    //console.log(numeroInicial);
-
-    //console.log(nuevo2);
-    //console.log(mayor);
-    //console.log(clientesCalendar);
   }, 2000);
-  // clientes.forEach((el) => {
-  //   console.log(el);
-  // });
 
   recargar.addEventListener("click", () => {
     cargarDatos();
@@ -329,16 +292,39 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // Contar Registros
-function contarRegistros(array) {
-  if (!Array.isArray(array)) return 0;
-  return array.length;
+// function contarRegistros(array) {
+//   if (!Array.isArray(array)) return 0;
+//   return array.length;
+// }
+
+function contarRegistrosVisibles(datos) {
+  const ahora = new Date();
+
+  return datos.filter((item) => {
+    const fechaFinTexto = item.fechaFin;
+
+    const [anio, mes, dia] = fechaFinTexto.split("-");
+
+    const fechaFin = new Date(anio, mes - 1, dia);
+
+    // visible hasta fin del día
+    fechaFin.setHours(23, 59, 59, 999);
+    if (ahora <= fechaFin) {
+      visibles.push(item);
+    } else {
+      ocultas.push(item);
+    }
+
+    return ahora <= fechaFin;
+  }).length;
 }
 
 // Cargar datos
 async function cargarDatos() {
   const res = await fetch("data/data.json");
   datos = await res.json();
-  const total = contarRegistros(datos);
+  //const total = contarRegistros(datos);
+  const total = contarRegistrosVisibles(datos);
   //totalReservas.textContent = `Total de reservas: ${total}`;
   totalReservas.innerHTML = `
     <span class="reservasTitulos"><strong>Total de reservas:</strong> <span class="reservasVisibles">${total}</span></span>
@@ -347,18 +333,6 @@ async function cargarDatos() {
 }
 
 function cargarEnFormulario(dato, index, indiceAnteriors) {
-  // console.log(dato);
-  // console.log(comidaCheck);
-  // if (dato.comida == "No" || dato.comida == "false") {
-  //   comidaCheck = false;
-  // } else {
-  //   comidaCheck = true;
-  // }
-  // if (dato.sena == "No" || dato.sena == "false") {
-  //   señaCheck = false;
-  // } else {
-  //   señaCheck = true;
-  // }
   if (comidaCheck == "No") {
     comidaCheck = false;
   } else {
@@ -544,6 +518,223 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
     }
   }
 }
+function mostrarDatos2(listaDestino, mostrarOcultas = false) {
+  console.log(listaDestino);
+  listaDestino.innerHTML = "";
+
+  const ahora = new Date();
+
+  datos
+    .sort((a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio))
+    .forEach((d, index) => {
+      const [anio, mes, dia] = d.fechaFin.split("-");
+
+      const fechaFin = new Date(anio, mes - 1, dia);
+
+      fechaFin.setHours(23, 59, 59, 999);
+
+      const estaOculta = ahora > fechaFin;
+
+      // ✅ visibles
+      if (!mostrarOcultas && estaOculta) return;
+
+      // ✅ ocultas
+      if (mostrarOcultas && !estaOculta) return;
+
+      //   const div = document.createElement("div");
+
+      //   div.className = `card-${index}`;
+      //   div.id = "card";
+      //   div.innerHTML = `
+      // <!-- <button class="btnelimina" id="${d.id}"> Eliminar </button> -->
+      // <!-- <div class="divcontainer"> -->
+      //   <h2 class="elCliente"><strong>${d.cliente}</strong></h2><br>
+      //   <span class="datosTitulos"><strong>Fecha Inicio:</strong> <span class="datosVisibles" id="fechaInicio">${d.fechaInicio}</span></span>
+      //   <span class="datosTitulos"><strong>Fecha Fin:</strong> <span class="datosVisibles" id="fechaFin">${d.fechaFin}</span></span>
+      //   <span class="datosTitulos"><strong>Vehículos clientes:</strong> <span class="datosVisibles" id="vc">${d.vc}</span></span>
+      //   <span class="datosTitulos"><strong>Vehículos org:</strong> <span class="datosVisibles" id="vo">${d.vo}</span></span>
+      //   <span class="datosTitulos"><strong>Comida:</strong> <span class="datosVisibles" id="comida">${comidaCheck}</span></span>
+      //   <span class="datosTitulos"><strong>Precio:</strong> <span class="datosVisibles" id="precio">${moneda} ${d.precio}</span></span>
+      //   <span class="datosTitulos"><strong>Seña:</strong> <span class="datosVisibles" id="seña">${señaCheck}</span></span>
+      //   <span class="datosTitulos"><strong>Seña Recibida:</strong> <span class="datosVisibles" id="señaRecibida">${d.senaRecibida}</span></span>
+      //   <!-- </div> -->
+      // `;
+
+      //   // div.innerHTML = `
+      //   //   <button class="btnelimina" id="${d.id}">
+      //   //     Eliminar
+      //   //   </button>
+
+      //   //   <div class="divcontainer">
+      //   //     <h2 class="elCliente">
+      //   //       <strong>${d.cliente}</strong>
+      //   //     </h2>
+
+      //   //     <span class="datosTitulos">
+      //   //       <strong>Fecha Inicio:</strong>
+      //   //       <span class="datosVisibles" id="fechaInicio">
+      //   //         ${d.fechaInicio}
+      //   //       </span>
+      //   //     </span>
+
+      //   //     <span class="datosTitulos">
+      //   //       <strong>Fecha Fin:</strong>
+      //   //       <span class="datosVisibles" id="fechaFin">
+      //   //         ${d.fechaFin}
+      //   //       </span>
+      //   //     </span>
+      //   //   </div>
+      //   // `;
+
+      //   listaDestino.appendChild(div);
+      const div = document.createElement("div");
+      const divContainer = document.createElement("div");
+      divContainer.className = "divcontainer";
+      const imgContainer = document.createElement("div");
+      imgContainer.className = "imgContainer";
+      const imgDiv = document.createElement("img");
+      imgDiv.className = "img";
+      imgDiv.src = "images/fondo-transparente.webp";
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      div.className = `card-${index}`;
+      div.id = "card";
+      div.dataset.id = `card-${index}`;
+      //div.appendChild(divContainer);
+      div.innerHTML = `
+    <button class="btnelimina" id="${d.id}"> Eliminar </button>
+    `;
+      const longitud = d?.precio;
+      if (longitud.length <= 3) {
+        moneda = "USD";
+      } else if (longitud.length > 3) {
+        moneda = "ARS";
+      }
+      const valorComida =
+        d.comida == null || String(d.comida).trim() === ""
+          ? ""
+          : typeof d.comida === "boolean"
+            ? d.comida
+              ? "Sí"
+              : "No"
+            : ["true", "Sí"].includes(String(d.comida).trim())
+              ? "Sí"
+              : ["false", "No"].includes(String(d.comida).trim())
+                ? "No"
+                : "";
+      const valorSeña =
+        d.sena == null || String(d.sena).trim() === ""
+          ? ""
+          : typeof d.sena === "boolean"
+            ? d.sena
+              ? "Sí"
+              : "No"
+            : ["true", "Sí"].includes(String(d.sena).trim())
+              ? "Sí"
+              : ["false", "No"].includes(String(d.sena).trim())
+                ? "No"
+                : "";
+      comidaCheck = valorComida.trim();
+      //comidaCheck = !(valorComida === "no" || valorComida === "false");
+      señaCheck = valorSeña.trim(); //!(valorSeña === "No" || valorSeña === "false");
+
+      divContainer.innerHTML = `
+    <!-- <button class="btnelimina" id="${d.id}"> Eliminar </button> -->
+    <!-- <div class="divcontainer"> -->
+      <h2 class="elCliente"><strong>${d.cliente}</strong></h2><br>
+      <span class="datosTitulos"><strong>Fecha Inicio:</strong> <span class="datosVisibles" id="fechaInicio">${d.fechaInicio}</span></span>
+      <span class="datosTitulos"><strong>Fecha Fin:</strong> <span class="datosVisibles" id="fechaFin">${d.fechaFin}</span></span>
+      <span class="datosTitulos"><strong>Vehículos clientes:</strong> <span class="datosVisibles" id="vc">${d.vc}</span></span>
+      <span class="datosTitulos"><strong>Vehículos org:</strong> <span class="datosVisibles" id="vo">${d.vo}</span></span>
+      <span class="datosTitulos"><strong>Comida:</strong> <span class="datosVisibles" id="comida">${comidaCheck}</span></span>
+      <span class="datosTitulos"><strong>Precio:</strong> <span class="datosVisibles" id="precio">${moneda} ${d.precio}</span></span>
+      <span class="datosTitulos"><strong>Seña:</strong> <span class="datosVisibles" id="seña">${señaCheck}</span></span>
+      <span class="datosTitulos"><strong>Seña Recibida:</strong> <span class="datosVisibles" id="señaRecibida">${d.senaRecibida}</span></span>
+      <!-- </div> -->
+    `;
+      // 👉 CLICK PARA EDITAR
+      divContainer.addEventListener("click", (e) => {
+        idSeleccionado = d.id;
+        //console.log(idSeleccionado);
+        // console.log(e.target.closest('div[id="card"]'));
+        const card = e.target.closest("#card");
+        if (!card) return;
+        const form = document.querySelector(".editaClientes");
+        // console.log(form);
+        seleccionarCard(card, eleEdita);
+        if (card.dataset.selected === "true") {
+          eleEdita.style.background = "#888";
+          eleEdita.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        } else {
+          eleEdita.style.background = "#2c2c2c";
+        }
+        const clases = div.className;
+        const numero = parseInt(clases.match(/card-(\d+)/)[1]);
+        // console.log(numero);
+        if (indiceAnterior === null) {
+          indiceAnterior = numero;
+        }
+        if (indiceNuevo === null) {
+          indiceNuevo = numero;
+        }
+
+        estado = "EXISTE";
+
+        cargarEnFormulario(d, index, indiceAnterior);
+      });
+
+      div.prepend(divContainer);
+      divContainer.prepend(imgContainer);
+      imgContainer.appendChild(imgDiv);
+      //divContainer.appendChild(div);
+      lista2.appendChild(div);
+
+      //console.log(div);
+
+      // lista.insertBefore(document.querySelector(`#card`), divContainer);
+
+      const btnElimina = document.querySelector(`#${d.id}`);
+      btnElimina.addEventListener("click", () => {
+        const option = select.options[select.selectedIndex];
+
+        //console.log(d.id);
+        idSeleccionado = d.id;
+        idCard = idSeleccionado;
+        if (btnElimina.textContent == "Eliminar") {
+          eliminar();
+          // console.log("eliminar");
+          if (option) {
+            option.remove();
+          }
+        } else if (btnElimina.textContent == "Actualizar") {
+          nuevo = {
+            id: idCard2,
+            cliente: document.getElementById("editaCliente").value,
+            fechaInicio: document.getElementById("editaFechaInicio").value,
+            fechaFin: document.getElementById("editaFechaFin").value,
+            vc: document.getElementById("editaVehiculosClientes").value,
+            vo: document.getElementById("editaVehiculosOrg").value,
+            comida: document.getElementById("editaComida").checked,
+            precio: document.getElementById("editaPrecio").value,
+            sena: document.getElementById("editaSeña").checked,
+            senaRecibida: document.getElementById("editaImporteSeña").value,
+          };
+          editar(nuevo);
+          //console.log(idCard2);
+          //console.log(nuevo);
+          if (option) {
+            option.remove();
+          }
+        }
+      });
+      //console.log(btnElimina);
+    });
+  ordenarPorFecha();
+  //});
+}
 
 function mostrarDatos() {
   lista.innerHTML = "";
@@ -551,6 +742,7 @@ function mostrarDatos() {
   datos.sort((a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio));
 
   datos.forEach((d, index) => {
+    //visibles.push(d);
     //console.log(d);
     const div = document.createElement("div");
     const divContainer = document.createElement("div");
@@ -561,11 +753,6 @@ function mostrarDatos() {
     imgDiv.className = "img";
     imgDiv.src = "images/fondo-transparente.webp";
     const radio = document.createElement("input");
-    // const btnElimina = document.createElement("button");
-    // btnElimina.className = "btnelimina";
-    // btnElimina.textContent = "Eliminar";
-    // btnElimina.id = `card-${index}`;
-    // console.log(`cliente: ${d.cliente} - fechaFin: ${d.fechaFin}`);
     radio.type = "radio";
     div.className = `card-${index}`;
     div.id = "card";
@@ -580,12 +767,6 @@ function mostrarDatos() {
     } else if (longitud.length > 3) {
       moneda = "ARS";
     }
-    // const valorComida =
-    //   d.comida == null
-    //     ? ""
-    //     : typeof d.comida === "boolean"
-    //       ? String(d.comida)
-    //       : d.comida;
     const valorComida =
       d.comida == null || String(d.comida).trim() === ""
         ? ""
@@ -628,34 +809,6 @@ function mostrarDatos() {
       <span class="datosTitulos"><strong>Seña Recibida:</strong> <span class="datosVisibles" id="señaRecibida">${d.senaRecibida}</span></span>
       <!-- </div> -->
     `;
-
-    // const cards = document.querySelectorAll("#card");
-
-    // cards.forEach((card) => {
-    //   card.addEventListener("click", () => {
-    //     console.log("hola");
-    //     // si ya estaba seleccionada → deseleccionar
-    //     if (card.dataset.selected === "true") {
-    //       card.dataset.selected = "false";
-    //       card.classList.remove("selected");
-    //       return;
-    //     }
-
-    //     // quitar selección anterior
-    //     //document.querySelectorAll(`div[id="card"]`).forEach((c) => {
-    //     document.querySelectorAll("#card.selected").forEach((c) => {
-    //       if (c.className.includes("selected")) {
-    //         console.log(c);
-    //         c.dataset.selected = "false";
-    //         c.classList.remove("selected");
-    //       }
-    //     });
-
-    //     // seleccionar nueva
-    //     card.dataset.selected = "true";
-    //     card.classList.add("selected");
-    //   });
-    // });
     // 👉 CLICK PARA EDITAR
     divContainer.addEventListener("click", (e) => {
       idSeleccionado = d.id;
@@ -667,9 +820,6 @@ function mostrarDatos() {
       // console.log(form);
       seleccionarCard(card, eleEdita);
       if (card.dataset.selected === "true") {
-        // card.dataset.selected = "false";
-        // card.classList.remove("selected");
-        // return;
         eleEdita.style.background = "#888";
         eleEdita.scrollIntoView({
           behavior: "smooth",
@@ -677,34 +827,7 @@ function mostrarDatos() {
         });
       } else {
         eleEdita.style.background = "#2c2c2c";
-        // eleEdita.style.background = "#888";
-        // eleEdita.scrollIntoView({
-        //   behavior: "smooth",
-        //   block: "center",
-        // });
       }
-
-      // // si ya estaba seleccionada
-      // if (card.dataset.selected === "true") {
-      //   card.dataset.selected = "false";
-      //   card.classList.remove("selected");
-      //   return;
-      // }
-
-      // // quitar selección anterior
-      // document.querySelectorAll("#card.selected").forEach((c) => {
-      //   c.dataset.selected = "false";
-      //   c.classList.remove("selected");
-      // });
-
-      // // seleccionar nueva
-      // card.dataset.selected = "true";
-      // card.classList.add("selected");
-      // if (div.dataset.selected == "true") {
-      //   div.dataset.selected = "false";
-      // } else {
-      //   div.dataset.selected = "true";
-      // }
       const clases = div.className;
       const numero = parseInt(clases.match(/card-(\d+)/)[1]);
       // console.log(numero);
@@ -714,37 +837,11 @@ function mostrarDatos() {
       if (indiceNuevo === null) {
         indiceNuevo = numero;
       }
-      // console.log(d.comida);
-      // const valorComida = String(d.comida).trim().toLowerCase();
-      // const valorSeña = String(d.sena).trim().toLowerCase();
 
-      // comidaCheck = !(valorComida === "no" || valorComida === "false");
-      // señaCheck = !(valorSeña === "No" || valorSeña === "false");
-      // if (d.comida === "No" || d.comida === "false") {
-      //   comidaCheck = false;
-      // } else {
-      //   comidaCheck = true;
-      // }
-      // if (d.sena == "No" || d.sena == "false") {
-      //   señaCheck = false;
-      // } else {
-      //   señaCheck = true;
-      // }
-      // console.log(idSeleccionado);
-      // console.log(d);
-      // console.log(index);
-      // console.log(indiceAnterior);
       estado = "EXISTE";
-      // document.querySelectorAll("#card").forEach((card) => {
-      //   //console.log(card);
-      //   card.classList.remove("selected");
-      //   card.dataset.selected = "false";
-      // });
+
       cargarEnFormulario(d, index, indiceAnterior);
     });
-
-    //labelElimina.appendChild(radio);
-    //div.before(btnElimina);
 
     div.prepend(divContainer);
     divContainer.prepend(imgContainer);
@@ -792,6 +889,7 @@ function mostrarDatos() {
     });
     //console.log(btnElimina);
   });
+  ordenarPorFecha();
 }
 
 function mostrarDatosGoogle(d, index = 0) {
@@ -1737,6 +1835,7 @@ function ordenarPorFecha() {
 
     // crear fecha fin
     const fechaFin = new Date(fechaFinTexto);
+    //console.log(ahora);
 
     // ✅ poner hora límite
     fechaFin.setHours(23, 59, 0, 0);
