@@ -22,6 +22,7 @@ let fechasInicio = null;
 const clientesCalendar = [];
 const reservas = [];
 const modificados = [];
+let nuevo;
 const datosNuevos = [];
 let existe = null;
 let noexiste = null;
@@ -232,6 +233,7 @@ window.addEventListener("DOMContentLoaded", () => {
         compararCards(card);
       });
     });
+    console.log(nuevo);
     // reservas.forEach((elemento, index) => {
     //   console.log(elemento);
     // });
@@ -549,7 +551,7 @@ function mostrarDatos() {
   datos.sort((a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio));
 
   datos.forEach((d, index) => {
-    //console.log(d);
+    console.log(d);
     const div = document.createElement("div");
     const divContainer = document.createElement("div");
     divContainer.className = "divcontainer";
@@ -572,7 +574,7 @@ function mostrarDatos() {
     div.innerHTML = `
     <button class="btnelimina" id="${d.id}"> Eliminar </button>
     `;
-    const longitud = d.precio;
+    const longitud = d?.precio;
     if (longitud.length <= 3) {
       moneda = "USD";
     } else if (longitud.length > 3) {
@@ -962,8 +964,8 @@ function mostrarDatosGoogle(d, index = 0) {
     if (btnElimina.textContent == "Eliminar") {
       eliminar();
     } else if (btnElimina.textContent == "Guardar") {
-      // console.log(datosNuevos);
-      guardar(datosNuevos);
+      console.log(nuevo);
+      guardar(nuevo);
     }
   });
   // const botonEliminar = document.querySelector(`#card-${nuevoNumero}`);
@@ -1032,7 +1034,6 @@ function procesarEventoGoogle(ev) {
   };
 }
 
-let nuevo;
 guarda.addEventListener("click", () => {
   if (elementos.length > 0) {
     const ultimo = elementos[elementos.length - 1];
@@ -1402,7 +1403,7 @@ function mostrarFechas(eventos) {
 
       // procesar
       const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-      // console.log(datosProcesados);
+      console.log(datosProcesados);
 
       // normalizar
       const cliente = datosProcesados.cliente
@@ -1469,8 +1470,8 @@ function mostrarFechas(eventos) {
         // }
         nuevo = {
           id: idCard2,
-          cliente: datosProcesados.cliente,
-          fechaInicio: datosProcesados.fechaInicio,
+          cliente: cliente,
+          fechaInicio: fecha,
           fechaFin: datosProcesados.fechaFin,
           vc: datosProcesados?.vc,
           vo: datosProcesados?.vo,
@@ -1480,7 +1481,7 @@ function mostrarFechas(eventos) {
           sena: señaCheck,
           senaRecibida: datosProcesados?.senaRecibida,
         };
-        datosNuevos.push(nuevo);
+        //datosNuevos.push(nuevo);
         reservas.push({
           cliente: datosProcesados.cliente.toLowerCase().trim(),
           fecha: datosProcesados.fechaInicio.toLowerCase(),
@@ -1574,7 +1575,7 @@ function mostrarFechas(eventos) {
             senaRecibida: datosProcesados.senaRecibida,
           };
           const fechaFin = restarDias(nuevo.fechaFin, 1);
-          datosNuevos.push(nuevo);
+          //datosNuevos.push(nuevo);
           if (nuevo.comida == "false") {
             nuevo.comida = "No";
           }
@@ -1635,7 +1636,7 @@ function mostrarFechas(eventos) {
             senaRecibida: datosProcesados.senaRecibida,
           };
           const fechaFin = restarDias(nuevo.fechaFin, 1);
-          datosNuevos.push(nuevo);
+          //datosNuevos.push(nuevo);
 
           card2.querySelector(".elCliente").textContent = nuevo.cliente;
           card2.querySelector("#fechaInicio").textContent = nuevo.fechaInicio;
