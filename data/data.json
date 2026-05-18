@@ -107,7 +107,6 @@
     "sena": false,
     "senaRecibida": ""
   },
-  [
     {
       "id": "card-10",
       "cliente": "Prueba fecha",
@@ -121,5 +120,4 @@
       "sena": "No",
       "senaRecibida": ""
     }
-  ]
 ]
