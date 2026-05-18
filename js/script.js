@@ -6,6 +6,7 @@ const cards = Array.from(lista.children);
 const totalReservas = document.querySelector(".totalReservas");
 const guarda = document.querySelector(".guardar");
 const actualizar = document.querySelector(".actualizar");
+const probar = document.querySelector(".probar");
 const botones = document.querySelectorAll("button");
 const btnEliminar = document.querySelector("#editaElimina");
 const eleEdita = document.querySelector(".editaClientes");
@@ -41,6 +42,14 @@ let comidaCheck = false;
 let señaCheck = false;
 let idCard = null;
 let idCard2 = null;
+let numeroMayor = 0;
+let numeroInicial = null;
+let dataId = null;
+let tarjetaAnterior = null;
+let cardAnterior = null;
+let cardNueva = null;
+let nombreAnterior = null;
+let nombreNuevo = null;
 //let indiceSelect = null;
 const API_KEY = "AIzaSyAVearlKR2iIcQd2eeS8zXqiKB2OITgIxU";
 const CALENDAR_ID = "diegomartinbarbosa2@gmail.com";
@@ -49,6 +58,7 @@ const url = `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/eve
 let precioMatch;
 let moneda;
 function procesarDescripcionEvento(texto) {
+  if (!texto || texto == null) return;
   //console.log(texto);
   const resultado = {
     vehiculos: null,
@@ -127,18 +137,14 @@ function procesarDescripcionEvento(texto) {
   // =========================
   // COMIDA
   // =========================
-  //console.log(texto);
-  // if (/no\s*incluye\s*comida/i.test(texto.toLowerCase())) {
-  //   resultado.comida = "No";
-  // } else if (/incluye\s*comida|con\s*comida/i.test(texto.toLowerCase())) {
-  //   resultado.comida = "Sí";
-  // }
   if (/\b(true|s[ií])\b|incluye\s*comida|con\s*comida/i.test(texto)) {
     resultado.comida = "Sí";
   } else if (/\b(false|no)\b|no\s*incluye\s*comida/i.test(texto)) {
     resultado.comida = "No";
   }
-
+  // =========================
+  // SEÑA
+  // =========================
   if (/\b(true|s[ií])\b|incluye\s*seña|con\s*seña/i.test(texto)) {
     resultado.sena = "Sí";
   } else if (/\b(false|no)\b|no\s*seña\s*seña/i.test(texto)) {
@@ -147,34 +153,7 @@ function procesarDescripcionEvento(texto) {
 
   return resultado;
 }
-
-// function obtenerPrecio2(texto) {
-//   const regex =
-//     /(?:precio\s*pactado|precio\s*por\s*veh[ií]culo)?[\s:]*\$?\s*(\d+)\s*(?:usd|u\$s|d[oó]lares?)?(?:\s*por\s*veh[ií]culo)?/i;
-
-//   const match = texto.match(regex);
-
-//   return match ? Number(match[1]) : null;
-// }
-
-// function obtenerPrecio(texto) {
-//   const patrones = [
-//     /(\d+)\s*d[oó]lares?\s*por\s*veh[ií]culo/i,
-//     /precio\s*por\s*veh[ií]culo[:\s]*\$?\s*(\d+)/i,
-//     /precio\s*pactado[:\s]*\$?\s*(\d+)/i,
-//   ];
-
-//   for (const regex of patrones) {
-//     const match = texto.match(regex);
-
-//     if (match) {
-//       return Number(match[1]);
-//     }
-//   }
-
-//   return null;
-// }
-
+// Funcion para restar 1 dia a la fecha obtenida del calendario
 function restarDias(fecha, dias) {
   const nuevaFecha = new Date(fecha);
 
@@ -192,15 +171,15 @@ fetch(url)
       const fechaIn = ev?.start.date;
       const fechaFn = ev?.end.date;
       const nomCli = ev?.summary;
-      const descrip = procesarDescripcionEvento(ev?.description);
+      const descrip = procesarDescripcionEvento(ev?.description) || null;
       const cliente = `cliente: ${nomCli}`;
       const fechaInicio = `start: ${fechaIn}`;
       const fechaFin = `end: ${fechaFn}`;
-      const vehiculosClientes = `vehiculos: ${descrip.vehiculos}`;
-      const vehiculosOrganizadores = `vehiculos organizadores: ${descrip.organizadores}`;
-      const comida = `comida: ${descrip.comida}`;
-      const moneda = `moneda: ${descrip.moneda}`;
-      const precio = `precio: ${descrip.precio}`;
+      const vehiculosClientes = `vehiculos: ${descrip?.vehiculos}` || null;
+      const vehiculosOrganizadores = `vehiculos organizadores: ${descrip?.organizadores}`;
+      const comida = `comida: ${descrip?.comida}`;
+      const moneda = `moneda: ${descrip?.moneda}`;
+      const precio = `precio: ${descrip?.precio}`;
       const id = ev?.id;
       idCalendar = ev?.id;
       //console.log(idCalendar);
@@ -218,6 +197,7 @@ fetch(url)
         precio: precio.replace("precio: ", "").toLowerCase().trim(),
         moneda: moneda.replace("moneda: ", "").toLowerCase().trim(),
       });
+      //console.log(clientesCalendar);
       clientes = nomCli.toLowerCase();
       fechasInicio = fechaInicio.toLowerCase();
 
@@ -247,6 +227,11 @@ window.addEventListener("DOMContentLoaded", () => {
           .toLowerCase(),
       });
     });
+    document.querySelectorAll("#card").forEach((card) => {
+      card.addEventListener("click", () => {
+        compararCards(card);
+      });
+    });
     // reservas.forEach((elemento, index) => {
     //   console.log(elemento);
     // });
@@ -264,34 +249,49 @@ window.addEventListener("DOMContentLoaded", () => {
     //   const ultimo = elementos[elementos.length - 1];
     //   console.log(ultimo.className);
     // }
-    const ultimo = lista.lastElementChild;
-    const dataId = ultimo.dataset.id;
-    //const nomCliente = lista.querySelectorAll(".divcontainer");
-    //const fechasss = lista.querySelectorAll("#fechaInicio");
-    //const clientes2 = nomCliente;
-    // clientes2.forEach((elemento, index) => {
-    //   const cliente = elemento.querySelector("h2").textContent;
-    //   const fecha = elemento.querySelector("#fechaInicio").textContent;
-    //   clientes = cliente;
-    //   console.log(`cliente: ${cliente} - fecha: ${fecha}`);
-    //   // console.log(fecha);
-    //   // console.log(cliente);
-    //   //console.log(el.textContent);
-    // });
-    //console.log(clientes);
-    // fechasss.forEach((el) => {
-    //   console.log(el.textContent);
-    // });
+    // const ultimo = lista.lastElementChild;
+    // console.log(ultimo);
+    // const dataId = ultimo.dataset.id;
+    // console.log(dataId);
+    // // document.querySelectorAll("#card").forEach((card) => {
+    // //   console.log(card);
+    // //   const botonEliminar = card.querySelector(`button`);
+    // //   numero = parseInt(botonEliminar.id.match(/card-(\d+)/)[1]);
+    // //   console.log(numero);
+    // // });
+    // document.querySelectorAll("#card").forEach((card) => {
+    //   const botonEliminar = card.querySelector("button");
 
-    nuevoNumero = Number(dataId.split("-")[1]) + 2;
+    //   if (!botonEliminar?.id) return;
+
+    //   const match = botonEliminar.id.match(/card-(\d+)/);
+
+    //   if (!match) return;
+
+    //   const numero = parseInt(match[1]);
+
+    //   if (numero > numeroMayor) {
+    //     numeroMayor = numero;
+    //   }
+    // });
+    // console.log(numeroMayor);
+    // numeroMayor = numeroMayor + 1;
+
+    // nuevoNumero = Number(dataId.split("-")[1]) + 1;
     if (plataforma.includes("Android")) {
       creaTop();
       window.onscroll = function () {
         scrollFunction();
       };
     }
+    //const { nuevo2, mayor } = obtenerNumeros();
+    //const [nuevo2, mayor] = obtenerNumeros();
+    const numeros = obtenerNumeros();
+    numeroInicial = numeros.mayor;
+    //console.log(numeroInicial);
 
-    //console.log(nuevoNumero);
+    //console.log(nuevo2);
+    //console.log(mayor);
     //console.log(clientesCalendar);
   }, 2000);
   // clientes.forEach((el) => {
@@ -301,6 +301,14 @@ window.addEventListener("DOMContentLoaded", () => {
   recargar.addEventListener("click", () => {
     cargarDatos();
     //console.log(datos);
+  });
+  probar.addEventListener("click", () => {
+    console.log(idCard2);
+    console.log(`nuevo: ${nuevoNumero} - mayor: ${numeroMayor}`);
+    lista.querySelectorAll("#card").forEach((card) => {
+      //console.log(card.querySelector("h2"));
+      console.log(card.dataset.id);
+    });
   });
   //const eleEdita1 = document.querySelector(".editaClientes");
   const ele = eleEdita.querySelectorAll("input");
@@ -363,12 +371,12 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaFechaInicio").value = dato.fechaInicio;
   const fechaFin = restarDias(dato.fechaFin.replace("end: ", ""), 1);
   document.getElementById("editaFechaFin").value = fechaFin;
-  document.getElementById("editaVehiculosClientes").value = dato.vc;
-  document.getElementById("editaVehiculosOrg").value = dato.vo;
+  document.getElementById("editaVehiculosClientes").value = dato?.vc || "";
+  document.getElementById("editaVehiculosOrg").value = dato?.vo || "";
   document.getElementById("editaComida").checked = comidaCheck;
-  document.getElementById("editaPrecio").value = dato.precio;
+  document.getElementById("editaPrecio").value = dato?.precio || "0";
   document.getElementById("editaSeña").checked = señaCheck;
-  document.getElementById("editaImporteSeña").value = dato.senaRecibida;
+  document.getElementById("editaImporteSeña").value = dato?.senaRecibida || "";
   document.querySelector(`.clienteSel`).textContent =
     `Editar Cliente Seleccionado: ${dato.cliente}`;
   actualizar.classList.remove("desactive");
@@ -649,6 +657,7 @@ function mostrarDatos() {
     // 👉 CLICK PARA EDITAR
     divContainer.addEventListener("click", (e) => {
       idSeleccionado = d.id;
+      //console.log(idSeleccionado);
       // console.log(e.target.closest('div[id="card"]'));
       const card = e.target.closest("#card");
       if (!card) return;
@@ -749,7 +758,7 @@ function mostrarDatos() {
     btnElimina.addEventListener("click", () => {
       const option = select.options[select.selectedIndex];
 
-      console.log(d.id);
+      //console.log(d.id);
       idSeleccionado = d.id;
       idCard = idSeleccionado;
       if (btnElimina.textContent == "Eliminar") {
@@ -772,7 +781,7 @@ function mostrarDatos() {
           senaRecibida: document.getElementById("editaImporteSeña").value,
         };
         editar(nuevo);
-        console.log(idCard2);
+        //console.log(idCard2);
         //console.log(nuevo);
         if (option) {
           option.remove();
@@ -796,15 +805,6 @@ function mostrarDatosGoogle(d, index = 0) {
       if (estado === "NO EXISTE") return;
       const resultados = reservas.filter((r) => r.cliente.includes(clientes));
       const resultados3 = reservas.some((r) => r.cliente.includes(clientes));
-      // const resultados2 = reservas.filter((d) => {
-      //   console.log(d.cliente.toLowerCase());
-      //   d.cliente.includes(clientes);
-      // });
-      // resultados2.forEach((el) => {
-      //   console.log(el);
-      // });
-      // console.log(resultados3);
-      //console.log(resultados);
       if (resultados) {
         const clienteExiste = resultados[0].cliente;
         const fechaExiste = resultados[0].fecha;
@@ -816,30 +816,11 @@ function mostrarDatosGoogle(d, index = 0) {
       if (resultados3) {
         const clienteExiste = reservas.has(resultados3.toLowerCase().trim());
         const fechaExiste = resultados[0].fecha;
-        // console.log(clienteExiste);
-        // console.log(fechaExiste);
         if (clienteExiste && fechaExiste) return;
       }
     }
   }, 3000);
   const fechaFin = restarDias(d.fechaFin.replace("end: ", ""), 1);
-
-  //console.log(fechaExiste);
-
-  // console.log(clientes);
-  // const existe = reservas.filter((r) => {
-  //   console.log(r.cliente);
-  //   r.cliente === d.cliente.toLowerCase();
-  // });
-  // console.log(existe);
-  // if (existe) {
-  //   console.log(existe);
-  // }
-  //if (clientes && fechasInicio) return;
-  //nuevoNumero = nuevoNumero + 1;
-  //console.log(d.cliente);
-  //lista.innerHTML = "";
-  // lista.sort((a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio));
 
   const div = document.createElement("div");
   const divContainer = document.createElement("div");
@@ -854,13 +835,14 @@ function mostrarDatosGoogle(d, index = 0) {
   imgDiv.src = "images/fondo-transparente.webp";
 
   div.className = `card-${nuevoNumero}`;
+
   div.classList.add("nuevo");
   div.dataset.id = `card-${nuevoNumero}`;
   div.id = "card";
   //div.dataset.selected = div.dataset.selected === "true" ? "false" : "true";
 
   div.innerHTML = `
-    <button class="btnelimina" id="card-${nuevoNumero}">
+    <button class="btnelimina" id="card-${numeroMayor}">
       Eliminar
     </button>
   `;
@@ -908,7 +890,7 @@ function mostrarDatosGoogle(d, index = 0) {
       <span class="datosTitulos">
         <strong>Precio:</strong>
         <span class="datosVisibles" id="precio">
-          ${d.moneda} ${d.precio || ""}
+          ${d.moneda || "ARS"} ${d.precio || "0"}
         </span>
       </span>
 
@@ -930,9 +912,12 @@ function mostrarDatosGoogle(d, index = 0) {
   // CLICK EN LA CARD
   divContainer.addEventListener("click", (e) => {
     idSeleccionado = `card-${index}`;
+    idCard2 = `card-${numeroMayor}`;
     const card = e.target.closest("#card");
     if (!card) return;
-    const form = document.querySelector(".editaClientes");
+
+    //console.log(idSeleccionado);
+    //const form = document.querySelector(".editaClientes");
     seleccionarCard(card, eleEdita);
     //console.log(idSeleccionado);
 
@@ -965,6 +950,7 @@ function mostrarDatosGoogle(d, index = 0) {
   //   idSeleccionado = d.id;
   //   eliminar();
   // });
+  //console.log(indiceEditando);
   document.querySelectorAll("#card").forEach((card) => {
     if (card.className.includes("nuevo")) {
       btnElimina.textContent = "Guardar";
@@ -972,6 +958,7 @@ function mostrarDatosGoogle(d, index = 0) {
   });
   btnElimina.addEventListener("click", () => {
     idSeleccionado = d.id;
+    //console.log(idCard2);
     if (btnElimina.textContent == "Eliminar") {
       eliminar();
     } else if (btnElimina.textContent == "Guardar") {
@@ -983,7 +970,39 @@ function mostrarDatosGoogle(d, index = 0) {
   // console.log(btnElimina);
   const card = document.querySelector(`#card[data-id="card-${nuevoNumero}"]`);
   if (!card) return;
+
+  idCard = card.dataset.id;
+  //console.log(idCard);
   const form = document.querySelector(".editaClientes");
+  const botonEliminar = document.querySelector(`.${idCard} > button`);
+  //console.log(botonEliminar);
+  const comparados = compararCards(card);
+  //console.log(comparados.anterior);
+  //console.log(comparados.anterior.querySelector(".elCliente").textContent);
+  nombreAnterior = comparados.anterior
+    .querySelector(".elCliente")
+    .textContent.trim();
+  nombreNuevo = comparados.nueva;
+  //console.log(nombreNuevo);
+  if (nombreAnterior != nombreNuevo && nombreNuevo != null) {
+    const conte = comparados.anterior;
+    const btnconte = conte.querySelector(".btnelimina");
+    if (conte.className.includes("nuevo")) {
+      //btnElimina.textContent = "Guardar";
+      //console.log("si");
+      conte.classList.remove("nuevo");
+    }
+    if (btnconte.textContent == "Guardar") {
+      btnconte.textContent = "Eliminar";
+    }
+
+    //conte.textContent = "Eliminar";
+    // console.log(btnconte);
+    // console.log(
+    //   `son distintos: anterior: ${nombreAnterior} - nuevo: ${nombreNuevo}`,
+    // );
+  }
+
   seleccionarCard(card, eleEdita);
   ordenarPorFecha();
 }
@@ -1002,11 +1021,11 @@ function procesarEventoGoogle(ev) {
 
     fechaFin: ev.end.dateTime || ev.end.date,
 
-    vc: datosExtraidos.vehiculos,
-    vo: datosExtraidos.organizadores,
-    comida: datosExtraidos.comida || false,
-    precio: datosExtraidos.precio,
-    moneda: datosExtraidos.moneda,
+    vc: datosExtraidos?.vehiculos,
+    vo: datosExtraidos?.organizadores,
+    comida: datosExtraidos?.comida || false,
+    precio: datosExtraidos?.precio,
+    moneda: datosExtraidos?.moneda,
 
     sena: false,
     senaRecibida: "",
@@ -1171,13 +1190,9 @@ setInterval(async () => {
 // }
 //const select = document.getElementById("fechas");
 select.selectedIndex = -1;
-// select.addEventListener("mousedown", () => {
-//   console.log("Abrió el select");
-//   console.log(`selectedindex: ${select.selectedIndex}`);
-// });
 
 function mostrarFechas(eventos) {
-  //console.log(eventos);
+  console.log(eventos);
   const opciones = [];
   setTimeout(() => {
     // limpiar select
@@ -1217,15 +1232,36 @@ function mostrarFechas(eventos) {
     const cambios2 = [];
 
     clientesCalendar2.forEach((calendar, index) => {
+      // const reserva2 = clientesCards3.find(
+      //   (card) => card.fecha === calendar.fecha,
+      // );
       const reserva2 = clientesCards3.find(
-        (card) => card.fecha === calendar.fecha,
+        (card) =>
+          card.fecha === calendar.fecha && card.cliente === calendar.cliente,
       );
+      //console.log(reserva2);
+      // ✅ evitar duplicados
+      // const yaExiste = cambios2.some(
+      //   (item) =>
+      //     item.fecha === calendar.fecha && item.cliente === calendar.cliente,
+      // );
 
+      // if (yaExiste) return;
       // si no existe → ignorar
-      if (!reserva2) return;
+      //if (!reserva2) return;
+      if (!reserva2) {
+        cambios2.push({
+          cliente: calendar.cliente,
+          fecha: calendar.fecha,
+          id: calendar.id,
+          cambios: ["no_existe"],
+        });
+
+        return;
+      }
 
       const resultado2 = compararReservas(reserva2, calendar);
-      // console.log(resultado2);
+      //console.log(resultado2);
 
       // ✅ IMPORTANTE
       // limpiar cambios por iteración
@@ -1236,7 +1272,7 @@ function mostrarFechas(eventos) {
         .forEach(([campo]) => {
           cambios.push(campo);
         });
-
+      //console.log(cambios2);
       // si no hay cambios → salir
       if (cambios.length === 0) return;
 
@@ -1246,12 +1282,6 @@ function mostrarFechas(eventos) {
         id: calendar.id,
         cambios: cambios,
       });
-      // opciones.push({
-      //   fecha: calendar.fecha,
-      //   cliente: calendar.cliente,
-      //   index,
-      //   id: calendar.id,
-      // });
     });
 
     // =========================
@@ -1262,35 +1292,15 @@ function mostrarFechas(eventos) {
       //console.log("Cambios detectados:", cambios2);
 
       cambios2.forEach((cambio, index) => {
-        //console.log(cambio);
+        //console.log(cambio.cambios);
         idcCalendar = cambio.id;
-        // opciones.push({
-        //   fecha: cambio.fecha,
-        //   cliente: cambio.cliente,
-        //   index,
-        //   id: idcCalendar,
-        // });
-
-        // opciones.forEach((op) => {
-        //   agregarOption(select, `${op.fecha} - ${op.cliente}`, op.index, op.id);
-        // });
         agregarOption(
           select,
           `${cambio.fecha} - ${cambio.cliente}`,
           index,
           idcCalendar,
         );
-        // agregarOption(
-        //   select,
-        //   `🟡 ${cambio.fecha} - ${cambio.cliente} | Cambios: ${cambio.cambios.join(", ")}`,
-        //   index,
-        // );
       });
-      // opciones.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-      // console.log(opciones);
-      // opciones.forEach((op) => {
-      //   agregarOption(select, `${op.fecha} - ${op.cliente}`, op.index, op.id);
-      // });
     } else {
       // console.log("Sin cambios");
     }
@@ -1327,15 +1337,19 @@ function mostrarFechas(eventos) {
           (card.cliente === cliente && card.fecha === fecha) ||
           card.precio === precio,
       );
+      //console.log(existe);
 
       // si YA existe → no agregar
       if (existe) return;
+      const yaExisteOption = [...select.options].some(
+        (opt) => opt.textContent === `${fecha} - ${cliente}`,
+      );
+
+      if (yaExisteOption) return;
 
       if (cambios2.length > 0) {
-        // agregar al select
-        // opciones.forEach((op) => {
-        //   agregarOption(select, `${op.fecha} - ${op.cliente}`, op.index, op.id);
-        // });
+        //console.log(cambios2);
+
         agregarOption(
           select,
           `${fecha} - ${cliente}`,
@@ -1346,58 +1360,24 @@ function mostrarFechas(eventos) {
         // console.log("Sin cambios");
       }
     });
-    // if (cambios2.length > 0) {
-    //   // agregar al select
-    //   opciones.forEach((op) => {
-    //     agregarOption(select, `${op.fecha} - ${op.cliente}`, op.index, op.id);
-    //   });
-    //   //agregarOption(select, `${fecha} - ${cliente}`, index, idcCalendar);
-    // } else {
-    //   // console.log("Sin cambios");
-    // }
     select.onchange = () => {
       indiceSelect = null;
       numeroIDSelect = null;
       origen = "select";
-      // const todosCard = document.querySelectorAll("#card");
-      // todosCard.forEach((card) => {
-      //   console.log(card);
-      //   //card.classList.remove("selected");
-      // });
 
       document.querySelectorAll("#card").forEach((card) => {
-        //console.log(card);
         card.classList.remove("selected");
         card.dataset.selected = "false";
       });
 
       const optionSeleccionado = select.options[select.selectedIndex];
-      //console.log(optionSeleccionado.id);
-      // console.log(select.value);
-      // console.log(select.value);
+
       const index = select.value;
 
-      // if (indiceAnterior === null) {
-      //   indiceAnterior = `card-${index}`;
-      // } //else {
-      // //indiceAnterior = indiceAnterior;
-      // //}
-      // if (indiceNuevo === null) {
-      //   indiceNuevo = `card-${index}`;
-      // }
-      // console.log(datos[index]);
-      //console.log(eventos);
-      //const evento = eventos.find((ev) => ev.id === optionSeleccionado.id);
-
-      //console.log(evento);
       const indexEvento = eventos.findIndex(
         (ev) => ev.id === optionSeleccionado.id,
       );
 
-      //console.log(indexEvento);
-      //console.log(datos[index].id);
-      //console.log(faltantes);
-      //console.log(nuevoNumero);
       if (existeFaltante) {
         if (index == nuevoNumero) {
           idCalendar = `card-${nuevoNumero}`;
@@ -1410,13 +1390,8 @@ function mostrarFechas(eventos) {
         idCalendar = datos[index].id;
         numero = parseInt(idCalendar.match(/card-(\d+)/)[1]);
       }
-      // console.log(idCalendar);
+      //console.log(idCalendar);
       idSeleccionado = idCalendar;
-      // console.log(noexiste);
-      // console.log(nuevoNumero);
-
-      // console.log(idCalendar);
-      // console.log(numero);
 
       if (index === "") return;
 
@@ -1488,16 +1463,56 @@ function mostrarFechas(eventos) {
       if (!reservaExistente) {
         // console.log("NO EXISTE");
         estado = "NO EXISTE";
+        idCard2 = `card-${numeroMayor}`;
         // if (indiceAnterior === null) {
         //   indiceAnterior = numero;
         // }
-        datosNuevos.push(datosProcesados);
+        nuevo = {
+          id: idCard2,
+          cliente: datosProcesados.cliente,
+          fechaInicio: datosProcesados.fechaInicio,
+          fechaFin: datosProcesados.fechaFin,
+          vc: datosProcesados?.vc,
+          vo: datosProcesados?.vo,
+          comida: comidaCheck,
+          precio: datosProcesados?.precio,
+          moneda: datosProcesados?.moneda,
+          sena: señaCheck,
+          senaRecibida: datosProcesados?.senaRecibida,
+        };
+        datosNuevos.push(nuevo);
         reservas.push({
           cliente: datosProcesados.cliente.toLowerCase().trim(),
           fecha: datosProcesados.fechaInicio.toLowerCase(),
           precio: datosProcesados.precio,
         });
+        const todos1 = lista.querySelectorAll("#card");
+        const total = todos1.length;
+        //console.log(total);
+        //console.log(datosNuevos);
+        const numeros = obtenerNumeros();
+        const ultimo = lista.lastElementChild;
+        const dataId2 = ultimo.dataset.id;
+        //console.log(Number(dataId2.split("-")[1]) + 1);
+        //console.log(obtenerNumeros(nuevoNumero));
+        const numeros2 = Number(dataId2.split("-")[1]) + 1;
+        //console.log(numeros[1]);
+        if (total > numeros2) {
+          nuevoNumero = total;
+          numeroMayor = numeroMayor + 1;
+        }
 
+        tarjetaAnterior = `card-${nuevoNumero}`;
+        //console.log(tarjetaAnterior);
+        // document.querySelectorAll("#card").forEach((card) => {
+        //   //card.addEventListener("click", () => {
+        //   compararCards(card);
+        //   //});
+        // });
+        // const card2 = document.querySelector(`#${tarjetaAnterior}`);
+        // card2.addEventListener("click", () => {
+        //   compararCards(card2);
+        // });
         mostrarDatosGoogle(datosProcesados, nuevoNumero);
         cargarEnFormulario(datosProcesados, idCalendar, numero);
         eleEdita.style.background = "#888";
@@ -1506,8 +1521,12 @@ function mostrarFechas(eventos) {
           block: "center",
         });
 
+        //console.log(`nuevo: ${numeros.nuevo2} - mayor: ${numeros.mayor}`);
+        tarjetaAnterior = null;
         return;
       }
+      //obtenerNumeros();
+      //obtenerNumeros(nuevoNumero, numeroMayor);
 
       indiceSelect = index;
       //}
@@ -1534,8 +1553,10 @@ function mostrarFechas(eventos) {
             cliente,
             datosProcesados.fechaInicio,
           );
-          console.log(idCard);
+          //console.log(idCard);
           const card2 = document.querySelector(`.${idCard}`);
+          compararCards(card2);
+          card2.click();
           const botonEliminar = document.querySelector(`.${idCard} > button`);
           idCard2 = botonEliminar.id;
           // console.log(señaCheck);
@@ -1586,25 +1607,20 @@ function mostrarFechas(eventos) {
           });
         }
       } else if (indiceNuevo == indiceAnterior) {
-        // console.log(numeroIDSelect);
-        //console.log(`indiceA: ${indiceAnterior} - indiceN: ${indiceNuevo}`);
-        // console.log(idSeleccionado);
         const card = document.querySelector(`.${numeroIDSelect}`);
-        //const botonEliminar = document.querySelector(`#${idSeleccionado}`);
         // resaltar
         if (card) {
           idCard = obtenerIdCardPorCliente(
             cliente,
             datosProcesados.fechaInicio,
           );
-          console.log(idCard);
+          //console.log(idCard);
           const card2 = document.querySelector(`.${idCard}`);
+          compararCards(card2);
+          card2.click();
           const botonEliminar = document.querySelector(`.${idCard} > button`);
-          console.log(botonEliminar);
+          //console.log(botonEliminar);
           idCard2 = botonEliminar.id;
-          // console.log(señaCheck);
-          // console.log(card);
-          // console.log(datosProcesados);
           nuevo = {
             id: idCard2,
             cliente: datosProcesados.cliente,
@@ -1659,248 +1675,11 @@ function mostrarFechas(eventos) {
 
       eleEdita.style.background = "#2c2c2c";
       cargarEnFormulario(datosProcesados, idCalendar, indiceAnterior);
-      // console.log("YA EXISTE");
-
-      //console.log(reservaExistente);
     };
   }, 2000);
 }
-
-// function mostrarFechas2(eventos) {
-//   //console.log(eventos);
-//   // const resultados = clientesCalendar.filter((r) =>
-//   //   r.cliente.toLowerCase().includes(reservas),
-//   // );
-//   //console.log(clientes);
-//   // const resultados = reservas.filter((r) =>
-//   //   r.cliente.toLowerCase().includes(clientesCalendar.cliente),
-//   // );
-//   // const clientesReservas = reservas.map((c) => c.cliente.toLowerCase());
-//   // setTimeout(() => {
-//   //   console.log(clientesReservas);
-//   // }, 2000);
-//   setTimeout(() => {
-//     const clientesCalendar2 = clientesCalendar.map((c) => ({
-//       cliente: c.cliente.replace("cliente:", "").trim().toLowerCase(),
-//       fecha: c.fecha.replace("start:", "").trim().toLowerCase(),
-//       precio: c.precio.replace("precio: ", "").trim().toLowerCase(),
-//       moneda: c.moneda.trim().toLowerCase(),
-//     }));
-
-//     const clientesCards = new Set(
-//       reservas.map((c) => c.cliente.trim().toLowerCase()),
-//     );
-
-//     const clientesCards3 = reservas.map((c) => ({
-//       cliente: c.cliente.toLowerCase(),
-//       fecha: c.fecha.replace("fecha:", "").toLowerCase(),
-//       precio: c.precio.replace(`${moneda} `, "").trim().toLowerCase(),
-//       moneda: moneda.trim().toLowerCase(),
-//     }));
-//     //console.log(clientesCards3);
-//     // if (clientesCards.has(clientesCalendar2)) {
-//     //   console.log("YA EXISTE:", clientesCalendar2);
-//     // }
-//     //console.log(clientesCalendar2);
-//     // console.log(clientesCards3);
-//     //console.log(moneda);
-//     clientesCards3.forEach((calendar) => {
-//       console.log(calendar.precio);
-//     });
-//     clientesCalendar2.forEach((calendar) => {
-//       //console.log(`precio Calendario: ${calendar.precio}`);
-//       const reserva2 = clientesCards3.find(
-//         (card) => card.fecha === calendar.fecha,
-//       );
-//       if (!reserva2) {
-//         modificados.push({
-//           tipo: "nuevo",
-//           datos: calendar,
-//         });
-
-//         return;
-//       }
-
-//       // const resultado = compararReservas(reserva2, calendar);
-
-//       // //console.log(resultado);
-//       // const cambios = Object.entries(resultado)
-//       //   .filter(([_, igual]) => !igual)
-//       //   .map(([campo]) => campo);
-
-//       // console.log(cambios);
-
-//       const resultado2 = compararReservas(reserva2, calendar);
-//       console.log(resultado2);
-//       Object.entries(resultado2)
-//         .filter(([_, igual]) => !igual)
-//         .forEach(([campo]) => {
-//           cambios2.push(campo);
-//         });
-
-//       // cambios2.push({ = Object.entries(resultado2)
-//       //   .filter(([_, igual]) => !igual)
-//       //   .map(([campo]) => campo);
-
-//       // if (cambios2.length > 0) {
-//       //   console.log("Cambios detectados:", cambios2);
-//       //   //   const datos = procesarEventoGoogle(ev);
-//       //   // //console.log(datos);
-//       //   // //console.log(index);
-
-//       //   // const cliente = datos.cliente.toLowerCase();
-
-//       //   // const fecha = datos.fechaInicio.toLowerCase();
-//       // } else {
-//       //   console.log("Sin cambios");
-//       // }
-//       //console.log(reserva2);
-//       // const reserva = clientesCards3.find(
-//       //   (card) =>
-//       //     card.precio === calendar.precio && card.fecha === calendar.fecha,
-//       // );
-//       // console.log(reserva);
-//       const cambioCliente = reserva2.precio !== calendar.precio;
-//       if (cambioCliente) {
-//         //console.log(`cambio: ${calendar.cliente}`);
-//         modificados.push({
-//           tipo: "modificado",
-//           anterior: reserva2,
-//           nuevo: calendar,
-//         });
-//       }
-//       console.log(modificados);
-//       if (clientesCards.has(calendar.cliente)) {
-//         //console.log("YA EXISTE:", calendar);
-//         return;
-//       }
-//       existe = clientesCards3.some(
-//         (card) =>
-//           card.cliente === calendar.cliente && card.fecha === calendar.fecha,
-//       );
-
-//       // if (existe) {
-//       //   console.log("YA EXISTE:", calendar);
-//       //   //return;
-//       // } else {
-//       //   //console.log("NO EXISTE:", calendar);
-//       // }
-//     });
-//     const faltantes = clientesCalendar2.filter(
-//       (calendar) =>
-//         !clientesCards3.some(
-//           (card) =>
-//             card.cliente === calendar.cliente && card.fecha === calendar.fecha,
-//         ),
-//     );
-//     noexiste = faltantes;
-
-//     //console.log(noexiste[0].cliente);
-//     //console.log(existe);
-//     //if (existe) return;
-//     //}, 2000);
-
-//     // resultados.forEach((el) => {
-//     //   console.log(el);
-//     // });
-//     //console.log(resultados);
-//     // const clienteExiste = resultados.cliente;
-//     // const fechaExiste = resultados.fecha;
-//     // console.log(clienteExiste);
-//     // console.log(fechaExiste);
-//     // // resultados.forEach((ev) => {
-//     // //   console.log(ev.cliente);
-//     // //   clientes = ev.cliente;
-//     // //   fechasInicio = ev.fechaInicio;
-//     // // });
-//     // //const clienteExiste = resultados[0].cliente;
-//     // //const fechaExiste = resultados[0].fecha;
-//     // console.log(clientesCalendar);
-//     // //console.log(clienteExiste);
-//     // //console.log(fechaExiste);
-//     // console.log(resultados);
-//     //console.log(reservas);
-//     //console.log(`cliente: ${clientes} - fecha: ${fechasInicio}`);
-//     //console.log(reservas);
-//     //const select = document.getElementById("fechas");
-
-//     // Limpiar opciones anteriores
-//     //select.innerHTML = "";
-
-//     // eventos.forEach((ev, index) => {
-//     //   const fecha = ev.start.dateTime || ev.start.date;
-
-//     //   const option = document.createElement("option");
-
-//     //   option.value = index;
-//     //   option.textContent = `${fecha} - ${ev.summary}`;
-
-//     //   select.appendChild(option);
-//     // });
-
-//     // recorrer eventos originales
-//     eventos.forEach((ev, index) => {
-//       const datos = procesarEventoGoogle(ev);
-//       //console.log(datos);
-//       //console.log(index);
-
-//       const cliente = datos.cliente.toLowerCase();
-//       const fecha = datos.fechaInicio.toLowerCase();
-//       const precio = datos.precio;
-//       console.log(precio);
-
-//       // verificar si existe
-//       const existe = clientesCards3.some(
-//         (card) =>
-//           (card.cliente === cliente && card.fecha === fecha) ||
-//           card.precio === precio,
-//       );
-//       console.log(existe);
-
-//       // si YA existe → no agregar
-//       if (existe) return;
-
-//       if (cambios2.length > 0) {
-//         console.log("Cambios detectados:", cambios2);
-//         agregarOption(select, `${fecha} - ${cliente}`, 0);
-//         //if (existe) return;
-//         //   const datos = procesarEventoGoogle(ev);
-//         // //console.log(datos);
-//         // //console.log(index);
-
-//         // const cliente = datos.cliente.toLowerCase();
-
-//         // const fecha = datos.fechaInicio.toLowerCase();
-//       } else {
-//         console.log("Sin cambios");
-//       }
-
-//       // ✅ SOLO FALTANTES
-//       // const option = document.createElement("option");
-
-//       // option.value = index;
-//       // option.textContent = `${fecha} - ${cliente}`;
-
-//       // select.appendChild(option);
-//     });
-
-//     // Cuando cambia la selección
-//     select.onchange = () => {
-//       const eventoSeleccionado = eventos[select.value];
-//       //console.log(eventoSeleccionado);
-//       const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-//       //console.log(datosProcesados.cliente);
-//       //clientes = datosProcesados.cliente.toLowerCase();
-//       clientes = noexiste[0].cliente;
-//       fechasInicio = datosProcesados.fechaInicio.toLowerCase();
-//       //console.log(`cliente: ${clientes} - fechaInicio: ${fechasInicio}`);
-
-//       mostrarDatosGoogle(datosProcesados, nuevoNumero);
-//     };
-//   }, 2000);
-// }
-
-function ordenarPorFecha() {
+// Funcion para ordenar por fecha
+function ordenarPorFecha2() {
   const cards = Array.from(lista.children);
 
   cards.sort((a, b) => {
@@ -1912,6 +1691,72 @@ function ordenarPorFecha() {
 
   // volver a insertar ordenados
   cards.forEach((card) => lista.appendChild(card));
+}
+
+function ordenarPorFecha3() {
+  const hoy = new Date();
+
+  // quitar horas para comparar solo fechas
+  hoy.setHours(0, 0, 0, 0);
+
+  const cards = Array.from(lista.children).filter((card) => {
+    const fechaFinTexto = card.querySelector("#fechaFin").textContent;
+
+    const fechaFin = new Date(fechaFinTexto);
+
+    fechaFin.setHours(0, 0, 0, 0);
+
+    // ✅ mostrar solo si fechaFin es MAYOR que hoy
+    return fechaFin > hoy;
+  });
+
+  // ordenar por fechaInicio
+  cards.sort((a, b) => {
+    const fechaA = new Date(a.querySelector("#fechaInicio").textContent);
+
+    const fechaB = new Date(b.querySelector("#fechaInicio").textContent);
+
+    return fechaA - fechaB;
+  });
+
+  // limpiar lista
+  lista.innerHTML = "";
+
+  // volver a insertar ordenadas
+  cards.forEach((card) => {
+    lista.appendChild(card);
+  });
+}
+
+function ordenarPorFecha() {
+  const ahora = new Date();
+
+  const cards = Array.from(lista.children).filter((card) => {
+    const fechaFinTexto = card.querySelector("#fechaFin").textContent;
+
+    // crear fecha fin
+    const fechaFin = new Date(fechaFinTexto);
+
+    // ✅ poner hora límite
+    fechaFin.setHours(23, 59, 0, 0);
+
+    // mostrar mientras NO haya pasado
+    return ahora < fechaFin;
+  });
+
+  cards.sort((a, b) => {
+    const fechaA = new Date(a.querySelector("#fechaInicio").textContent);
+
+    const fechaB = new Date(b.querySelector("#fechaInicio").textContent);
+
+    return fechaA - fechaB;
+  });
+
+  lista.innerHTML = "";
+
+  cards.forEach((card) => {
+    lista.appendChild(card);
+  });
 }
 
 // Funcion para comparar reservas con calendario
@@ -1944,14 +1789,14 @@ function compararReservas(reserva, calendar) {
       normalizarFecha(reserva.fechaFin) === normalizarFecha(calendar.fechaFin),
 
     precio:
-      normalizarNumero(reserva.precio) === normalizarNumero(calendar.precio),
+      normalizarNumero(reserva?.precio) === normalizarNumero(calendar?.precio),
 
     comida:
-      normalizarBoolean(reserva.comida) === normalizarBoolean(calendar.comida),
+      normalizarBoolean(reserva.comida) === normalizarBoolean(calendar?.comida),
 
     reservas:
       normalizarNumero(reserva.reservas) ===
-      normalizarNumero(calendar.reservas),
+      normalizarNumero(calendar?.reservas),
   };
 }
 
@@ -1997,24 +1842,6 @@ function seleccionarCard(card, formulario) {
     card.dataset.selected = "false";
     card.classList.remove("selected");
     limpiarFormulario(eleEdita);
-    // const form = document.querySelector(`${formulario}`);
-    // const elementos = form.querySelectorAll("input, select, textarea");
-    // console.log(elementos);
-    // form.querySelectorAll("input, textarea, select").forEach((el) => {
-    //   if (el.type === "checkbox" || el.type === "radio") {
-    //     el.checked = false;
-    //   } else {
-    //     el.value = "";
-    //   }
-    // });
-
-    // elementos.forEach((el) => {
-    //   if (el.type === "checkbox" || el.type === "radio") {
-    //     el.checked = false;
-    //   } else {
-    //     el.value = "";
-    //   }
-    // });
     return;
   }
 
@@ -2027,9 +1854,8 @@ function seleccionarCard(card, formulario) {
   // seleccionar nueva
   card.dataset.selected = "true";
   card.classList.add("selected");
-  //limpiarFormulario(formulario);
 }
-
+// Funcion para obtener el ID de cada card
 function obtenerIdCardPorCliente(cliente, fechaBuscada) {
   const cards = document.querySelectorAll("#card");
 
@@ -2043,8 +1869,6 @@ function obtenerIdCardPorCliente(cliente, fechaBuscada) {
       .textContent.trim()
       .toLowerCase();
 
-    //console.log(fecha);
-
     if (
       nombre === cliente.trim().toLowerCase() &&
       fecha === fechaBuscada.trim().toLowerCase()
@@ -2056,6 +1880,43 @@ function obtenerIdCardPorCliente(cliente, fechaBuscada) {
   return null;
 }
 
+// Funcion para obtener el ultimo id de la card, y el ultimo id del boton eliminar
+function obtenerNumeros() {
+  const ultimo = lista.lastElementChild;
+  dataId = ultimo.dataset.id;
+
+  document.querySelectorAll("#card").forEach((card) => {
+    const botonEliminar = card.querySelector("button");
+
+    if (!botonEliminar?.id) return;
+
+    const match = botonEliminar.id.match(/card-(\d+)/);
+
+    if (!match) return;
+
+    const numero = parseInt(match[1]);
+    //console.log(numero);
+
+    if (numero > numeroMayor) {
+      numeroMayor = numero;
+    }
+  });
+  //numeroInicial = numeroMayor + 1;
+  nuevoNumero = Number(dataId.split("-")[1]) + 1;
+  //console.log(numeroInicial);
+
+  if (numeroMayor != numeroInicial) {
+    numeroMayor = numeroMayor + 1;
+  }
+  //console.log(numeroMayor);
+  //console.log(`nuevo: ${nuevoNumero} - mayor: ${numeroMayor}`);
+  //return [nuevoNumero, numeroMayor];
+  return {
+    nuevo2: nuevoNumero,
+    mayor: numeroMayor,
+  };
+}
+
 let a = "";
 let b = "";
 let scrolll = "";
@@ -2064,20 +1925,8 @@ const target = 20;
 let final = "";
 //const TargetHeight = document.documentElement.offsetHeight - screen.height;
 const TargetHeight = document.documentElement.offsetHeight - window.innerHeight;
-
+// Funcion para crear boton de top
 function creaTop() {
-  //if (location.href.includes('Menu-Cumen-Truck') || location.href.includes('index') || window.location.pathname.includes('index') || location.href.includes('bebidas') || window.location.pathname.includes('bebidas') || window.location.pathname.includes('Menu-Cumen-Truck'))
-  //if (location.href.includes('Menu-Cumen-Truck') && location.href.includes('index') || window.location.pathname.includes('Menu-Cumen-Truck') && window.location.pathname.includes('index') || location.href.includes('bebidas') || window.location.pathname.includes('bebidas'))
-  /* if (location.href.includes('index') && window.location.pathname.includes('index') || location.href.includes('bebidas') || window.location.pathname.includes('bebidas'))
-        var destino = document.querySelector("main");
-    else if (window.location.pathname.includes('about')) {
-        destino = document.querySelector(".container");
-    } */
-  // if (window.location.pathname.includes('about')) {
-  //     var destino = document.querySelector(".container");
-  // } else {
-  //     destino = document.querySelector("body");
-  // }
   var destino = document.querySelector("body");
   if (destino == undefined) alert("No existe el bloque destino");
   else {
@@ -2115,7 +1964,7 @@ function scrollFunction() {
     mybutton.style.display = "none";
   }
 }
-
+// Funcion para determinar cuando llegamos al final de la pagina
 function isBottomOfPage() {
   //return window.scrollY + window.innerHeight >= Math.round(document.documentElement.scrollHeight);
   return (
@@ -2124,9 +1973,6 @@ function isBottomOfPage() {
 }
 
 function topFunction() {
-  //const mybutton = document.getElementById("myBtn");
-  //document.body.scrollTop = 0; // For Safari
-  //document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
   if ("scrollTo" in window) {
     // Verifica si el navegador soporta scrollTo
     window.scrollTo({
@@ -2142,6 +1988,34 @@ function topFunction() {
       window.scrollTo(0, currentScroll - currentScroll / 8); // Efecto suave manual
     }
   }
+}
+
+function compararCards(cardActual) {
+  const clienteNuevo = cardActual.querySelector(".elCliente").textContent;
+
+  //console.log(clienteNuevo.trim());
+
+  if (cardAnterior) {
+    const clienteAnterior =
+      cardAnterior.querySelector(".elCliente").textContent;
+
+    //console.log("Anterior:", clienteAnterior.trim());
+    //console.log("Nuevo:", clienteNuevo.trim());
+    //cardNueva = clienteNuevo.trim();
+    cardNueva = clienteNuevo.trim();
+    if (clienteAnterior.trim() !== clienteNuevo.trim()) {
+      //cardAnterior = clienteAnterior.trim();
+
+      console.log("Cambió de cliente");
+      return { anterior: cardAnterior, nueva: cardNueva };
+    }
+  } else {
+    cardNueva = null;
+  }
+
+  //cardAnterior = cardActual.querySelector(".elCliente").textContent;
+  cardAnterior = cardActual;
+  return { anterior: cardAnterior, nueva: cardNueva };
 }
 
 cargarDatos();
