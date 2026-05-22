@@ -103,8 +103,8 @@
     "fechaFin": "2026-06-24",
     "vc": "9",
     "vo": "",
-    "comida": false,
-    "precio": "50",
+    "comida": true,
+    "precio": "60",
     "sena": false,
     "senaRecibida": ""
   },
