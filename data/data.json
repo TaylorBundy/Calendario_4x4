@@ -106,14 +106,5 @@
     "precio": "50",
     "sena": false,
     "senaRecibida": ""
-  },
-  {
-    "id": "card-10",
-    "cliente": "la huella",
-    "fechaInicio": "2026-07-24",
-    "fechaFin": "2026-07-27",
-    "comida": "No",
-    "sena": "No",
-    "senaRecibida": ""
   }
 ]
