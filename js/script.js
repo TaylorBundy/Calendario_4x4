@@ -194,12 +194,14 @@ datos.forEach((item) => {
     ocultas.push(item);
   }
 });
-console.log(ocultas.length);
+
 // MOSTRAR U OCULTAR BOTÓN
-if (ocultas.length === 0) {
-  btnOcultas.style.display = "none";
-} else {
-  btnOcultas.style.display = "block";
+function muestraBoton() {
+  if (ocultas.length === 0) {
+    btnOcultas.style.display = "none";
+  } else {
+    btnOcultas.style.display = "block";
+  }
 }
 // visibles.forEach((item) => {
 //   mostrarDatos2(lista2, true);
@@ -295,6 +297,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     const numeros = obtenerNumeros();
     numeroInicial = numeros.mayor;
+    muestraBoton();
   }, 2000);
 
   recargar.addEventListener("click", () => {
@@ -640,7 +643,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       div.dataset.id = `card-${index}`;
       //div.appendChild(divContainer);
       div.innerHTML = `
-    <button class="btnelimina" id="${d.id}"> Eliminar </button>
+    <button class="btnelimina" id="${d.id}">Eliminar</button>
     `;
       const longitud = d?.precio;
       if (longitud.length <= 3) {
@@ -743,6 +746,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
         idCard = idSeleccionado;
         if (btnElimina.textContent == "Eliminar") {
           eliminar();
+          //console.log(d.id);
           // console.log("eliminar");
           if (option) {
             option.remove();
@@ -1197,7 +1201,8 @@ guarda.addEventListener("click", () => {
     sena: document.getElementById("seña").checked,
     senaRecibida: document.getElementById("importeSeña").value,
   };
-  guardar(nuevo);
+  console.log(nuevo);
+  //guardar(nuevo);
   limpiarFormulario(eleCarga);
 });
 
