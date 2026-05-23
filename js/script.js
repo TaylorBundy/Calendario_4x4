@@ -199,8 +199,21 @@ datos.forEach((item) => {
 
 // mostrarDatos2(lista2, true);
 // Funcion para restar 1 dia a la fecha obtenida del calendario
-function restarDias(fecha, dias) {
+function restarDias2(fecha, dias) {
   const nuevaFecha = new Date(fecha);
+
+  nuevaFecha.setDate(nuevaFecha.getDate() - dias);
+
+  return nuevaFecha.toISOString().split("T")[0];
+}
+
+function restarDias(fechaInicio, fechaFin, dias) {
+  // Si son iguales, devolver la misma fecha
+  if (fechaInicio === fechaFin) {
+    return fechaFin;
+  }
+
+  const nuevaFecha = new Date(fechaFin);
 
   nuevaFecha.setDate(nuevaFecha.getDate() - dias);
 
@@ -227,7 +240,11 @@ fetch(url)
       const precio = `precio: ${descrip?.precio}`;
       const id = ev?.id;
       idCalendar = ev?.id;
-      const resultado = restarDias(fechaFin.replace("end: ", ""), 1);
+      const resultado = restarDias(
+        fechaInicio,
+        fechaFin.replace("end: ", ""),
+        1,
+      );
       clientesCalendar.push({
         id: id.toLowerCase().trim(),
         cliente: cliente.toLowerCase().trim(),
@@ -354,7 +371,11 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   }
   document.getElementById("editaCliente").value = dato.cliente;
   document.getElementById("editaFechaInicio").value = dato.fechaInicio;
-  const fechaFin = restarDias(dato.fechaFin.replace("end: ", ""), 1);
+  const fechaFin = restarDias(
+    dato.fechaInicio,
+    dato.fechaFin.replace("end: ", ""),
+    1,
+  );
   document.getElementById("editaFechaFin").value = fechaFin;
   document.getElementById("editaVehiculosClientes").value = dato?.vc || "";
   document.getElementById("editaVehiculosOrg").value = dato?.vo || "";
@@ -803,13 +824,18 @@ function mostrarDatos() {
     comidaCheck = valorComida.trim();
     //comidaCheck = !(valorComida === "no" || valorComida === "false");
     señaCheck = valorSeña.trim(); //!(valorSeña === "No" || valorSeña === "false");
+    const resultado = restarDias(
+      d.fechaInicio,
+      d.fechaFin.replace("end: ", ""),
+      1,
+    );
 
     divContainer.innerHTML = `
     <!-- <button class="btnelimina" id="${d.id}"> Eliminar </button> -->
     <!-- <div class="divcontainer"> -->
       <h2 class="elCliente"><strong>${d.cliente}</strong></h2><br>
       <span class="datosTitulos"><strong>Fecha Inicio:</strong> <span class="datosVisibles" id="fechaInicio">${d.fechaInicio}</span></span>
-      <span class="datosTitulos"><strong>Fecha Fin:</strong> <span class="datosVisibles" id="fechaFin">${d.fechaFin}</span></span>
+      <span class="datosTitulos"><strong>Fecha Fin:</strong> <span class="datosVisibles" id="fechaFin">${resultado}</span></span>
       <span class="datosTitulos"><strong>Vehículos clientes:</strong> <span class="datosVisibles" id="vc">${d.vc}</span></span>
       <span class="datosTitulos"><strong>Vehículos org:</strong> <span class="datosVisibles" id="vo">${d.vo}</span></span>
       <span class="datosTitulos"><strong>Comida:</strong> <span class="datosVisibles" id="comida">${comidaCheck}</span></span>
@@ -929,7 +955,11 @@ function mostrarDatosGoogle(d, index = 0) {
       }
     }
   }, 3000);
-  const fechaFin = restarDias(d.fechaFin.replace("end: ", ""), 1);
+  const fechaFin = restarDias(
+    d.fechaInicio,
+    d.fechaFin.replace("end: ", ""),
+    1,
+  );
 
   const div = document.createElement("div");
   const divContainer = document.createElement("div");
@@ -1681,7 +1711,7 @@ function mostrarFechas(eventos) {
             sena: señaCheck,
             senaRecibida: datosProcesados.senaRecibida,
           };
-          const fechaFin = restarDias(nuevo.fechaFin, 1);
+          const fechaFin = restarDias(nuevo.fechaInicio, nuevo.fechaFin, 1);
           //datosNuevos.push(nuevo);
           if (nuevo.comida == "false") {
             nuevo.comida = "No";
@@ -1742,7 +1772,7 @@ function mostrarFechas(eventos) {
             sena: señaCheck,
             senaRecibida: datosProcesados.senaRecibida,
           };
-          const fechaFin = restarDias(nuevo.fechaFin, 1);
+          const fechaFin = restarDias(nuevo.fechaInicio, nuevo.fechaFin, 1);
           //datosNuevos.push(nuevo);
 
           card2.querySelector(".elCliente").textContent = nuevo.cliente;
@@ -1844,7 +1874,7 @@ function ordenarPorFecha() {
 
     // crear fecha fin
     const fechaFin = new Date(fechaFinTexto);
-    //console.log(ahora);
+    console.log(fechaFin);
 
     // ✅ poner hora límite
     fechaFin.setHours(23, 59, 0, 0);
