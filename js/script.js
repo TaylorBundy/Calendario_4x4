@@ -10,6 +10,7 @@ const actualizar = document.querySelector(".actualizar");
 const botones = document.querySelectorAll("button");
 const btnEliminar = document.querySelector("#editaElimina");
 const eleEdita = document.querySelector(".editaClientes");
+const eleCarga = document.querySelector(".cargaClientes");
 const recargar = document.querySelector(".recargar");
 const select = document.getElementById("fechas");
 const API = "https://calendario-4x4.onrender.com";
@@ -193,6 +194,13 @@ datos.forEach((item) => {
     ocultas.push(item);
   }
 });
+console.log(ocultas.length);
+// MOSTRAR U OCULTAR BOTÓN
+if (ocultas.length === 0) {
+  btnOcultas.style.display = "none";
+} else {
+  btnOcultas.style.display = "block";
+}
 // visibles.forEach((item) => {
 //   mostrarDatos2(lista2, true);
 // });
@@ -240,11 +248,11 @@ fetch(url)
       const precio = `precio: ${descrip?.precio}`;
       const id = ev?.id;
       idCalendar = ev?.id;
-      const resultado = restarDias(
-        fechaInicio,
-        fechaFin.replace("end: ", ""),
-        1,
-      );
+      // const resultado = restarDias(
+      //   fechaInicio,
+      //   fechaFin.replace("end: ", ""),
+      //   1,
+      // );
       clientesCalendar.push({
         id: id.toLowerCase().trim(),
         cliente: cliente.toLowerCase().trim(),
@@ -1190,7 +1198,7 @@ guarda.addEventListener("click", () => {
     senaRecibida: document.getElementById("importeSeña").value,
   };
   guardar(nuevo);
-  limpiarFormulario("cargaClientes");
+  limpiarFormulario(eleCarga);
 });
 
 actualizar.addEventListener("click", (e) => {
@@ -1874,7 +1882,7 @@ function ordenarPorFecha() {
 
     // crear fecha fin
     const fechaFin = new Date(fechaFinTexto);
-    console.log(fechaFin);
+    //console.log(fechaFin);
 
     // ✅ poner hora límite
     fechaFin.setHours(23, 59, 0, 0);
