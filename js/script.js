@@ -770,6 +770,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       // 👉 CLICK PARA EDITAR
       divContainer.addEventListener("click", (e) => {
         idSeleccionado = d.id;
+        idCard2 = idSeleccionado;
         //console.log(idSeleccionado);
         // console.log(e.target.closest('div[id="card"]'));
         const card = e.target.closest("#card");
@@ -818,6 +819,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
         //console.log(d.id);
         idSeleccionado = d.id;
         idCard = idSeleccionado;
+        idCard2 = btnElimina.id;
         if (btnElimina.textContent == "Eliminar") {
           eliminar();
           //console.log(d.id);
@@ -934,6 +936,7 @@ function mostrarDatos() {
     divContainer.addEventListener("click", (e) => {
       idSeleccionado = d.id;
       //console.log(idSeleccionado);
+      idCard2 = idSeleccionado;
       // console.log(e.target.closest('div[id="card"]'));
       const card = e.target.closest("#card");
       if (!card) return;
@@ -981,6 +984,7 @@ function mostrarDatos() {
       //console.log(d.id);
       idSeleccionado = d.id;
       idCard = idSeleccionado;
+      idCard2 = btnElimina.id;
       if (btnElimina.textContent == "Eliminar") {
         eliminar();
         // console.log("eliminar");
@@ -1331,6 +1335,7 @@ async function guardar(contenido) {
 }
 
 async function editar(contenido) {
+  //console.log(idCard2);
   const res = await fetch(`${API}/editar`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1347,17 +1352,40 @@ async function editar(contenido) {
   alert("Editado");
 }
 
+// async function eliminar() {
+//   console.log(`${API}/eliminar`);
+//   await fetch(`http://127.0.0.1:5000/eliminar`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({
+//       path: "data/data.json",
+//       id: idCard2,
+//     }),
+//   });
+// }
 async function eliminar() {
-  await fetch(`${API}/eliminar`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      path: "data/data.json",
-      id: idCard2,
-    }),
-  });
+  //console.log(idCard2);
+  try {
+    const res = await fetch(`${API}/eliminar`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        path: "data/data.json",
+        id: idCard2,
+      }),
+    });
+
+    const data = await res.json();
+
+    console.log("STATUS:", res.status);
+    console.log(data);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 // function limpiarFormulario2(formId) {

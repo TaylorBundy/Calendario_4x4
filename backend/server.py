@@ -15,6 +15,10 @@ GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
 
 API_URL = f"https://api.github.com/repos/{REPO}/contents/{FILE_PATH}"
 
+@app.route("/")
+def home():
+    return "Servidor activo"
+
 # ✏️ EDITAR
 @app.route("/editar", methods=["POST"])
 def editar():
