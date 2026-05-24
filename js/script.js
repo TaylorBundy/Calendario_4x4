@@ -457,7 +457,8 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
     señaCheck = true;
   }
   document.getElementById("editaCliente").value = dato.cliente;
-  document.getElementById("editaFechaInicio").value = dato.fechaInicio;
+  const fecha2 = formatearFecha(dato.fechaInicio);
+  document.getElementById("editaFechaInicio").value = fecha2;
   const fechaFin = restarDias(
     dato.fechaInicio,
     dato.fechaFin.replace("end: ", ""),
@@ -1053,6 +1054,7 @@ function mostrarDatosGoogle(d, index = 0) {
     d.fechaFin.replace("end: ", ""),
     1,
   );
+  const fecha2 = formatearFecha(d.fechaInicio);
 
   const div = document.createElement("div");
   const divContainer = document.createElement("div");
@@ -1087,7 +1089,7 @@ function mostrarDatosGoogle(d, index = 0) {
       <span class="datosTitulos">
         <strong>Fecha Inicio:</strong>
         <span class="datosVisibles" id="fechaInicio">
-          ${d.fechaInicio || ""}
+          ${fecha2 || ""}
         </span>
       </span>
 
