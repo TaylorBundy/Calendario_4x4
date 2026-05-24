@@ -2205,8 +2205,21 @@ function obtenerNumeros() {
   const ultimo = lista.lastElementChild;
   const ultimo2 = lista2.lastElementChild;
   dataId = ultimo.dataset.id;
-  const dataId2 = ultimo2.dataset.id;
-  console.log(ultimo2.dataset.id);
+  //const dataId2 = ultimo2.dataset.id;
+  let nuevoNumero2 = 0;
+  // 🔹 Obtener número de lista principal
+  if (ultimo?.dataset?.id) {
+    nuevoNumero = Number(ultimo.dataset.id.split("-")[1]) + 1;
+  }
+  // 🔹 Validar lista2
+  if (ultimo2?.dataset?.id) {
+    nuevoNumero2 = Number(ultimo2.dataset.id.split("-")[1]) + 1;
+
+    // usar el mayor entre ambos
+    //if (nuevoNumero2 > nuevoNumero) {
+    nuevoNumero = nuevoNumero + nuevoNumero2;
+    //}
+  }
 
   document.querySelectorAll("#card").forEach((card) => {
     const botonEliminar = card.querySelector("button");
@@ -2225,15 +2238,15 @@ function obtenerNumeros() {
     }
   });
   //numeroInicial = numeroMayor + 1;
-  nuevoNumero = Number(dataId.split("-")[1]) + 1;
-  const nuevoNumero2 = Number(dataId2.split("-")[1]) + 1;
+  //nuevoNumero = Number(dataId.split("-")[1]) + 1;
+  //const nuevoNumero2 = Number(dataId2.split("-")[1]) + 1;
   //console.log(numeroInicial);
 
   if (numeroMayor != numeroInicial) {
     numeroMayor = numeroMayor + 1;
   }
   //console.log(numeroMayor);
-  console.log(`nuevo: ${nuevoNumero2} - mayor: ${numeroMayor}`);
+  console.log(`nuevo: ${nuevoNumero} - mayor: ${numeroMayor}`);
   //return [nuevoNumero, numeroMayor];
   return {
     nuevo2: nuevoNumero,
