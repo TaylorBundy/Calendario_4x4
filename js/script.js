@@ -1788,10 +1788,11 @@ function mostrarFechas(eventos) {
         // if (indiceAnterior === null) {
         //   indiceAnterior = numero;
         // }
+        const fecha2 = formatearFecha(datosProcesados.fechaInicio);
         nuevo = {
           id: idCard2,
           cliente: cliente,
-          fechaInicio: fecha,
+          fechaInicio: fecha2,
           fechaFin: datosProcesados.fechaFin,
           vc: datosProcesados?.vc,
           vo: datosProcesados?.vo,
@@ -1881,11 +1882,17 @@ function mostrarFechas(eventos) {
           const botonEliminar = document.querySelector(`.${idCard} > button`);
           idCard2 = botonEliminar.id;
           // console.log(señaCheck);
+          const fechaFin = restarDias(
+            datosProcesados.fechaInicio,
+            datosProcesados.fechaFin,
+            1,
+          );
+          const fecha2 = formatearFecha(datosProcesados.fechaInicio);
           nuevo = {
             id: idCard2,
             cliente: datosProcesados.cliente,
-            fechaInicio: datosProcesados.fechaInicio,
-            fechaFin: datosProcesados.fechaFin,
+            fechaInicio: fecha2,
+            fechaFin: fechaFin,
             vc: datosProcesados.vc,
             vo: datosProcesados.vo,
             comida: comidaCheck,
@@ -1894,7 +1901,7 @@ function mostrarFechas(eventos) {
             sena: señaCheck,
             senaRecibida: datosProcesados.senaRecibida,
           };
-          const fechaFin = restarDias(nuevo.fechaInicio, nuevo.fechaFin, 1);
+
           //datosNuevos.push(nuevo);
           if (nuevo.comida == "false") {
             nuevo.comida = "No";
@@ -1905,7 +1912,7 @@ function mostrarFechas(eventos) {
           // console.log(nuevo.sena);
 
           card2.querySelector(".elCliente").textContent = nuevo.cliente;
-          card2.querySelector("#fechaInicio").textContent = nuevo.fechaInicio;
+          card2.querySelector("#fechaInicio").textContent = fecha2;
           card2.querySelector("#fechaFin").textContent = fechaFin;
           card2.querySelector("#vc").textContent = nuevo.vc;
           card2.querySelector("#vo").textContent = nuevo.vo;
@@ -1942,11 +1949,17 @@ function mostrarFechas(eventos) {
           const botonEliminar = document.querySelector(`.${idCard} > button`);
           //console.log(botonEliminar);
           idCard2 = botonEliminar.id;
+          const fechaFin = restarDias(
+            datosProcesados.fechaInicio,
+            datosProcesados.fechaFin,
+            1,
+          );
+          const fecha2 = formatearFecha(datosProcesados.fechaInicio);
           nuevo = {
             id: idCard2,
             cliente: datosProcesados.cliente,
-            fechaInicio: datosProcesados.fechaInicio,
-            fechaFin: datosProcesados.fechaFin,
+            fechaInicio: fecha2,
+            fechaFin: fechaFin,
             vc: datosProcesados.vc,
             vo: datosProcesados.vo,
             comida: comidaCheck,
@@ -1955,11 +1968,11 @@ function mostrarFechas(eventos) {
             sena: señaCheck,
             senaRecibida: datosProcesados.senaRecibida,
           };
-          const fechaFin = restarDias(nuevo.fechaInicio, nuevo.fechaFin, 1);
+          //const fechaFin = restarDias(nuevo.fechaInicio, nuevo.fechaFin, 1);
           //datosNuevos.push(nuevo);
 
           card2.querySelector(".elCliente").textContent = nuevo.cliente;
-          card2.querySelector("#fechaInicio").textContent = nuevo.fechaInicio;
+          card2.querySelector("#fechaInicio").textContent = fecha2;
           card2.querySelector("#fechaFin").textContent = fechaFin;
           card2.querySelector("#vc").textContent = nuevo.vc;
           card2.querySelector("#vo").textContent = nuevo.vo;
