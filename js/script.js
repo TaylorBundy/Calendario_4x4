@@ -371,6 +371,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const numeros = obtenerNumeros();
     numeroInicial = numeros.mayor;
     //console.log(reservas);
+    lista2.style.display = "none";
     muestraBoton();
   }, 2000);
 
@@ -441,6 +442,7 @@ async function cargarDatos() {
     <span class="reservasTitulos"><strong>Total de reservas:</strong> <span class="reservasVisibles">${total}</span></span>
     `;
   mostrarDatos();
+  mostrarDatos2(lista2, true);
 }
 
 function cargarEnFormulario(dato, index, indiceAnteriors) {
@@ -2201,7 +2203,10 @@ function obtenerIdCardPorCliente(cliente, fechaBuscada) {
 // Funcion para obtener el ultimo id de la card, y el ultimo id del boton eliminar
 function obtenerNumeros() {
   const ultimo = lista.lastElementChild;
+  const ultimo2 = lista2.lastElementChild;
   dataId = ultimo.dataset.id;
+  const dataId2 = ultimo2.dataset.id;
+  console.log(ultimo2.dataset.id);
 
   document.querySelectorAll("#card").forEach((card) => {
     const botonEliminar = card.querySelector("button");
@@ -2221,13 +2226,14 @@ function obtenerNumeros() {
   });
   //numeroInicial = numeroMayor + 1;
   nuevoNumero = Number(dataId.split("-")[1]) + 1;
+  const nuevoNumero2 = Number(dataId2.split("-")[1]) + 1;
   //console.log(numeroInicial);
 
   if (numeroMayor != numeroInicial) {
     numeroMayor = numeroMayor + 1;
   }
   //console.log(numeroMayor);
-  //console.log(`nuevo: ${nuevoNumero} - mayor: ${numeroMayor}`);
+  console.log(`nuevo: ${nuevoNumero2} - mayor: ${numeroMayor}`);
   //return [nuevoNumero, numeroMayor];
   return {
     nuevo2: nuevoNumero,
