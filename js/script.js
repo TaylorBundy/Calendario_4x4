@@ -2246,7 +2246,7 @@ function obtenerNumeros() {
     numeroMayor = numeroMayor + 1;
   }
   //console.log(numeroMayor);
-  console.log(`nuevo: ${nuevoNumero} - mayor: ${numeroMayor}`);
+  //console.log(`nuevo: ${nuevoNumero} - mayor: ${numeroMayor}`);
   //return [nuevoNumero, numeroMayor];
   return {
     nuevo2: nuevoNumero,
