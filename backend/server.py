@@ -220,7 +220,7 @@ def log(msg):
 def get_logs():
     return jsonify(logs_global)
 
+print(app.url_map)
 #app.run(host="0.0.0.0", port=10000)
 if __name__ == "__main__":
-    print(app.url_map)
     app.run(host="0.0.0.0", debug=True, port=int(os.environ.get("PORT", 5000)))

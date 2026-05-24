@@ -875,7 +875,7 @@ function mostrarDatos() {
     div.dataset.id = `card-${index}`;
     //div.appendChild(divContainer);
     div.innerHTML = `
-    <button class="btnelimina" id="${d.id}"> Eliminar </button>
+    <button class="btnelimina" id="${d.id}">Eliminar</button>
     `;
     const longitud = d?.precio;
     if (longitud.length <= 3) {
