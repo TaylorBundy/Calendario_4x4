@@ -171,5 +171,17 @@
     "precio": "50",
     "sena": false,
     "senaRecibida": ""
+  },
+  {
+    "id": "card-14",
+    "cliente": "aaaa",
+    "fechaInicio": "2026-05-25",
+    "fechaFin": "2026-05-26",
+    "vc": "5",
+    "vo": "2",
+    "comida": false,
+    "precio": "75",
+    "sena": false,
+    "senaRecibida": ""
   }
 ]
