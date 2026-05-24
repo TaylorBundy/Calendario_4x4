@@ -4,7 +4,6 @@ import json
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # 👈 IMPORTANTE
-from git import Repo
 
 app = Flask(__name__)
 CORS(app)  # 👈 ESTO SOLUCIONA TODO
@@ -223,4 +222,5 @@ def get_logs():
 
 #app.run(host="0.0.0.0", port=10000)
 if __name__ == "__main__":
+    print(app.url_map)
     app.run(host="0.0.0.0", debug=True, port=int(os.environ.get("PORT", 5000)))

@@ -54,6 +54,14 @@ let nombreAnterior = null;
 let nombreNuevo = null;
 const visibles = [];
 const ocultas = [];
+const ahora = new Date();
+const fechaHoy =
+  ahora.getFullYear() +
+  "-" +
+  String(ahora.getMonth() + 1).padStart(2, "0") +
+  "-" +
+  String(ahora.getDate()).padStart(2, "0");
+let fechaFormateada = null;
 //let indiceSelect = null;
 const API_KEY = "AIzaSyAVearlKR2iIcQd2eeS8zXqiKB2OITgIxU";
 const CALENDAR_ID = "diegomartinbarbosa2@gmail.com";
@@ -209,13 +217,13 @@ function muestraBoton() {
 
 // mostrarDatos2(lista2, true);
 // Funcion para restar 1 dia a la fecha obtenida del calendario
-function restarDias2(fecha, dias) {
-  const nuevaFecha = new Date(fecha);
+// function restarDias2(fecha, dias) {
+//   const nuevaFecha = new Date(fecha);
 
-  nuevaFecha.setDate(nuevaFecha.getDate() - dias);
+//   nuevaFecha.setDate(nuevaFecha.getDate() - dias);
 
-  return nuevaFecha.toISOString().split("T")[0];
-}
+//   return nuevaFecha.toISOString().split("T")[0];
+// }
 
 function restarDias(fechaInicio, fechaFin, dias) {
   // Si son iguales, devolver la misma fecha
@@ -230,18 +238,82 @@ function restarDias(fechaInicio, fechaFin, dias) {
   return nuevaFecha.toISOString().split("T")[0];
 }
 
+// function formatearFecha2(fecha) {
+//   const f = new Date(fecha);
+
+//   // validar fecha inválida
+//   if (isNaN(f.getTime())) {
+//     return null;
+//   }
+
+//   const year = f.getFullYear();
+
+//   const month = String(f.getMonth() + 1).padStart(2, "0");
+
+//   const day = String(f.getDate()).padStart(2, "0");
+
+//   return `${year}-${month}-${day}`;
+// }
+
+function formatearFecha(fecha) {
+  // yyyy-mm-dd
+  if (typeof fecha === "string" && /^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+    return fecha;
+  }
+
+  const f = new Date(fecha);
+
+  if (isNaN(f.getTime())) {
+    return null;
+  }
+
+  const year = f.getFullYear();
+
+  const month = String(f.getMonth() + 1).padStart(2, "0");
+
+  const day = String(f.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 fetch(url)
   .then((res) => res.json())
   .then((data) => {
     //console.log(data);
     const items = data.items;
     items.forEach((ev) => {
-      const fechaIn = ev?.start.date;
+      const fechaIn = ev?.start.date || ev?.start.dateTime;
       const fechaFn = ev?.end.date;
       const nomCli = ev?.summary;
       const descrip = procesarDescripcionEvento(ev?.description) || null;
       const cliente = `cliente: ${nomCli}`;
       const fechaInicio = `start: ${fechaIn}`;
+      //console.log(fechaInicio);
+      //console.log(formatearFecha(fechaInicio.replace("start:", "").trim()));
+      if (ev?.start.date) {
+        //console.log(fechaInicio.replace("start:", "").trim());
+        fechaFormateada = fechaInicio.replace("start:", "").trim();
+        //console.log(fechaFormateada);
+        return;
+      } else {
+        fechaFormateada = formatearFecha(
+          fechaInicio.replace("start:", "").trim(),
+        );
+        //console.log(fechaFormateada);
+        //console.log(ev?.start.dateTime);
+        //const fechaaaa = ev.start.dateTime;
+        //console.log(fechaaaa.getFullYear());
+
+        // const fechaFormateada =
+        //   fechaaaa.getFullYear() +
+        //   "-" +
+        //   String(fechaaaa.getMonth() + 1).padStart(2, "0") +
+        //   "-" +
+        //   String(fechaaaa.getDate()).padStart(2, "0");
+        // console.log(fechaFormateada);
+      }
+
+      //const fechaInicio: ev.start.dateTime || ev.start.date,
       const fechaFin = `end: ${fechaFn}`;
       const vehiculosClientes = `vehiculos: ${descrip?.vehiculos}` || null;
       const vehiculosOrganizadores = `vehiculos organizadores: ${descrip?.organizadores}`;
@@ -258,7 +330,8 @@ fetch(url)
       clientesCalendar.push({
         id: id.toLowerCase().trim(),
         cliente: cliente.toLowerCase().trim(),
-        fecha: fechaInicio.toLowerCase().trim(),
+        //fecha: fechaInicio.toLowerCase().trim(),
+        fecha: fechaFormateada,
         precio: precio.replace("precio: ", "").toLowerCase().trim(),
         moneda: moneda.replace("moneda: ", "").toLowerCase().trim(),
       });
@@ -297,6 +370,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     const numeros = obtenerNumeros();
     numeroInicial = numeros.mayor;
+    //console.log(reservas);
     muestraBoton();
   }, 2000);
 
@@ -404,9 +478,9 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   indiceEditando = index;
   indiceNuevo = indiceEditando;
   //console.log(indiceNuevo);
-  const prueba = document.querySelector(`.card-${index}`);
+  //const prueba = document.querySelector(`.card-${index}`);
   //console.log(prueba);
-  const prueba2 = document.querySelector(`.${idCalendar}`);
+  //const prueba2 = document.querySelector(`.${idCalendar}`);
   //console.log(prueba2);
   // if (prueba != prueba2) {
   //   console.log("son diferentes");
@@ -1113,7 +1187,7 @@ function mostrarDatosGoogle(d, index = 0) {
     if (btnElimina.textContent == "Eliminar") {
       eliminar();
     } else if (btnElimina.textContent == "Guardar") {
-      console.log(nuevo);
+      //console.log(nuevo);
       guardar(nuevo);
     }
   });
@@ -1168,7 +1242,7 @@ function procesarEventoGoogle(ev) {
   return {
     id: ev.id,
     cliente: ev.summary || "",
-    fechaInicio: ev.start.dateTime || ev.start.date,
+    fechaInicio: ev?.start.dateTime || ev.start.date,
 
     fechaFin: ev.end.dateTime || ev.end.date,
 
@@ -1201,8 +1275,8 @@ guarda.addEventListener("click", () => {
     sena: document.getElementById("seña").checked,
     senaRecibida: document.getElementById("importeSeña").value,
   };
-  console.log(nuevo);
-  //guardar(nuevo);
+  //console.log(nuevo);
+  guardar(nuevo);
   limpiarFormulario(eleCarga);
 });
 
@@ -1223,7 +1297,7 @@ actualizar.addEventListener("click", (e) => {
     // console.log(idSeleccionado);
     guardar(nuevo);
   } else {
-    console.log(idCard2);
+    //console.log(idCard2);
     if (btnEliminar.checked) {
       eliminar();
     } else {
@@ -1286,23 +1360,23 @@ async function eliminar() {
   });
 }
 
-function limpiarFormulario2(formId) {
-  const form = document.querySelector(`${formId}`);
-  // console.log(form);
-  //form.reset();
+// function limpiarFormulario2(formId) {
+//   const form = document.querySelector(`${formId}`);
+//   // console.log(form);
+//   //form.reset();
 
-  if (!form) return;
+//   if (!form) return;
 
-  const elementos = form.querySelectorAll("input, select, textarea");
+//   const elementos = form.querySelectorAll("input, select, textarea");
 
-  elementos.forEach((el) => {
-    if (el.type === "checkbox" || el.type === "radio") {
-      el.checked = false;
-    } else {
-      el.value = "";
-    }
-  });
-}
+//   elementos.forEach((el) => {
+//     if (el.type === "checkbox" || el.type === "radio") {
+//       el.checked = false;
+//     } else {
+//       el.value = "";
+//     }
+//   });
+// }
 
 function limpiarFormulario(contenedor) {
   if (!contenedor) return;
@@ -1340,6 +1414,27 @@ setInterval(async () => {
 //   });
 // }
 //const select = document.getElementById("fechas");
+function compararFechas(fecha1, fecha2) {
+  const f1 = new Date(fecha1);
+  const f2 = new Date(fecha2);
+
+  // limpiar horas
+  f1.setHours(0, 0, 0, 0);
+  f2.setHours(0, 0, 0, 0);
+
+  // iguales
+  if (f1.getTime() === f2.getTime()) {
+    return 0;
+  }
+
+  // fecha1 mayor
+  if (f1 > f2) {
+    return 1;
+  }
+
+  // fecha1 menor
+  return -1;
+}
 select.selectedIndex = -1;
 
 function mostrarFechas(eventos) {
@@ -1441,9 +1536,37 @@ function mostrarFechas(eventos) {
 
     if (cambios2.length > 0) {
       //console.log("Cambios detectados:", cambios2);
+      //console.log(cambios2);
+      // const ahora = new Date();
+
+      // const fecha =
+      //   ahora.getFullYear() +
+      //   "-" +
+      //   String(ahora.getMonth() + 1).padStart(2, "0") +
+      //   "-" +
+      //   String(ahora.getDate()).padStart(2, "0");
+
+      //console.log(fecha);
 
       cambios2.forEach((cambio, index) => {
-        //console.log(cambio.cambios);
+        cambio.fecha = formatearFecha(cambio.fecha.trim());
+        //console.log(cambio.fecha);
+        //const fechaComparada = compararFechas(fecha, cambio.fecha);
+        //console.log(fechaComparada);
+        //console.log(compararFechas(fecha, cambio.fecha));
+        // if (fecha > cambio.fecha) {
+        //   console.log(cambio.fecha);
+        //   return;
+        // }
+        //if (fechaComparada === 1) {
+        //return;
+        //} else if (fechaComparada === 0) {
+        const fechaComparada = compararFechas(cambio.fecha, fechaHoy);
+
+        // menor a hoy → ignorar
+        if (fechaComparada === -1) {
+          return;
+        }
         idcCalendar = cambio.id;
         agregarOption(
           select,
@@ -1451,6 +1574,7 @@ function mostrarFechas(eventos) {
           index,
           idcCalendar,
         );
+        //}
       });
     } else {
       // console.log("Sin cambios");
@@ -1475,17 +1599,21 @@ function mostrarFechas(eventos) {
 
     noexiste = faltantes;
     eventos.forEach((ev, index) => {
-      // console.log(index);
+      //console.log(ev);
       const datos = procesarEventoGoogle(ev);
+      //console.log(datos.fechaInicio);
       const cliente = datos.cliente.toLowerCase();
       const fecha = datos.fechaInicio.toLowerCase();
+      const fecha2 = formatearFecha(datos.fechaInicio);
+      //console.log(fecha2);
+      //console.log(fechaFormateada);
       const precio = datos.precio;
       idcCalendar = datos.id;
 
       // verificar si existe
       const existe = clientesCards3.some(
         (card) =>
-          (card.cliente === cliente && card.fecha === fecha) ||
+          (card.cliente === cliente && card.fecha === fecha2) ||
           card.precio === precio,
       );
       //console.log(existe);
@@ -1493,17 +1621,26 @@ function mostrarFechas(eventos) {
       // si YA existe → no agregar
       if (existe) return;
       const yaExisteOption = [...select.options].some(
-        (opt) => opt.textContent === `${fecha} - ${cliente}`,
+        (opt) => opt.textContent === `${fecha2} - ${cliente}`,
       );
 
       if (yaExisteOption) return;
 
       if (cambios2.length > 0) {
-        //console.log(cambios2);
+        // fechaFormateada = formatearFecha(fecha.replace("start:", "").trim());
+        // console.log(fechaFormateada);
+        // console.log(fecha);
+        const fechaComparada = compararFechas(fecha2, fechaHoy);
+
+        // menor a hoy → ignorar
+        if (fechaComparada === -1) {
+          return;
+        }
+        //console.log(formatearFecha(fecha));
 
         agregarOption(
           select,
-          `${fecha} - ${cliente}`,
+          `${fecha2} - ${cliente}`,
           nuevoNumero,
           idcCalendar,
         );
@@ -1553,7 +1690,7 @@ function mostrarFechas(eventos) {
 
       // procesar
       const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-      console.log(datosProcesados);
+      //console.log(datosProcesados);
 
       // normalizar
       const cliente = datosProcesados.cliente
