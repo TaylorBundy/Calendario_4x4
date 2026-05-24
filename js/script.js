@@ -813,6 +813,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       // lista.insertBefore(document.querySelector(`#card`), divContainer);
 
       const btnElimina = document.querySelector(`#${d.id}`);
+      console.log(btnElimina);
       btnElimina.addEventListener("click", () => {
         const option = select.options[select.selectedIndex];
 
