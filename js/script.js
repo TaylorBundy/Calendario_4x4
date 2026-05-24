@@ -1788,12 +1788,17 @@ function mostrarFechas(eventos) {
         // if (indiceAnterior === null) {
         //   indiceAnterior = numero;
         // }
+        const fechaFin = restarDias(
+          datosProcesados.fechaInicio,
+          datosProcesados.fechaFin,
+          1,
+        );
         const fecha2 = formatearFecha(datosProcesados.fechaInicio);
         nuevo = {
           id: idCard2,
           cliente: cliente,
           fechaInicio: fecha2,
-          fechaFin: datosProcesados.fechaFin,
+          fechaFin: fechaFin,
           vc: datosProcesados?.vc,
           vo: datosProcesados?.vo,
           comida: comidaCheck,
