@@ -164,23 +164,11 @@
     "id": "card-14",
     "cliente": "rogelio",
     "fechaInicio": "2026-05-21",
-    "fechaFin": "2026-05-22",
+    "fechaFin": "2026-05-21",
     "vc": "5",
-    "vo": "2",
+    "vo": "3",
     "comida": true,
     "precio": "50",
-    "sena": false,
-    "senaRecibida": ""
-  },
-  {
-    "id": "card-15",
-    "cliente": "fgggg",
-    "fechaInicio": "2026-05-28",
-    "fechaFin": "2026-05-30",
-    "vc": "5",
-    "vo": "5",
-    "comida": true,
-    "precio": "55",
     "sena": false,
     "senaRecibida": ""
   }
