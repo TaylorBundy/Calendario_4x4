@@ -159,17 +159,5 @@
     "moneda": "ARS",
     "sena": "No",
     "senaRecibida": ""
-  },
-  {
-    "id": "card-14",
-    "cliente": "Prueba fecha3",
-    "fechaInicio": "",
-    "fechaFin": "2026-05-25",
-    "vc": "4",
-    "vo": "2",
-    "comida": true,
-    "precio": "100000",
-    "sena": false,
-    "senaRecibida": ""
   }
 ]
