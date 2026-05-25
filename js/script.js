@@ -55,6 +55,7 @@ let cardAnterior = null;
 let cardNueva = null;
 let nombreAnterior = null;
 let nombreNuevo = null;
+let elID;
 const visibles = [];
 const ocultas = [];
 const ahora = new Date();
@@ -314,8 +315,10 @@ window.addEventListener("DOMContentLoaded", () => {
     // console.log(ocultas);
     //console.log(descripciones);
     lista.querySelectorAll(".divcontainer").forEach((card) => {
-      //console.log(card.querySelector("h2"));
+      const card2 = card.closest("[data-card-id]");
+      //console.log(card2.dataset.id);
       reservas.push({
+        cardID: card2.dataset.id,
         cliente: card.querySelector("h2")?.textContent.trim(),
         fecha: card.querySelector("#fechaInicio")?.textContent.toLowerCase(),
         fechaFin: card.querySelector("#fechaFin")?.textContent.toLowerCase(),
@@ -330,6 +333,9 @@ window.addEventListener("DOMContentLoaded", () => {
       });
       //console.log(reservas);
     });
+    // reservas.forEach((reserva) => {
+    //   console.log(reserva.cardID);
+    // });
 
     descripciones.forEach((d) => {
       mapa[d.cliente.toLowerCase().trim()] = d.descripcion;
@@ -413,6 +419,7 @@ async function cargarDatos() {
 }
 
 function cargarEnFormulario(dato, index, indiceAnteriors) {
+  console.log(dato);
   if (comidaCheck == "No") {
     comidaCheck = false;
   } else {
@@ -424,7 +431,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
     señaCheck = true;
   }
   document.getElementById("editaCliente").value = dato.cliente;
-  const fecha2 = formatearFecha(dato.fechaInicio);
+  const fecha2 = formatearFecha(dato.fechaInicio) || formatearFecha(dato.fecha);
   document.getElementById("editaFechaInicio").value = fecha2;
   const fechaFin = restarDias(
     dato.fechaInicio,
@@ -435,7 +442,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaVehiculosClientes").value = dato?.vc || "";
   document.getElementById("editaVehiculosOrg").value = dato?.vo || "";
   document.getElementById("editaComida").checked = comidaCheck;
-  document.getElementById("editaPrecio").value = dato?.precio || "0";
+  document.getElementById("editaPrecio").value = dato?.precio || "";
   document.getElementById("editaSeña").checked = señaCheck;
   document.getElementById("editaImporteSeña").value = dato?.senaRecibida || "";
   document.querySelector(`.clienteSel`).textContent =
@@ -488,6 +495,8 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
       indiceEditando == indiceAnterior &&
       elementoActual.dataset.selected == "false"
     ) {
+      document.querySelector(`.clienteSel`).textContent =
+        `Editar Cliente Seleccionado:`;
       limpiarFormulario(eleEdita);
       // console.log("linea525");
       actualizar.classList.remove("active");
@@ -634,7 +643,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       // lista.insertBefore(document.querySelector(`#card`), divContainer);
 
       const btnElimina = document.querySelector(`#${d.id}`);
-      console.log(btnElimina);
+      //console.log(btnElimina);
       btnElimina.addEventListener("click", () => {
         const option = select.options[select.selectedIndex];
 
@@ -697,6 +706,26 @@ function mostrarDatos() {
     div.className = `card-${index}`;
     div.id = "card";
     div.dataset.id = `card-${index}`;
+    div.dataset.cardId = `card-${index}`;
+    d.cardId = d.id;
+    elID = div.dataset.cardId;
+    // const reservaExistente = reservas.find((r) => r.cliente === d.cliente);
+    // console.log(reservaExistente);
+
+    // reservas.forEach((reserva) => {
+    //   console.log(reserva.cliente);
+    // });
+    // // console.log(d.cliente);
+    // // const reservaEncontrada = reservas.find(
+    // //   (reserva) => reserva.cliente === d.cliente,
+    // // );
+    // // console.log(reservaEncontrada);
+    // // if (reservaEncontrada) {
+    // //   reservaEncontrada.cardId = elID;
+    // // }
+    // // console.log(reservaEncontrada);
+
+    // console.log(elID);
     //div.appendChild(divContainer);
     div.innerHTML = `
     <button class="btnelimina" id="${d.id}">Eliminar</button>
@@ -760,7 +789,8 @@ function mostrarDatos() {
       //console.log(idSeleccionado);
       idCard2 = idSeleccionado;
       // console.log(e.target.closest('div[id="card"]'));
-      const card = e.target.closest("#card");
+      //const card = e.target.closest("#card");
+      const card = e.target.closest("[data-card-id]");
       if (!card) return;
       const form = document.querySelector(".editaClientes");
       // console.log(form);
@@ -1060,18 +1090,18 @@ function mostrarDatosGoogle(d, index = 0) {
 }
 
 function procesarEventoGoogle(ev) {
-  // console.log(ev);
-  const descripcion = ev.description || "";
+  //console.log(ev);
+  const descripcion = ev?.description || ev?.descripcion || "";
 
   const datosExtraidos = procesarDescripcionEvento(descripcion);
   //console.log(datosExtraidos);
 
   return {
-    id: ev.id,
-    cliente: ev.summary || "",
-    fechaInicio: ev?.start.dateTime || ev.start.date,
+    id: ev?.id,
+    cliente: ev?.summary || ev?.cliente || "",
+    fechaInicio: ev?.start?.dateTime || ev?.start?.date || ev?.fecha,
 
-    fechaFin: ev.end.dateTime || ev.end.date,
+    fechaFin: ev?.end?.dateTime || ev?.end?.date || ev?.fechaFin,
 
     vc: datosExtraidos?.vehiculos,
     vo: datosExtraidos?.organizadores,
@@ -1997,6 +2027,8 @@ function seleccionarCard(card, formulario) {
     card.dataset.selected = "false";
     card.classList.remove("selected");
     limpiarFormulario(eleEdita);
+    document.querySelector(`.clienteSel`).textContent =
+      `Editar Cliente Seleccionado:`;
     return;
   }
 
@@ -2197,12 +2229,15 @@ function renderizarCards({
   contenedor,
   transformar = null,
   onClick = null,
+  clickable = false,
 }) {
+  //console.log(datos);
   if (!contenedor) return;
 
   //contenedor.innerHTML = "";
 
   datos.forEach((item, index) => {
+    //console.log(item.id);
     // =========================
     // TRANSFORMAR ITEM
     // =========================
@@ -2232,6 +2267,18 @@ function renderizarCards({
     const precio = data.precio ?? NoDisponible;
 
     const moneda = data.moneda ?? "";
+    nuevo = {
+      cliente: titulo,
+      fechaInicio: fechaInicio,
+      fechaFin: data.fechaFin,
+      vc: data.vehiculosClientes,
+      vo: data.vehiculosOrganizadores,
+      comida: data.comida,
+      precio: data.precio,
+      moneda: data.moneda,
+      sena: document.getElementById("editaSeña").checked,
+      senaRecibida: document.getElementById("editaImporteSeña").value,
+    };
 
     // =========================
     // CARD
@@ -2321,17 +2368,101 @@ function renderizarCards({
     // =========================
     // CLICK
     // =========================
+    // const elti = document.querySelector(".cardContainerReservas");
+    // console.log(elti);
+    // if (elti.textContent === "Eventos desde Calendario") {
+    //   console.log(card);
+    // }
+    if (clickable) {
+      card.classList.add("sinHover");
+      card.addEventListener("click", () => {
+        //console.log(item.cardID);
+        const cardOriginal = document.querySelector(`.${item.cardID}`);
 
-    card.addEventListener("click", () => {
-      console.log("Item seleccionado:", item);
+        if (!cardOriginal) return;
+        // remover resaltado anterior
+        // document.querySelectorAll(".selected").forEach((el) => {
+        //   el.classList.remove("selected");
+        // });
 
-      if (onClick) {
-        onClick(item, index, card);
-      }
-    });
+        // // resaltar
+        // cardOriginal.classList.add("selected");
+
+        // // scroll automático
+        // cardOriginal.scrollIntoView({
+        //   behavior: "smooth",
+        //   block: "center",
+        // });
+        seleccionarCard(cardOriginal, eleEdita);
+        cardOriginal.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        if (cardOriginal.dataset.selected === "true") {
+          eleEdita.style.background = "#888";
+          // eleEdita.scrollIntoView({
+          //   behavior: "smooth",
+          //   block: "center",
+          // });
+        } else {
+          eleEdita.style.background = "#2c2c2c";
+        }
+        //   const indexEvento = item.findIndex(
+        //   (ev) => ev.id === optionSeleccionado.id,
+        // );
+        const datosProcesados = procesarEventoGoogle(item);
+        const valorComida =
+          datosProcesados.comida === null ||
+          String(datosProcesados.comida).trim() === ""
+            ? ""
+            : typeof datosProcesados.comida === "boolean"
+              ? datosProcesados.comida
+                ? "Sí"
+                : "No"
+              : ["true", "Sí"].includes(String(datosProcesados.comida).trim())
+                ? "Sí"
+                : ["false", "No"].includes(
+                      String(datosProcesados.comida).trim(),
+                    )
+                  ? "No"
+                  : "";
+        const valorSeña =
+          datosProcesados.sena == null ||
+          String(datosProcesados.sena).trim() === ""
+            ? ""
+            : typeof datosProcesados.sena === "boolean"
+              ? datosProcesados.sena
+                ? "Sí"
+                : "No"
+              : ["true", "Sí"].includes(String(datosProcesados.sena).trim())
+                ? "Sí"
+                : ["false", "No"].includes(String(datosProcesados.sena).trim())
+                  ? "No"
+                  : "";
+        comidaCheck = valorComida.trim();
+        //comidaCheck = !(valorComida === "no" || valorComida === "false");
+        señaCheck = valorSeña.trim(); //!(valorSeña === "No" || valorSeña === "false");
+        //console.log(datosProcesados.cliente);
+        cargarEnFormulario(datosProcesados, index, indiceAnterior);
+        console.log("Item seleccionado:", item);
+        cerrarModalEventos();
+
+        if (onClick) {
+          onClick(item, index, card);
+        }
+      });
+    } else {
+      card.classList.remove("sinHover");
+      card.style.cursor = "not-allowed";
+    }
     //contenedor.appendChild(cardContainer);
     contenedor.appendChild(card);
   });
+}
+
+function cerrarModalEventos() {
+  const overlay = document.querySelector("#modalEventosOverlay");
+  overlay.style.display = "none";
 }
 
 (function () {
@@ -2434,6 +2565,7 @@ function renderizarCards({
           datos: EVENTOS,
 
           contenedor: contenedorCards,
+          clickable: false,
 
           transformar: (ev) => {
             const descrip = procesarDescripcionEvento(ev?.description);
@@ -2474,12 +2606,14 @@ function renderizarCards({
           tituloContenedorCards.textContent = "Eventos desde Reservas";
           contenedorCards.appendChild(tituloContenedorCards);
           //lista.appendChild(cardContainer);
+          nuevo = null;
         }
         lista.appendChild(contenedorCards);
         renderizarCards({
           datos: reservas,
 
           contenedor: contenedorCards,
+          clickable: true,
 
           transformar: (d) => ({
             titulo: d.cliente,
