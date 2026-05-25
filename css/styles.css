@@ -256,6 +256,11 @@ button {
   font-weight: bold;
   width: 70%;
   margin: 5px auto;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  right: 0;
+  opacity: 0.6;
 }
 #modalEventosOverlay {
   position: fixed;
