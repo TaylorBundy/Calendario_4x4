@@ -214,19 +214,6 @@ function muestraBoton() {
     btnOcultas.style.display = "block";
   }
 }
-// visibles.forEach((item) => {
-//   mostrarDatos2(lista2, true);
-// });
-
-// mostrarDatos2(lista2, true);
-// Funcion para restar 1 dia a la fecha obtenida del calendario
-// function restarDias2(fecha, dias) {
-//   const nuevaFecha = new Date(fecha);
-
-//   nuevaFecha.setDate(nuevaFecha.getDate() - dias);
-
-//   return nuevaFecha.toISOString().split("T")[0];
-// }
 
 function restarDias(fechaInicio, fechaFin, dias) {
   // Si son iguales, devolver la misma fecha
@@ -240,23 +227,6 @@ function restarDias(fechaInicio, fechaFin, dias) {
 
   return nuevaFecha.toISOString().split("T")[0];
 }
-
-// function formatearFecha2(fecha) {
-//   const f = new Date(fecha);
-
-//   // validar fecha inválida
-//   if (isNaN(f.getTime())) {
-//     return null;
-//   }
-
-//   const year = f.getFullYear();
-
-//   const month = String(f.getMonth() + 1).padStart(2, "0");
-
-//   const day = String(f.getDate()).padStart(2, "0");
-
-//   return `${year}-${month}-${day}`;
-// }
 
 function formatearFecha(fecha) {
   // yyyy-mm-dd
@@ -310,18 +280,6 @@ fetch(url)
         fechaFormateada = formatearFecha(
           fechaInicio.replace("start:", "").trim(),
         );
-        //console.log(fechaFormateada);
-        //console.log(ev?.start.dateTime);
-        //const fechaaaa = ev.start.dateTime;
-        //console.log(fechaaaa.getFullYear());
-
-        // const fechaFormateada =
-        //   fechaaaa.getFullYear() +
-        //   "-" +
-        //   String(fechaaaa.getMonth() + 1).padStart(2, "0") +
-        //   "-" +
-        //   String(fechaaaa.getDate()).padStart(2, "0");
-        // console.log(fechaFormateada);
       }
 
       //const fechaInicio: ev.start.dateTime || ev.start.date,
@@ -333,11 +291,6 @@ fetch(url)
       const precio = `precio: ${descrip?.precio}`;
       const id = ev?.id;
       idCalendar = ev?.id;
-      // const resultado = restarDias(
-      //   fechaInicio,
-      //   fechaFin.replace("end: ", ""),
-      //   1,
-      // );
       clientesCalendar.push({
         id: id.toLowerCase().trim(),
         cliente: cliente.toLowerCase().trim(),
@@ -377,32 +330,14 @@ window.addEventListener("DOMContentLoaded", () => {
       });
       //console.log(reservas);
     });
-    // descripciones.forEach((item) => {
-    //   const encontrado = reservas.find(
-    //     (el) =>
-    //       el.cliente.toLowerCase().trim() === item.cliente.toLowerCase().trim(),
-    //   );
-    //   console.log(encontrado.descripcion);
-    //   mapa[item.cliente] = item.descripcion;
-    // });
-    // console.log(mapa);
+
     descripciones.forEach((d) => {
       mapa[d.cliente.toLowerCase().trim()] = d.descripcion;
     });
     reservas.forEach((reserva) => {
       reserva.descripcion = mapa[reserva.cliente.toLowerCase().trim()] || "";
     });
-    // reservas.forEach((item) => {
-    //   const encontrado = descripciones.find(
-    //     (el) =>
-    //       el.cliente.toLowerCase().trim() === item.cliente.toLowerCase().trim(),
-    //   );
-    //   console.log(encontrado);
-    //   console.log(encontrado.descripcion);
-    //   const descripcion = mapa[item.cliente];
 
-    //   console.log(descripcion);
-    // });
     document.querySelectorAll("#card").forEach((card) => {
       card.addEventListener("click", () => {
         compararCards(card);
@@ -425,15 +360,7 @@ window.addEventListener("DOMContentLoaded", () => {
     cargarDatos();
     //console.log(datos);
   });
-  // probar.addEventListener("click", () => {
-  //   console.log(idCard2);
-  //   console.log(`nuevo: ${nuevoNumero} - mayor: ${numeroMayor}`);
-  //   lista.querySelectorAll("#card").forEach((card) => {
-  //     //console.log(card.querySelector("h2"));
-  //     console.log(card.dataset.id);
-  //   });
-  // });
-  //const eleEdita1 = document.querySelector(".editaClientes");
+
   const ele = eleEdita.querySelectorAll("input");
   ele.forEach((el) => {
     if (el.type === "text" || el.type === "number") {
@@ -448,12 +375,6 @@ window.addEventListener("DOMContentLoaded", () => {
   });
   //console.log(eleEdita);
 });
-
-// Contar Registros
-// function contarRegistros(array) {
-//   if (!Array.isArray(array)) return 0;
-//   return array.length;
-// }
 
 function contarRegistrosVisibles(datos) {
   const ahora = new Date();
@@ -526,16 +447,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
 
   indiceEditando = index;
   indiceNuevo = indiceEditando;
-  //console.log(indiceNuevo);
-  //const prueba = document.querySelector(`.card-${index}`);
-  //console.log(prueba);
-  //const prueba2 = document.querySelector(`.${idCalendar}`);
-  //console.log(prueba2);
-  // if (prueba != prueba2) {
-  //   console.log("son diferentes");
-  // } else {
-  //   console.log("son iguales");
-  // }
+
   let elementoSelected;
   // console.log(estado);
   // console.log(origen);
@@ -556,45 +468,8 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
     elementoSelected = document.querySelector(`.${numeroIDSelect}`);
   } else {
     elementoSelected = document.querySelector(`.card-${indiceAnteriors}`);
-    // document.querySelectorAll("#card").forEach((card) => {
-    //   console.log(card);
-    //   //card.classList.remove("selected");
-    //   // if (card.className.includes("nuevo")) {
-    //   //   actualizar.textContent = "guardar";
-    //   // }
-    // });
-    // const cards = document.querySelectorAll("#card");
-
-    // cards.forEach((card) => {
-    //   //card.addEventListener("click", () => {
-    //   console.log("hola");
-    //   // si ya estaba seleccionada → deseleccionar
-    //   if (card.dataset.selected === "true") {
-    //     card.dataset.selected = "false";
-    //     card.classList.remove("selected");
-    //     return;
-    //   }
-
-    //   // quitar selección anterior
-    //   document.querySelectorAll(`div[id="card"]`).forEach((c) => {
-    //     console.log(c);
-    //     c.dataset.selected = "false";
-    //     c.classList.remove("selected");
-    //   });
-
-    //   // seleccionar nueva
-    //   card.dataset.selected = "true";
-    //   card.classList.add("selected");
-    //   //});
-    // });
   }
-  // if (estado === "EXISTE") {
-  //   elementoSelected = document.querySelector(`.${idCalendar}`);
-  // } else {
-  //   elementoSelected = document.querySelector(`.${idCalendar}`);
-  // }
-  //const elementoSelected = document.querySelector(`.${idCalendar}`);
-  // console.log(elementoSelected);
+
   const elementoSelected1 = document.querySelector(`.card-${indiceAnteriors}`);
   // console.log(elementoSelected1);
   const elementoActual = document.querySelector(`.card-${index}`);
@@ -608,69 +483,11 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
     // console.log(`linea390`);
     indiceNuevo = index;
     indiceAnterior = indiceNuevo;
-    // if (elementoSelected1.dataset.selected == "true") {
-    //   if (elementoSelected1.className.includes("selected")) {
-    //     elementoSelected1.classList.remove("selected");
-    //     elementoSelected1.dataset.selected = "false";
-    //   } else {
-    //     elementoSelected1.classList.add("selected");
-    //   }
-    // }
-    // if (elementoSelected.dataset.selected == "true") {
-    //   if (elementoSelected.className.includes("selected")) {
-    //     elementoSelected.classList.remove("selected");
-    //     elementoSelected.dataset.selected = "false";
-    //   } else {
-    //     elementoSelected.classList.add("selected");
-    //   }
-    // }
-
-    // if (elementoSelected.className.includes("selected")) {
-    //   if (!elementoSelected.dataset.selected) {
-    //     // console.log(elementoSelected.dataset);
-    //     elementoSelected.dataset.selected = "true";
-    //   } else {
-    //     elementoSelected.dataset.selected = "false";
-    //   }
-    //   // if (elementoSelected.className.includes("selected")) {
-    //   //   elementoSelected.classList.remove("selected");
-    //   //   elementoSelected.dataset.selected = "false";
-    //   // } else {
-    //   //   elementoSelected.classList.add("selected");
-    //   // }
-    // } else {
-    //   elementoSelected.dataset.selected = "false";
-    // }
   } else if (indiceNuevo == indiceAnterior) {
-    // console.log(`linea426`);
-    // if (elementoSelected1.dataset.selected == "true") {
-    //   if (elementoSelected1.className.includes("selected")) {
-    //     elementoSelected1.classList.remove("selected");
-    //     elementoSelected1.dataset.selected = "false";
-    //     elementoSelected.classList.add("selected");
-    //   } else {
-    //     elementoSelected1.classList.add("selected");
-    //   }
-    // } else {
-    //   if (elementoSelected1.className.includes("selected")) {
-    //     elementoSelected1.classList.remove("selected");
-    //   }
-    // }
     if (
       indiceEditando == indiceAnterior &&
       elementoActual.dataset.selected == "false"
     ) {
-      // document.getElementById("editaCliente").value = "";
-      // document.getElementById("editaFechaInicio").value = "";
-      // document.getElementById("editaFechaFin").value = "";
-      // document.getElementById("editaVehiculosClientes").value = "";
-      // document.getElementById("editaVehiculosOrg").value = "";
-      // document.getElementById("editaComida").checked = false;
-      // document.getElementById("editaPrecio").value = "";
-      // document.getElementById("editaSeña").checked = false;
-      // document.getElementById("editaImporteSeña").value = "";
-      // document.querySelector(`.clienteSel`).textContent =
-      //   `Editar Cliente Seleccionado: `;
       limpiarFormulario(eleEdita);
       // console.log("linea525");
       actualizar.classList.remove("active");
@@ -704,51 +521,6 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
 
       // ✅ ocultas
       if (mostrarOcultas && !estaOculta) return;
-
-      //   const div = document.createElement("div");
-
-      //   div.className = `card-${index}`;
-      //   div.id = "card";
-      //   div.innerHTML = `
-      // <!-- <button class="btnelimina" id="${d.id}"> Eliminar </button> -->
-      // <!-- <div class="divcontainer"> -->
-      //   <h2 class="elCliente"><strong>${d.cliente}</strong></h2><br>
-      //   <span class="datosTitulos"><strong>Fecha Inicio:</strong> <span class="datosVisibles" id="fechaInicio">${d.fechaInicio}</span></span>
-      //   <span class="datosTitulos"><strong>Fecha Fin:</strong> <span class="datosVisibles" id="fechaFin">${d.fechaFin}</span></span>
-      //   <span class="datosTitulos"><strong>Vehículos clientes:</strong> <span class="datosVisibles" id="vc">${d.vc}</span></span>
-      //   <span class="datosTitulos"><strong>Vehículos org:</strong> <span class="datosVisibles" id="vo">${d.vo}</span></span>
-      //   <span class="datosTitulos"><strong>Comida:</strong> <span class="datosVisibles" id="comida">${comidaCheck}</span></span>
-      //   <span class="datosTitulos"><strong>Precio:</strong> <span class="datosVisibles" id="precio">${moneda} ${d.precio}</span></span>
-      //   <span class="datosTitulos"><strong>Seña:</strong> <span class="datosVisibles" id="seña">${señaCheck}</span></span>
-      //   <span class="datosTitulos"><strong>Seña Recibida:</strong> <span class="datosVisibles" id="señaRecibida">${d.senaRecibida}</span></span>
-      //   <!-- </div> -->
-      // `;
-
-      //   // div.innerHTML = `
-      //   //   <button class="btnelimina" id="${d.id}">
-      //   //     Eliminar
-      //   //   </button>
-
-      //   //   <div class="divcontainer">
-      //   //     <h2 class="elCliente">
-      //   //       <strong>${d.cliente}</strong>
-      //   //     </h2>
-
-      //   //     <span class="datosTitulos">
-      //   //       <strong>Fecha Inicio:</strong>
-      //   //       <span class="datosVisibles" id="fechaInicio">
-      //   //         ${d.fechaInicio}
-      //   //       </span>
-      //   //     </span>
-
-      //   //     <span class="datosTitulos">
-      //   //       <strong>Fecha Fin:</strong>
-      //   //       <span class="datosVisibles" id="fechaFin">
-      //   //         ${d.fechaFin}
-      //   //       </span>
-      //   //     </span>
-      //   //   </div>
-      //   // `;
 
       //   listaDestino.appendChild(div);
       const div = document.createElement("div");
@@ -1403,19 +1175,6 @@ async function editar(contenido) {
   alert("Editado");
 }
 
-// async function eliminar() {
-//   console.log(`${API}/eliminar`);
-//   await fetch(`http://127.0.0.1:5000/eliminar`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify({
-//       path: "data/data.json",
-//       id: idCard2,
-//     }),
-//   });
-// }
 async function eliminar() {
   //console.log(idCard2);
   try {
@@ -1439,24 +1198,6 @@ async function eliminar() {
   }
 }
 
-// function limpiarFormulario2(formId) {
-//   const form = document.querySelector(`${formId}`);
-//   // console.log(form);
-//   //form.reset();
-
-//   if (!form) return;
-
-//   const elementos = form.querySelectorAll("input, select, textarea");
-
-//   elementos.forEach((el) => {
-//     if (el.type === "checkbox" || el.type === "radio") {
-//       el.checked = false;
-//     } else {
-//       el.value = "";
-//     }
-//   });
-// }
-
 function limpiarFormulario(contenedor) {
   if (!contenedor) return;
 
@@ -1479,20 +1220,6 @@ setInterval(async () => {
   logs.forEach((l) => console.log(l));
 }, 5000);
 
-// function mostrarFechas2(eventos) {
-//   const select = document.getElementById("fechas");
-
-//   eventos.forEach((ev) => {
-//     const fecha = ev.start.dateTime || ev.start.date;
-
-//     const option = document.createElement("option");
-//     option.value = fecha;
-//     option.textContent = `${fecha} - ${ev.summary}`;
-
-//     select.appendChild(option);
-//   });
-// }
-//const select = document.getElementById("fechas");
 function compararFechas(fecha1, fecha2) {
   const f1 = new Date(fecha1);
   const f2 = new Date(fecha2);
@@ -1614,32 +1341,8 @@ function mostrarFechas(eventos) {
     // =========================
 
     if (cambios2.length > 0) {
-      //console.log("Cambios detectados:", cambios2);
-      //console.log(cambios2);
-      // const ahora = new Date();
-
-      // const fecha =
-      //   ahora.getFullYear() +
-      //   "-" +
-      //   String(ahora.getMonth() + 1).padStart(2, "0") +
-      //   "-" +
-      //   String(ahora.getDate()).padStart(2, "0");
-
-      //console.log(fecha);
-
       cambios2.forEach((cambio, index) => {
         cambio.fecha = formatearFecha(cambio.fecha.trim());
-        //console.log(cambio.fecha);
-        //const fechaComparada = compararFechas(fecha, cambio.fecha);
-        //console.log(fechaComparada);
-        //console.log(compararFechas(fecha, cambio.fecha));
-        // if (fecha > cambio.fecha) {
-        //   console.log(cambio.fecha);
-        //   return;
-        // }
-        //if (fechaComparada === 1) {
-        //return;
-        //} else if (fechaComparada === 0) {
         const fechaComparada = compararFechas(cambio.fecha, fechaHoy);
 
         // menor a hoy → ignorar
@@ -1880,16 +1583,6 @@ function mostrarFechas(eventos) {
         }
 
         tarjetaAnterior = `card-${nuevoNumero}`;
-        //console.log(tarjetaAnterior);
-        // document.querySelectorAll("#card").forEach((card) => {
-        //   //card.addEventListener("click", () => {
-        //   compararCards(card);
-        //   //});
-        // });
-        // const card2 = document.querySelector(`#${tarjetaAnterior}`);
-        // card2.addEventListener("click", () => {
-        //   compararCards(card2);
-        // });
         mostrarDatosGoogle(datosProcesados, nuevoNumero);
         cargarEnFormulario(datosProcesados, idCalendar, numero);
         eleEdita.style.background = "#888";
@@ -2632,9 +2325,6 @@ function renderizarCards({
     //contenedor.appendChild(cardContainer);
     contenedor.appendChild(card);
   });
-  // ordenarPorFecha({
-  //   contenedor: contenedor,
-  // });
 }
 
 (function () {
@@ -2659,7 +2349,7 @@ function renderizarCards({
     // Ej:
     // window.eventosCalendario = [...]
     window.eventosCalendario = eventosCalen[0].items;
-    console.log(eventosCalen[0]);
+    //console.log(eventosCalen[0]);
     const EVENTOS = window.eventosCalendario || [];
 
     // =========================
@@ -2668,217 +2358,7 @@ function renderizarCards({
 
     const style = document.createElement("style");
 
-    //   style.innerHTML = `
-
-    //   #modalEventosOverlay {
-    //     position: fixed;
-    //     inset: 0;
-    //     background: rgba(0,0,0,.7);
-    //     z-index: 999999;
-    //     display: none;
-    //     justify-content: center;
-    //     align-items: center;
-    //     backdrop-filter: blur(4px);
-    //   }
-    //   #listaEventosModal {
-    //     display: grid;
-    //     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    //     gap: 10px;
-    //   }
-
-    //   #modalEventos {
-    //     width: 90%;
-    //     max-width: 900px;
-    //     max-height: 90vh;
-    //     overflow-y: auto;
-    //     background: #1e1e1e;
-    //     color: white;
-    //     border-radius: 16px;
-    //     padding: 20px;
-    //     box-shadow: 0 0 30px rgba(0,0,0,.5);
-    //     font-family: Arial;
-    //   }
-
-    //   #modalEventos h2 {
-    //     margin-top: 0;
-    //   }
-
-    //   .eventoCard {
-    //   display: flex;
-    //   flex-direction: column;
-    //     background: #2a2a2a;
-    //     border-radius: 10px;
-    //     padding: 15px;
-    //     margin-bottom: 12px;
-    //     cursor: pointer;
-    //     transition: .2s;
-    //     border: 1px solid transparent;
-    //   }
-
-    //   .eventoCard:hover {
-    //     border-color: #00bfff;
-    //     transform: scale(1.01);
-    //   }
-    //   label {
-    //     margin: 0;
-    //   }
-    //   .elCliente {
-    //     margin: 0;
-    //     text-align: center;
-    //     color: #00ff3a;
-    //     font-size: 1em;
-    //   }
-
-    //   .eventoFecha {
-    //     color: #00bfff;
-    //     font-size: 14px;
-    //     margin-bottom: 6px;
-    //   }
-
-    //   .eventoTitulo {
-    //     font-size: 18px;
-    //     font-weight: bold;
-    //   }
-
-    //   .eventoDescripcion {
-    //     opacity: .8;
-    //     margin-top: 8px;
-    //     /* white-space: pre-wrap; */
-    //   }
-
-    //   #cerrarModalEventos {
-    //     float: right;
-    //     background: crimson;
-    //     color: white;
-    //     border: none;
-    //     padding: 8px 12px;
-    //     border-radius: 8px;
-    //     cursor: pointer;
-    //   }
-
-    // `;
-
     document.head.appendChild(style);
-
-    // Funcion para formatear fecha
-    // function formatearFecha(fecha) {
-    //   // yyyy-mm-dd
-    //   if (typeof fecha === "string" && /^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
-    //     return fecha;
-    //   }
-
-    //   const f = new Date(fecha);
-
-    //   if (isNaN(f.getTime())) {
-    //     return null;
-    //   }
-
-    //   const year = f.getFullYear();
-
-    //   const month = String(f.getMonth() + 1).padStart(2, "0");
-
-    //   const day = String(f.getDate()).padStart(2, "0");
-
-    //   return `${year}-${month}-${day}`;
-    // }
-
-    // // Funcion para procesar la descripcion del evento
-    // function procesarDescripcionEvento(texto) {
-    //   if (!texto || texto == null) return;
-    //   //console.log(texto);
-    //   const resultado = {
-    //     vehiculos: null,
-    //     organizadores: null,
-    //     precio: null,
-    //     moneda: null,
-    //     comida: null,
-    //     sena: null,
-    //   };
-
-    //   // =========================
-    //   // VEHÍCULOS
-    //   // =========================
-    //   const vehiculosMatch = texto.match(
-    //     /(\d+)\s*veh[ií]culos?(?!\s*organizadores)|vehiculos/i,
-    //   );
-
-    //   if (vehiculosMatch) {
-    //     resultado.vehiculos = Number(vehiculosMatch[1]);
-    //   }
-
-    //   // =========================
-    //   // ORGANIZADORES
-    //   // =========================
-    //   const organizadoresMatch = texto.match(
-    //     /(\d+)\s*veh[ií]culos?\s*organizadores/i,
-    //   );
-
-    //   if (organizadoresMatch) {
-    //     resultado.organizadores = Number(organizadoresMatch[1]);
-    //   }
-
-    //   // =========================
-    //   // PRECIO
-    //   // =========================
-    //   const precioRegex =
-    //     /(?:precio\s*pactado|precio\s*por\s*veh[ií]culo)?[\s:]*\$?\s*(\d+)\s*(usd|u\$s|d[oó]lares?|dolares|pesos?)?(?:\s*por\s*veh[ií]culo)?/i;
-    //   const patronesPrecio = [
-    //     /(\d+)\s*(usd|u\$s|d[oó]lares?|dolares|pesos?)\s*por\s*veh[ií]culo/i,
-
-    //     /precio\s*(?:pactado|por\s*veh[ií]culo)?[:\s]*\$?\s*(\d+)/i,
-
-    //     /\$\s*(\d+)/i,
-    //   ];
-
-    //   for (const regex of patronesPrecio) {
-    //     const match = texto.match(regex);
-
-    //     if (match) {
-    //       precioMatch = match;
-    //     }
-    //   }
-
-    //   if (precioMatch) {
-    //     resultado.precio = Number(precioMatch[1]);
-
-    //     if (precioMatch[2]) {
-    //       moneda = precioMatch[2].toLowerCase();
-
-    //       if (
-    //         moneda.includes("usd") ||
-    //         moneda.includes("u$s") ||
-    //         moneda.includes("dólar") ||
-    //         moneda.includes("dolar") ||
-    //         moneda.includes("dolares")
-    //       ) {
-    //         moneda = "USD";
-    //         resultado.moneda = "USD";
-    //       } else if (moneda.includes("peso")) {
-    //         moneda = "ARS";
-    //         resultado.moneda = "ARS";
-    //       }
-    //     }
-    //   }
-
-    //   // =========================
-    //   // COMIDA
-    //   // =========================
-    //   if (/\b(true|s[ií])\b|incluye\s*comida|con\s*comida/i.test(texto)) {
-    //     resultado.comida = "Sí";
-    //   } else if (/\b(false|no)\b|no\s*incluye\s*comida/i.test(texto)) {
-    //     resultado.comida = "No";
-    //   }
-    //   // =========================
-    //   // SEÑA
-    //   // =========================
-    //   if (/\b(true|s[ií])\b|incluye\s*seña|con\s*seña/i.test(texto)) {
-    //     resultado.sena = "Sí";
-    //   } else if (/\b(false|no)\b|no\s*seña\s*seña/i.test(texto)) {
-    //     resultado.sena = "No";
-    //   }
-
-    //   return resultado;
-    // }
 
     // =========================
     // MODAL
@@ -2929,7 +2409,7 @@ function renderizarCards({
         <p>No hay eventos cargados.</p>
       `;
       } else {
-        console.log(reservas);
+        //console.log(reservas);
         let contenedorCards;
         let tituloContenedorCards;
         if (EVENTOS) {
@@ -3063,6 +2543,6 @@ function renderizarCards({
       }
     });
 
-    console.log("Modal de eventos cargado. CTRL + SHIFT + E");
+    //console.log("Modal de eventos cargado. CTRL + SHIFT + E");
   }, 2000);
 })();
