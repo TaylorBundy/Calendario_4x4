@@ -61,7 +61,7 @@
   },
   {
     "id": "card-6",
-    "cliente": "britos",
+    "cliente": "Britos",
     "fechaInicio": "2026-07-18",
     "fechaFin": "2026-07-26",
     "vc": 4,
@@ -110,7 +110,7 @@
   },
   {
     "id": "card-10",
-    "cliente": "la huella",
+    "cliente": "La huella",
     "fechaInicio": "2026-07-24",
     "fechaFin": "2026-07-27",
     "vc": 9,
@@ -123,7 +123,7 @@
   },
   {
     "id": "card-11",
-    "cliente": "peruano",
+    "cliente": "Peruano",
     "fechaInicio": "2026-07-27",
     "fechaFin": "2026-07-31",
     "vc": 4,
@@ -136,7 +136,7 @@
   },
   {
     "id": "card-12",
-    "cliente": "ignacio vado",
+    "cliente": "Ignacio vado",
     "fechaInicio": "2026-08-02",
     "fechaFin": "2026-08-05",
     "vc": 4,
@@ -149,7 +149,7 @@
   },
   {
     "id": "card-13",
-    "cliente": "salvatierra",
+    "cliente": "Salvatierra",
     "fechaInicio": "2026-07-20",
     "fechaFin": "2026-07-24",
     "vc": 4,
@@ -158,18 +158,6 @@
     "precio": 100000,
     "moneda": "ARS",
     "sena": "No",
-    "senaRecibida": ""
-  },
-  {
-    "id": "card-14",
-    "cliente": "prueba fecha3",
-    "fechaInicio": "2026-05-25",
-    "fechaFin": "2026-05-25",
-    "vc": "4",
-    "vo": "2",
-    "comida": false,
-    "precio": "100000",
-    "sena": false,
     "senaRecibida": ""
   }
 ]
