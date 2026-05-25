@@ -14,9 +14,12 @@ const eleCarga = document.querySelector(".cargaClientes");
 const recargar = document.querySelector(".recargar");
 const select = document.getElementById("fechas");
 const API = "https://calendario-4x4.onrender.com";
+const btnModal = document.querySelector("#btnModal");
 const plataforma = navigator.userAgent;
 
 let datos = [];
+let eventosCalen = [];
+let descripciones = [];
 let clientes = null;
 let fechasInicio = null;
 //const cambios2 = [];
@@ -280,14 +283,22 @@ fetch(url)
   .then((res) => res.json())
   .then((data) => {
     //console.log(data);
+    eventosCalen.push(data);
+    //descripciones.push(data.items);
     const items = data.items;
     items.forEach((ev) => {
+      //console.log(ev);
       const fechaIn = ev?.start.date || ev?.start.dateTime;
       const fechaFn = ev?.end.date;
       const nomCli = ev?.summary;
       const descrip = procesarDescripcionEvento(ev?.description) || null;
       const cliente = `cliente: ${nomCli}`;
       const fechaInicio = `start: ${fechaIn}`;
+      const detalle = ev?.description || null;
+      descripciones.push({
+        cliente: nomCli.toLowerCase(),
+        descripcion: detalle,
+      });
       //console.log(fechaInicio);
       //console.log(formatearFecha(fechaInicio.replace("start:", "").trim()));
       if (ev?.start.date) {
@@ -344,19 +355,54 @@ fetch(url)
 
 window.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
+    const mapa = {};
+
     // console.log(visibles);
     // console.log(ocultas);
+    //console.log(descripciones);
     lista.querySelectorAll(".divcontainer").forEach((card) => {
       //console.log(card.querySelector("h2"));
       reservas.push({
-        cliente: card.querySelector("h2")?.textContent.toLowerCase().trim(),
+        cliente: card.querySelector("h2")?.textContent.trim(),
         fecha: card.querySelector("#fechaInicio")?.textContent.toLowerCase(),
+        fechaFin: card.querySelector("#fechaFin")?.textContent.toLowerCase(),
+        vc: card.querySelector("#vc")?.textContent.toLowerCase(),
+        vo: card.querySelector("#vo")?.textContent.toLowerCase(),
+        comida: card.querySelector("#comida")?.textContent.toLowerCase(),
+        //descripcion: descripciones?.descripcion,
         precio: card
           .querySelector("#precio")
           ?.textContent.replace(`${moneda} `, "")
           .toLowerCase(),
       });
+      //console.log(reservas);
     });
+    // descripciones.forEach((item) => {
+    //   const encontrado = reservas.find(
+    //     (el) =>
+    //       el.cliente.toLowerCase().trim() === item.cliente.toLowerCase().trim(),
+    //   );
+    //   console.log(encontrado.descripcion);
+    //   mapa[item.cliente] = item.descripcion;
+    // });
+    // console.log(mapa);
+    descripciones.forEach((d) => {
+      mapa[d.cliente.toLowerCase().trim()] = d.descripcion;
+    });
+    reservas.forEach((reserva) => {
+      reserva.descripcion = mapa[reserva.cliente.toLowerCase().trim()] || "";
+    });
+    // reservas.forEach((item) => {
+    //   const encontrado = descripciones.find(
+    //     (el) =>
+    //       el.cliente.toLowerCase().trim() === item.cliente.toLowerCase().trim(),
+    //   );
+    //   console.log(encontrado);
+    //   console.log(encontrado.descripcion);
+    //   const descripcion = mapa[item.cliente];
+
+    //   console.log(descripcion);
+    // });
     document.querySelectorAll("#card").forEach((card) => {
       card.addEventListener("click", () => {
         compararCards(card);
@@ -1808,10 +1854,14 @@ function mostrarFechas(eventos) {
           senaRecibida: datosProcesados?.senaRecibida,
         };
         //datosNuevos.push(nuevo);
+        // reservas.push({
+        //   cliente: datosProcesados.cliente.toLowerCase().trim(),
+        //   fecha: datosProcesados.fechaInicio.toLowerCase(),
+        //   precio: datosProcesados.precio,
+        // });
         reservas.push({
-          cliente: datosProcesados.cliente.toLowerCase().trim(),
-          fecha: datosProcesados.fechaInicio.toLowerCase(),
-          precio: datosProcesados.precio,
+          nuevo,
+          desc: datosProcesados,
         });
         const todos1 = lista.querySelectorAll("#card");
         const total = todos1.length;
@@ -2099,6 +2149,71 @@ function ordenarPorFecha() {
   });
 }
 
+function ordenarPorFecha55({
+  contenedor,
+  selectorFecha = "#fechaFin",
+  ocultarVencidas = true,
+  ordenAscendente = true,
+}) {
+  if (!contenedor) return;
+
+  const ahora = new Date();
+
+  // =========================
+  // OBTENER CARDS
+  // =========================
+
+  const cards = Array.from(contenedor.children);
+
+  // =========================
+  // FILTRAR
+  // =========================
+
+  let filtradas = cards;
+
+  if (ocultarVencidas) {
+    filtradas = cards.filter((card) => {
+      const elFecha = card.querySelector(selectorFecha);
+
+      if (!elFecha) return false;
+
+      const fechaTexto = elFecha.textContent.trim();
+
+      const fecha = new Date(fechaTexto);
+
+      fecha.setHours(23, 59, 59, 999);
+
+      return ahora <= fecha;
+    });
+  }
+
+  // =========================
+  // ORDENAR
+  // =========================
+
+  filtradas.sort((a, b) => {
+    const fechaA = new Date(a.querySelector(selectorFecha).textContent.trim());
+
+    const fechaB = new Date(b.querySelector(selectorFecha).textContent.trim());
+
+    return ordenAscendente ? fechaA - fechaB : fechaB - fechaA;
+  });
+
+  // =========================
+  // LIMPIAR CONTENEDOR
+  // =========================
+
+  contenedor.innerHTML = "";
+
+  // =========================
+  // REINSERTAR
+  // =========================
+
+  filtradas.forEach((card) => {
+    contenedor.appendChild(card);
+  });
+}
+
 // Funcion para comparar reservas con calendario
 function compararReservas(reserva, calendar) {
   if (!reserva) return;
@@ -2376,3 +2491,578 @@ function compararCards(cardActual) {
 }
 
 cargarDatos();
+
+function renderizarCards({
+  datos = [],
+  contenedor,
+  transformar = null,
+  onClick = null,
+}) {
+  if (!contenedor) return;
+
+  //contenedor.innerHTML = "";
+
+  datos.forEach((item, index) => {
+    // =========================
+    // TRANSFORMAR ITEM
+    // =========================
+
+    const data = transformar ? transformar(item, index) : item;
+
+    // =========================
+    // DEFAULTS
+    // =========================
+
+    const NoDisponible = "No Disponible";
+
+    const titulo = data.titulo || "Sin título";
+
+    const fechaInicio = data.fechaInicio || "Sin fecha";
+
+    const fechaFin = data.fechaFin || "Sin fecha";
+
+    const descripcion = data.descripcion || "";
+
+    const vehiculosClientes = data.vehiculosClientes ?? NoDisponible;
+
+    const vehiculosOrganizadores = data.vehiculosOrganizadores ?? NoDisponible;
+
+    const comida = data.comida ?? NoDisponible;
+
+    const precio = data.precio ?? NoDisponible;
+
+    const moneda = data.moneda ?? "";
+
+    // =========================
+    // CARD
+    // =========================
+
+    //const cardContainer = document.createElement("div");
+    const card = document.createElement("div");
+
+    card.className = "eventoCard";
+
+    card.innerHTML = `
+    
+      <div class="eventoTitulo">
+        <h2 class="elCliente">
+          ${titulo}
+        </h2>
+      </div>
+
+      <span class="datosTitulos">
+        <strong>Fecha Inicio:</strong>
+
+        <span class="datosVisibles">
+          ${formatearFecha(fechaInicio)}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Fecha Fin:</strong>
+
+        <span class="datosVisibles" id="fechaFin">
+          ${formatearFecha(fechaFin)}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Vehiculos Organizadores:</strong>
+
+        <span class="datosVisibles">
+          ${vehiculosOrganizadores}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Vehiculos Clientes:</strong>
+
+        <span class="datosVisibles">
+          ${vehiculosClientes}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Precio Acordado:</strong>
+
+        <span class="datosVisibles">
+          ${moneda} ${precio}
+        </span>
+      </span>
+
+      <span class="datosTitulos">
+        <strong>Incluye Comida:</strong>
+
+        <span class="datosVisibles">
+          ${comida}
+        </span>
+      </span>
+
+      <div class="eventoDescripcion">
+        <label>Descripción:</label>
+
+        ${descripcion}
+      </div>
+
+    `;
+
+    // =========================
+    // AUTO REDUCIR H2
+    // =========================
+
+    const h2 = card.querySelector(".elCliente");
+
+    const palabras = h2.textContent.trim().split(/\s+/);
+
+    if (palabras.length > 3) {
+      h2.style.fontSize = "18px";
+    }
+
+    // =========================
+    // CLICK
+    // =========================
+
+    card.addEventListener("click", () => {
+      console.log("Item seleccionado:", item);
+
+      if (onClick) {
+        onClick(item, index, card);
+      }
+    });
+    //contenedor.appendChild(cardContainer);
+    contenedor.appendChild(card);
+  });
+  // ordenarPorFecha({
+  //   contenedor: contenedor,
+  // });
+}
+
+(function () {
+  const titulosClientesModal = document.querySelector(
+    "#listaEventosModal > div h2",
+  );
+  setTimeout(() => {
+    // =========================
+    // CONFIG
+    // =========================
+
+    // Combinación:
+    // CTRL + SHIFT + E
+    const HOTKEY = {
+      ctrl: false,
+      shift: true,
+      key: "L",
+    };
+
+    // Array global con eventos
+    // Debe existir en tu página
+    // Ej:
+    // window.eventosCalendario = [...]
+    window.eventosCalendario = eventosCalen[0].items;
+    console.log(eventosCalen[0]);
+    const EVENTOS = window.eventosCalendario || [];
+
+    // =========================
+    // ESTILOS
+    // =========================
+
+    const style = document.createElement("style");
+
+    //   style.innerHTML = `
+
+    //   #modalEventosOverlay {
+    //     position: fixed;
+    //     inset: 0;
+    //     background: rgba(0,0,0,.7);
+    //     z-index: 999999;
+    //     display: none;
+    //     justify-content: center;
+    //     align-items: center;
+    //     backdrop-filter: blur(4px);
+    //   }
+    //   #listaEventosModal {
+    //     display: grid;
+    //     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    //     gap: 10px;
+    //   }
+
+    //   #modalEventos {
+    //     width: 90%;
+    //     max-width: 900px;
+    //     max-height: 90vh;
+    //     overflow-y: auto;
+    //     background: #1e1e1e;
+    //     color: white;
+    //     border-radius: 16px;
+    //     padding: 20px;
+    //     box-shadow: 0 0 30px rgba(0,0,0,.5);
+    //     font-family: Arial;
+    //   }
+
+    //   #modalEventos h2 {
+    //     margin-top: 0;
+    //   }
+
+    //   .eventoCard {
+    //   display: flex;
+    //   flex-direction: column;
+    //     background: #2a2a2a;
+    //     border-radius: 10px;
+    //     padding: 15px;
+    //     margin-bottom: 12px;
+    //     cursor: pointer;
+    //     transition: .2s;
+    //     border: 1px solid transparent;
+    //   }
+
+    //   .eventoCard:hover {
+    //     border-color: #00bfff;
+    //     transform: scale(1.01);
+    //   }
+    //   label {
+    //     margin: 0;
+    //   }
+    //   .elCliente {
+    //     margin: 0;
+    //     text-align: center;
+    //     color: #00ff3a;
+    //     font-size: 1em;
+    //   }
+
+    //   .eventoFecha {
+    //     color: #00bfff;
+    //     font-size: 14px;
+    //     margin-bottom: 6px;
+    //   }
+
+    //   .eventoTitulo {
+    //     font-size: 18px;
+    //     font-weight: bold;
+    //   }
+
+    //   .eventoDescripcion {
+    //     opacity: .8;
+    //     margin-top: 8px;
+    //     /* white-space: pre-wrap; */
+    //   }
+
+    //   #cerrarModalEventos {
+    //     float: right;
+    //     background: crimson;
+    //     color: white;
+    //     border: none;
+    //     padding: 8px 12px;
+    //     border-radius: 8px;
+    //     cursor: pointer;
+    //   }
+
+    // `;
+
+    document.head.appendChild(style);
+
+    // Funcion para formatear fecha
+    // function formatearFecha(fecha) {
+    //   // yyyy-mm-dd
+    //   if (typeof fecha === "string" && /^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+    //     return fecha;
+    //   }
+
+    //   const f = new Date(fecha);
+
+    //   if (isNaN(f.getTime())) {
+    //     return null;
+    //   }
+
+    //   const year = f.getFullYear();
+
+    //   const month = String(f.getMonth() + 1).padStart(2, "0");
+
+    //   const day = String(f.getDate()).padStart(2, "0");
+
+    //   return `${year}-${month}-${day}`;
+    // }
+
+    // // Funcion para procesar la descripcion del evento
+    // function procesarDescripcionEvento(texto) {
+    //   if (!texto || texto == null) return;
+    //   //console.log(texto);
+    //   const resultado = {
+    //     vehiculos: null,
+    //     organizadores: null,
+    //     precio: null,
+    //     moneda: null,
+    //     comida: null,
+    //     sena: null,
+    //   };
+
+    //   // =========================
+    //   // VEHÍCULOS
+    //   // =========================
+    //   const vehiculosMatch = texto.match(
+    //     /(\d+)\s*veh[ií]culos?(?!\s*organizadores)|vehiculos/i,
+    //   );
+
+    //   if (vehiculosMatch) {
+    //     resultado.vehiculos = Number(vehiculosMatch[1]);
+    //   }
+
+    //   // =========================
+    //   // ORGANIZADORES
+    //   // =========================
+    //   const organizadoresMatch = texto.match(
+    //     /(\d+)\s*veh[ií]culos?\s*organizadores/i,
+    //   );
+
+    //   if (organizadoresMatch) {
+    //     resultado.organizadores = Number(organizadoresMatch[1]);
+    //   }
+
+    //   // =========================
+    //   // PRECIO
+    //   // =========================
+    //   const precioRegex =
+    //     /(?:precio\s*pactado|precio\s*por\s*veh[ií]culo)?[\s:]*\$?\s*(\d+)\s*(usd|u\$s|d[oó]lares?|dolares|pesos?)?(?:\s*por\s*veh[ií]culo)?/i;
+    //   const patronesPrecio = [
+    //     /(\d+)\s*(usd|u\$s|d[oó]lares?|dolares|pesos?)\s*por\s*veh[ií]culo/i,
+
+    //     /precio\s*(?:pactado|por\s*veh[ií]culo)?[:\s]*\$?\s*(\d+)/i,
+
+    //     /\$\s*(\d+)/i,
+    //   ];
+
+    //   for (const regex of patronesPrecio) {
+    //     const match = texto.match(regex);
+
+    //     if (match) {
+    //       precioMatch = match;
+    //     }
+    //   }
+
+    //   if (precioMatch) {
+    //     resultado.precio = Number(precioMatch[1]);
+
+    //     if (precioMatch[2]) {
+    //       moneda = precioMatch[2].toLowerCase();
+
+    //       if (
+    //         moneda.includes("usd") ||
+    //         moneda.includes("u$s") ||
+    //         moneda.includes("dólar") ||
+    //         moneda.includes("dolar") ||
+    //         moneda.includes("dolares")
+    //       ) {
+    //         moneda = "USD";
+    //         resultado.moneda = "USD";
+    //       } else if (moneda.includes("peso")) {
+    //         moneda = "ARS";
+    //         resultado.moneda = "ARS";
+    //       }
+    //     }
+    //   }
+
+    //   // =========================
+    //   // COMIDA
+    //   // =========================
+    //   if (/\b(true|s[ií])\b|incluye\s*comida|con\s*comida/i.test(texto)) {
+    //     resultado.comida = "Sí";
+    //   } else if (/\b(false|no)\b|no\s*incluye\s*comida/i.test(texto)) {
+    //     resultado.comida = "No";
+    //   }
+    //   // =========================
+    //   // SEÑA
+    //   // =========================
+    //   if (/\b(true|s[ií])\b|incluye\s*seña|con\s*seña/i.test(texto)) {
+    //     resultado.sena = "Sí";
+    //   } else if (/\b(false|no)\b|no\s*seña\s*seña/i.test(texto)) {
+    //     resultado.sena = "No";
+    //   }
+
+    //   return resultado;
+    // }
+
+    // =========================
+    // MODAL
+    // =========================
+
+    const overlay = document.createElement("div");
+
+    overlay.id = "modalEventosOverlay";
+
+    overlay.innerHTML = `
+  
+    <div id="modalEventos">
+
+      <button id="cerrarModalEventos">
+        Cerrar
+      </button>
+
+      <h2 class="tituloModal">
+        Eventos del Calendario
+      </h2>
+
+      <div id="listaEventosModal"></div>
+
+    </div>
+
+  `;
+
+    document.body.appendChild(overlay);
+    const btnCerrarModal = document.querySelector("#cerrarModalEventos");
+
+    // =========================
+    // FUNCIONES
+    // =========================
+
+    function abrirModalEventos() {
+      let vehiculosClientes;
+      let vehiculosOrganizadores;
+      let comida;
+      let moneda;
+      let precio;
+
+      const lista = document.querySelector("#listaEventosModal");
+
+      lista.innerHTML = "";
+
+      if (!EVENTOS.length) {
+        lista.innerHTML = `
+        <p>No hay eventos cargados.</p>
+      `;
+      } else {
+        console.log(reservas);
+        let contenedorCards;
+        let tituloContenedorCards;
+        if (EVENTOS) {
+          contenedorCards = document.createElement("div");
+          contenedorCards.className = "cardContainerEventos";
+          tituloContenedorCards = document.createElement("h2");
+          tituloContenedorCards.className = "tituloEventos";
+          tituloContenedorCards.textContent = "Eventos desde Calendario";
+          contenedorCards.appendChild(tituloContenedorCards);
+          //lista.appendChild(cardContainer);
+        }
+        lista.appendChild(contenedorCards);
+
+        renderizarCards({
+          datos: EVENTOS,
+
+          contenedor: contenedorCards,
+
+          transformar: (ev) => {
+            const descrip = procesarDescripcionEvento(ev?.description);
+
+            return {
+              titulo: ev?.summary,
+
+              fechaInicio: ev?.start?.dateTime || ev?.start?.date,
+
+              fechaFin: ev?.end?.dateTime || ev?.end?.date,
+
+              descripcion: ev?.description,
+
+              vehiculosClientes: descrip?.vehiculos,
+
+              vehiculosOrganizadores: descrip?.organizadores,
+
+              comida: descrip?.comida,
+
+              precio: descrip?.precio,
+
+              moneda: descrip?.moneda,
+            };
+          },
+
+          onClick: (ev) => {
+            console.log(ev);
+          },
+        });
+        ordenarPorFecha55({
+          contenedor: contenedorCards,
+        });
+        if (reservas) {
+          contenedorCards = document.createElement("div");
+          contenedorCards.className = "cardContainerReservas";
+          tituloContenedorCards = document.createElement("h2");
+          tituloContenedorCards.className = "tituloReservas";
+          tituloContenedorCards.textContent = "Eventos desde Reservas";
+          contenedorCards.appendChild(tituloContenedorCards);
+          //lista.appendChild(cardContainer);
+        }
+        lista.appendChild(contenedorCards);
+        renderizarCards({
+          datos: reservas,
+
+          contenedor: contenedorCards,
+
+          transformar: (d) => ({
+            titulo: d.cliente,
+
+            fechaInicio: d.fecha,
+
+            fechaFin: d.fechaFin,
+
+            descripcion: d.descripcion,
+
+            vehiculosClientes: d.vc,
+
+            vehiculosOrganizadores: d.vo,
+
+            comida: d.comida,
+
+            precio: d.precio,
+
+            moneda: d.moneda,
+          }),
+        });
+        ordenarPorFecha55({
+          contenedor: contenedorCards,
+        });
+      }
+
+      overlay.style.display = "flex";
+      document.querySelectorAll("#listaEventosModal > div h2").forEach((h2) => {
+        const palabras = h2.textContent.trim().split(/\s+/);
+
+        if (palabras.length > 3) {
+          h2.style.fontSize = "1.4em";
+        }
+      });
+    }
+
+    function cerrarModalEventos() {
+      overlay.style.display = "none";
+    }
+
+    // =========================
+    // EVENTOS
+    // =========================
+
+    document
+      .querySelector("#cerrarModalEventos")
+      .addEventListener("click", cerrarModalEventos);
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        cerrarModalEventos();
+      }
+    });
+
+    if (plataforma.includes("Android")) {
+      btnCerrarModal.textContent = "X";
+      btnModal.style.display = "block";
+      btnModal.addEventListener("click", () => {
+        abrirModalEventos();
+      });
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.shiftKey && e.key.toLowerCase() === "l") {
+        e.preventDefault();
+
+        abrirModalEventos();
+      }
+    });
+
+    console.log("Modal de eventos cargado. CTRL + SHIFT + E");
+  }, 2000);
+})();
