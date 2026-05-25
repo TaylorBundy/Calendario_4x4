@@ -276,7 +276,7 @@ button {
 #modalEventos {
   width: 90%;
   max-width: 900px;
-  max-height: 90vh;
+  max-height: 80vh;
   overflow-y: auto;
   background: #1e1e1e;
   color: white;
@@ -341,6 +341,15 @@ label {
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
+}
+#listaEventosModal .tituloReservas,
+#listaEventosModal .tituloEventos {
+  color: #7804e5;
+  font-size: 2.1em;
+  text-align: center;
+  background: #141414;
+  padding: 5px;
+  border-radius: 8px;
 }
 @media only screen and (min-width: 360px) and (max-width: 1154px) {
   header {
@@ -559,15 +568,15 @@ label {
   #cerrarModalEventos {
     /* float: right; */
     position: absolute;
-    right: 8px;
-    top: 8px;
-    width: 60px;
-    height: 60px;
+    right: 20px;
+    top: 10px;
+    width: 80px;
+    height: 80px;
     background: crimson;
     color: white;
     border: none;
     padding: 8px 12px;
-    border-radius: 8px;
+    border-radius: 20px;
     cursor: pointer;
     font-size: 2em;
     font-weight: bold;
@@ -588,8 +597,8 @@ label {
     font-size: 2em;
     text-align: center;
   }
-  .tituloReservas,
-  .tituloEventos {
+  #listaEventosModal .tituloReservas,
+  #listaEventosModal .tituloEventos {
     color: #7804e5;
     font-size: 2.1em;
     text-align: center;

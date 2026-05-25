@@ -1844,6 +1844,7 @@ function ordenarPorFecha() {
 
 function ordenarPorFecha55({
   contenedor,
+  selectorCards = ".eventoCard",
   selectorFecha = "#fechaFin",
   ocultarVencidas = true,
   ordenAscendente = true,
@@ -1856,7 +1857,12 @@ function ordenarPorFecha55({
   // OBTENER CARDS
   // =========================
 
-  const cards = Array.from(contenedor.children);
+  //const cards = Array.from(contenedor.children);
+  // =========================
+  // SOLO CARDS
+  // =========================
+
+  const cards = Array.from(contenedor.querySelectorAll(selectorCards));
 
   // =========================
   // FILTRAR
@@ -1895,8 +1901,9 @@ function ordenarPorFecha55({
   // =========================
   // LIMPIAR CONTENEDOR
   // =========================
+  cards.forEach((card) => card.remove());
 
-  contenedor.innerHTML = "";
+  //contenedor.innerHTML = "";
 
   // =========================
   // REINSERTAR
