@@ -324,6 +324,7 @@ fetch(url)
   });
 
 window.addEventListener("DOMContentLoaded", () => {
+  fechaFin = null;
   setTimeout(() => {
     const mapa = {};
 
@@ -449,7 +450,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaCliente").value = dato.cliente;
   const fecha2 = formatearFecha(dato.fechaInicio) || formatearFecha(dato.fecha);
   document.getElementById("editaFechaInicio").value = fecha2;
-  //console.log(dato.fechaFin);
+  console.log(dato.fechaFin);
   if (dato.fechaFin > fechaFin) {
     fechaFin = restarDias(
       dato.fechaInicio,
@@ -457,7 +458,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
       1,
     );
   }
-  document.getElementById("editaFechaFin").value = fechaFin;
+  document.getElementById("editaFechaFin").value = dato?.fechaFin;
   document.getElementById("editaVehiculosClientes").value = dato?.vc || "";
   document.getElementById("editaVehiculosOrg").value = dato?.vo || "";
   document.getElementById("editaComida").checked = comidaCheck;
@@ -1783,7 +1784,7 @@ function mostrarFechas(eventos) {
           compararCards(card2);
           card2.click();
           const botonEliminar = document.querySelector(`.${idCard} > button`);
-          //console.log(botonEliminar);
+          console.log(botonEliminar);
           idCard2 = botonEliminar.id;
           const fechaFin = restarDias(
             datosProcesados.fechaInicio,
@@ -1844,7 +1845,7 @@ function mostrarFechas(eventos) {
       }
 
       eleEdita.style.background = "#2c2c2c";
-      cargarEnFormulario(datosProcesados, idCalendar, indiceAnterior);
+      cargarEnFormulario(nuevo, idCalendar, indiceAnterior);
     };
   }, 2000);
 }
@@ -2654,7 +2655,7 @@ function cerrarModalEventos() {
               fechaInicio: ev?.start?.dateTime || ev?.start?.date,
 
               //fechaFin: ev?.end?.dateTime || ev?.end?.date,
-              fechaFin: fechaFin || null,
+              fechaFin: fechaFin,
 
               descripcion: ev?.description,
 
