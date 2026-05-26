@@ -42,7 +42,7 @@
     "fechaFin": "2026-07-27",
     "vc": "4",
     "vo": "2",
-    "comida": true,
+    "comida": false,
     "precio": "USD 50",
     "moneda": "",
     "sena": false,
