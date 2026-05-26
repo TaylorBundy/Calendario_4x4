@@ -87,6 +87,7 @@ function procesarDescripcionEvento(texto) {
     comida: null,
     sena: null,
   };
+  const textoLower = (texto || "").toLowerCase();
 
   // =========================
   // VEHÍCULOS
@@ -156,11 +157,52 @@ function procesarDescripcionEvento(texto) {
   // =========================
   // COMIDA
   // =========================
-  if (/\b(true|s[ií])\b|incluye\s*comida|con\s*comida/i.test(texto)) {
-    resultado.comida = "Sí";
-  } else if (/\b(false|no)\b|no\s*incluye\s*comida/i.test(texto)) {
+  // if (/\b(true|s[ií])\b|incluye\s*comida|con\s*comida/i.test(texto)) {
+  //   resultado.comida = "Sí";
+  // } else if (/\b(false|no)\b|No|no\s*incluye\s*comida/i.test(texto)) {
+  //   resultado.comida = "No";
+  // }
+  // console.log(resultado.comida);
+  // if (/\b(false|no)\b|no\s*incluye\s*comida/i.test(texto)) {
+  //   resultado.comida = "No";
+  // } else if (
+  //   /\b(true|s[ií])\b|(?<!no\s)incluye\s*comida|con\s*comida/i.test(texto)
+  // ) {
+  //   resultado.comida = "Sí";
+  // }
+  // if (
+  //   !texto ||
+  //   textoLower.includes("no incluye comida") ||
+  //   /\bno\b/.test(textoLower)
+  // ) {
+  //   resultado.comida = "No";
+  // } else if (
+  //   textoLower.includes("incluye comida") ||
+  //   textoLower.includes("con comida") ||
+  //   /\b(si|sí|true)\b/.test(textoLower)
+  // ) {
+  //   resultado.comida = "Sí";
+  // }
+  const tieneComida = [
+    "desayuno",
+    "almuerzo",
+    "merienda",
+    "cena",
+    "comida",
+  ].some((palabra) => textoLower.includes(palabra));
+
+  if (
+    !texto ||
+    textoLower.includes("no incluye comida") ||
+    /\bno\b/.test(textoLower) ||
+    !tieneComida
+  ) {
     resultado.comida = "No";
+  } else {
+    resultado.comida = "Sí";
   }
+
+  //console.log(resultado.comida);
   // =========================
   // SEÑA
   // =========================
@@ -274,7 +316,6 @@ fetch(url)
     //     descripcion: detalle,
     //   });
     //   const fechaFin1 = `end: ${fechaFn}`;
-
     //   //console.log(formatearFecha(fechaInicio.replace("start:", "").trim()));
     //   if (ev?.start.date) {
     //     //console.log(`si es date:${fechaInicio.replace("start: ", "").trim()}`);
@@ -298,9 +339,7 @@ fetch(url)
     //     fechaFin = formatearFecha(fechaFin1.replace("end: ", "").trim());
     //   }
     //   //console.log(fechaFormateada);
-
     //   //const fechaInicio: ev.start.dateTime || ev.start.date,
-
     //   const vehiculosClientes = `vehiculos: ${descrip?.vehiculos}` || null;
     //   const vehiculosOrganizadores = `vehiculos organizadores: ${descrip?.organizadores}`;
     //   const comida = `comida: ${descrip?.comida}`;
@@ -322,7 +361,7 @@ fetch(url)
     //   clientes = nomCli.toLowerCase();
     //   fechasInicio = fechaInicio.toLowerCase();
     // });
-    cargarEventosGoogle(url);
+    //cargarEventosGoogle(url);
     //mostrarFechas(data.items);
   });
 
@@ -330,7 +369,7 @@ async function cargarEventosGoogle(url) {
   try {
     // limpiar antes de recargar
     clientesCalendar.length = 0;
-    descripciones.length = 0;
+    //descripciones.length = 0;
 
     // limpiar select
     select.innerHTML = "";
@@ -389,6 +428,8 @@ async function cargarEventosGoogle(url) {
         precio: `${descrip?.precio || ""}`.toLowerCase().trim(),
 
         moneda: `${descrip?.moneda || ""}`.toLowerCase().trim(),
+
+        comida: `${descrip?.comida || ""}`.toLowerCase().trim(),
       });
     });
 
@@ -420,12 +461,11 @@ function reconstruirReservasDesdeDOM() {
 
       vo: card.querySelector("#vo")?.textContent.toLowerCase(),
 
-      comida: card.querySelector("#comida")?.textContent.toLowerCase(),
+      comida: card.querySelector("#comida")?.textContent,
 
       precio: card
         .querySelector("#precio")
-        ?.textContent.replace(`${moneda} `, "")
-        .toLowerCase(),
+        ?.textContent.replace(`${moneda} `, ""),
     });
   });
 
@@ -438,68 +478,108 @@ function reconstruirReservasDesdeDOM() {
   });
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  fechaFin = null;
+// window.addEventListener("DOMContentLoaded", () => {
+//   fechaFin = null;
+//   reconstruirReservasDesdeDOM();
+//   setTimeout(() => {
+//     // const mapa = {};
+
+//     // // console.log(visibles);
+//     // // console.log(ocultas);
+//     // //console.log(descripciones);
+//     // lista.querySelectorAll(".divcontainer").forEach((card) => {
+//     //   const card2 = card.closest("[data-card-id]");
+//     //   //console.log(card2.dataset.id);
+//     //   reservas.push({
+//     //     cardID: card2.dataset.id,
+//     //     cliente: card.querySelector("h2")?.textContent.trim(),
+//     //     fecha: card.querySelector("#fechaInicio")?.textContent.toLowerCase(),
+//     //     fechaFin: card.querySelector("#fechaFin")?.textContent.toLowerCase(),
+//     //     vc: card.querySelector("#vc")?.textContent.toLowerCase(),
+//     //     vo: card.querySelector("#vo")?.textContent.toLowerCase(),
+//     //     comida: card.querySelector("#comida")?.textContent.toLowerCase(),
+//     //     //descripcion: descripciones?.descripcion,
+//     //     precio: card
+//     //       .querySelector("#precio")
+//     //       ?.textContent.replace(`${moneda} `, "")
+//     //       .toLowerCase(),
+//     //   });
+//     //   //console.log(reservas);
+//     // });
+//     // // reservas.forEach((reserva) => {
+//     // //   console.log(reserva.cardID);
+//     // // });
+
+//     // descripciones.forEach((d) => {
+//     //   mapa[d.cliente.toLowerCase().trim()] = d.descripcion;
+//     // });
+//     // reservas.forEach((reserva) => {
+//     //   reserva.descripcion = mapa[reserva.cliente.toLowerCase().trim()] || "";
+//     // });
+
+//     document.querySelectorAll("#card").forEach((card) => {
+//       card.addEventListener("click", () => {
+//         compararCards(card);
+//       });
+//     });
+//     if (plataforma.includes("Android")) {
+//       creaTop();
+//       window.onscroll = function () {
+//         scrollFunction();
+//       };
+//     }
+//     const numeros = obtenerNumeros();
+//     numeroInicial = numeros.mayor;
+
+//     //console.log(reservas);
+//     lista2.style.display = "none";
+//     muestraBoton();
+//   }, 2000);
+//   cargarDatosDesde("data/data.json");
+//   // recargar.addEventListener("click", () => {
+//   //   cargarDatos();
+//   //   //console.log(datos);
+//   // });
+
+//   const ele = eleEdita.querySelectorAll("input");
+//   ele.forEach((el) => {
+//     if (el.type === "text" || el.type === "number") {
+//       if (el.value === "") {
+//         //console.log(el);
+//         actualizar.disabled = true;
+//         actualizar.classList.add("desactive");
+//         //actualizar.style.background = "#888";
+//         //actualizar.style.cursor = "wait";
+//       }
+//     }
+//   });
+//   //console.log(eleEdita);
+// });
+window.addEventListener("DOMContentLoaded", async () => {
+  await cargarEventosGoogle(url);
+
   reconstruirReservasDesdeDOM();
-  setTimeout(() => {
-    // const mapa = {};
 
-    // // console.log(visibles);
-    // // console.log(ocultas);
-    // //console.log(descripciones);
-    // lista.querySelectorAll(".divcontainer").forEach((card) => {
-    //   const card2 = card.closest("[data-card-id]");
-    //   //console.log(card2.dataset.id);
-    //   reservas.push({
-    //     cardID: card2.dataset.id,
-    //     cliente: card.querySelector("h2")?.textContent.trim(),
-    //     fecha: card.querySelector("#fechaInicio")?.textContent.toLowerCase(),
-    //     fechaFin: card.querySelector("#fechaFin")?.textContent.toLowerCase(),
-    //     vc: card.querySelector("#vc")?.textContent.toLowerCase(),
-    //     vo: card.querySelector("#vo")?.textContent.toLowerCase(),
-    //     comida: card.querySelector("#comida")?.textContent.toLowerCase(),
-    //     //descripcion: descripciones?.descripcion,
-    //     precio: card
-    //       .querySelector("#precio")
-    //       ?.textContent.replace(`${moneda} `, "")
-    //       .toLowerCase(),
-    //   });
-    //   //console.log(reservas);
-    // });
-    // // reservas.forEach((reserva) => {
-    // //   console.log(reserva.cardID);
-    // // });
-
-    // descripciones.forEach((d) => {
-    //   mapa[d.cliente.toLowerCase().trim()] = d.descripcion;
-    // });
-    // reservas.forEach((reserva) => {
-    //   reserva.descripcion = mapa[reserva.cliente.toLowerCase().trim()] || "";
-    // });
-
-    document.querySelectorAll("#card").forEach((card) => {
-      card.addEventListener("click", () => {
-        compararCards(card);
-      });
+  document.querySelectorAll("#card").forEach((card) => {
+    card.addEventListener("click", () => {
+      compararCards(card);
     });
-    if (plataforma.includes("Android")) {
-      creaTop();
-      window.onscroll = function () {
-        scrollFunction();
-      };
-    }
+  });
+  if (plataforma.includes("Android")) {
+    creaTop();
+    window.onscroll = function () {
+      scrollFunction();
+    };
+  }
+  cargarDatosDesde("data/data.json");
+  setTimeout(() => {
     const numeros = obtenerNumeros();
     numeroInicial = numeros.mayor;
+  }, 1000);
 
-    //console.log(reservas);
-    lista2.style.display = "none";
-    muestraBoton();
-  }, 2000);
-  cargarDatosDesde("data/data.json");
-  // recargar.addEventListener("click", () => {
-  //   cargarDatos();
-  //   //console.log(datos);
-  // });
+  //console.log(reservas);
+  lista2.style.display = "none";
+  muestraBoton();
 
   const ele = eleEdita.querySelectorAll("input");
   ele.forEach((el) => {
@@ -513,7 +593,6 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
-  //console.log(eleEdita);
 });
 
 function contarRegistrosVisibles(datos) {
@@ -1483,6 +1562,7 @@ function mostrarFechas(eventos) {
 
         moneda: c.moneda.trim().toLowerCase(),
         id: c.id.trim().toLowerCase(),
+        comida: c.comida,
         //}));
       }))
       .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
@@ -1501,6 +1581,7 @@ function mostrarFechas(eventos) {
         .toLowerCase(),
 
       moneda: moneda.trim().toLowerCase(),
+      comida: c.comida.trim().toLowerCase(),
     }));
     //console.log(clientesCards3);
 
@@ -1508,6 +1589,7 @@ function mostrarFechas(eventos) {
     const cambios2 = [];
 
     clientesCalendar2.forEach((calendar, index) => {
+      //console.log(calendar);
       // const reserva2 = clientesCards3.find(
       //   (card) => card.fecha === calendar.fecha,
       // );
@@ -1515,7 +1597,8 @@ function mostrarFechas(eventos) {
         (card) =>
           card.fecha === calendar.fecha &&
           card.fechaFin === calendar.fechaFin &&
-          card.cliente === calendar.cliente,
+          card.cliente === calendar.cliente &&
+          card.comida === calendar.comida,
       );
       //console.log(reserva2);
       // ✅ evitar duplicados
@@ -1533,6 +1616,7 @@ function mostrarFechas(eventos) {
           fecha: calendar.fecha,
           fechaFin: calendar.fechaFin,
           id: calendar.id,
+          comida: calendar.comida,
           cambios: ["no_existe"],
         });
 
@@ -1559,6 +1643,7 @@ function mostrarFechas(eventos) {
         cliente: calendar.cliente,
         fecha: calendar.fecha,
         fechaFin: calendar.fechaFin,
+        comida: calendar.comida,
         id: calendar.id,
         cambios: cambios,
       });
@@ -2221,6 +2306,19 @@ function compararReservas(reserva, calendar) {
 // Funcion para agregar items al select
 function agregarOption(select, texto, valor, idc, options = {}) {
   //console.log(valor);
+  // agregar placeholder solo una vez
+  if (!select.dataset.placeholderAgregado) {
+    const placeholder = document.createElement("option");
+
+    placeholder.textContent = "Seleccione una fecha:";
+    placeholder.value = "";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+
+    select.prepend(placeholder);
+
+    select.dataset.placeholderAgregado = "true";
+  }
   const option = document.createElement("option");
 
   option.textContent = texto;
