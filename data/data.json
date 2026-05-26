@@ -116,6 +116,7 @@
     "vc": "9",
     "vo": "",
     "comida": true,
+    "precio": "60",
     "moneda": "",
     "sena": false,
     "senaRecibida": ""
