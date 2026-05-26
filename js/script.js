@@ -261,7 +261,7 @@ fetch(url)
     items.forEach((ev) => {
       //console.log(ev);
       const fechaIn = ev?.start.date || ev?.start.dateTime;
-      const fechaFn = ev?.end.date;
+      const fechaFn = ev?.end.date || ev?.end.dateTime;
       const nomCli = ev?.summary;
       const descrip = procesarDescripcionEvento(ev?.description) || null;
       const cliente = `cliente: ${nomCli}`;
@@ -271,12 +271,19 @@ fetch(url)
         cliente: nomCli.toLowerCase(),
         descripcion: detalle,
       });
+      const fechaFin1 = `end: ${fechaFn}`;
 
       //console.log(formatearFecha(fechaInicio.replace("start:", "").trim()));
       if (ev?.start.date) {
         //console.log(`si es date:${fechaInicio.replace("start: ", "").trim()}`);
         //console.log(fechaInicio.replace("start:", "").trim());
-        fechaFormateada = fechaInicio.replace("start:", "").trim();
+        fechaFormateada = fechaInicio.replace("start: ", "").trim();
+        //fechaFin = fechaFin1.replace("end: ", "").trim();
+        fechaFin = restarDias(
+          fechaFormateada,
+          fechaFin1.replace("end: ", "").trim(),
+          1,
+        );
         //console.log(fechaFormateada);
         //return;
       } else {
@@ -284,13 +291,14 @@ fetch(url)
         //   `si es dateTime:${normalizarFecha(fechaInicio.replace("start: ", "").trim())}`,
         // );
         fechaFormateada = formatearFecha(
-          fechaInicio.replace("start:", "").trim(),
+          fechaInicio.replace("start: ", "").trim(),
         );
+        fechaFin = formatearFecha(fechaFin1.replace("end: ", "").trim());
       }
       //console.log(fechaFormateada);
 
       //const fechaInicio: ev.start.dateTime || ev.start.date,
-      const fechaFin = `end: ${fechaFn}`;
+
       const vehiculosClientes = `vehiculos: ${descrip?.vehiculos}` || null;
       const vehiculosOrganizadores = `vehiculos organizadores: ${descrip?.organizadores}`;
       const comida = `comida: ${descrip?.comida}`;
@@ -303,11 +311,12 @@ fetch(url)
         cliente: cliente.trim(),
         //fecha: fechaInicio.toLowerCase().trim(),
         fecha: fechaFormateada,
+        fechaFin: fechaFin,
         //fecha: normalizarFecha(fechaInicio.replace("start:", "").trim()),
         precio: precio.replace("precio: ", "").toLowerCase().trim(),
         moneda: moneda.replace("moneda: ", "").toLowerCase().trim(),
       });
-      //console.log(clientesCalendar);
+      console.log(clientesCalendar);
       clientes = nomCli.toLowerCase();
       fechasInicio = fechaInicio.toLowerCase();
     });
@@ -1304,6 +1313,7 @@ function mostrarFechas(eventos) {
 
         //fecha: c.fecha.replace("start:", "").trim().toLowerCase(),
         fecha: c.fecha,
+        fechaFin: c.fechaFin,
 
         precio: c.precio.replace("precio: ", "").trim().toLowerCase(),
 
@@ -1312,12 +1322,13 @@ function mostrarFechas(eventos) {
         //}));
       }))
       .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-    //console.log(clientesCalendar2);
+    console.log(clientesCalendar2);
 
     const clientesCards3 = reservas.map((c) => ({
       cliente: c.cliente.trim().toLowerCase(),
 
       fecha: c.fecha.replace("fecha:", "").trim().toLowerCase(),
+      fechaFin: c.fechaFin,
 
       //precio: c.precio.replace(`${moneda} `, "").trim().toLowerCase(),
       precio: c.precio
@@ -1327,7 +1338,7 @@ function mostrarFechas(eventos) {
 
       moneda: moneda.trim().toLowerCase(),
     }));
-    //console.log(clientesCards3);
+    console.log(clientesCards3);
 
     // limpiar array
     const cambios2 = [];
@@ -1338,9 +1349,11 @@ function mostrarFechas(eventos) {
       // );
       const reserva2 = clientesCards3.find(
         (card) =>
-          card.fecha === calendar.fecha && card.cliente === calendar.cliente,
+          card.fecha === calendar.fecha &&
+          card.fechaFin === calendar.fechaFin &&
+          card.cliente === calendar.cliente,
       );
-      //console.log(reserva2);
+      console.log(reserva2);
       // ✅ evitar duplicados
       // const yaExiste = cambios2.some(
       //   (item) =>
@@ -1354,6 +1367,7 @@ function mostrarFechas(eventos) {
         cambios2.push({
           cliente: calendar.cliente,
           fecha: calendar.fecha,
+          fechaFin: calendar.fechaFin,
           id: calendar.id,
           cambios: ["no_existe"],
         });
@@ -1362,7 +1376,7 @@ function mostrarFechas(eventos) {
       }
 
       const resultado2 = compararReservas(reserva2, calendar);
-      //console.log(resultado2);
+      console.log(resultado2);
 
       // ✅ IMPORTANTE
       // limpiar cambios por iteración
@@ -1380,6 +1394,7 @@ function mostrarFechas(eventos) {
       cambios2.push({
         cliente: calendar.cliente,
         fecha: calendar.fecha,
+        fechaFin: calendar.fechaFin,
         id: calendar.id,
         cambios: cambios,
       });
@@ -1391,7 +1406,7 @@ function mostrarFechas(eventos) {
 
     if (cambios2.length > 0) {
       cambios2.forEach((cambio, index) => {
-        //console.log(cambio);
+        console.log(cambio);
         //cambio.fecha = formatearFecha(cambio.fecha.trim());
         const fechaComparada = compararFechas(cambio.fecha, fechaHoy);
 
@@ -1415,7 +1430,9 @@ function mostrarFechas(eventos) {
       (calendar) =>
         !clientesCards3.some(
           (card) =>
-            card.cliente === calendar.cliente && card.fecha === calendar.fecha,
+            card.cliente === calendar.cliente &&
+            card.fecha === calendar.fecha &&
+            card.fechaFin === calendar.fechaFin,
         ),
     );
     faltantes.forEach((ev, index) => {
@@ -1425,7 +1442,9 @@ function mostrarFechas(eventos) {
       (calendar) =>
         !clientesCards3.some(
           (card) =>
-            card.cliente === calendar.cliente && card.fecha === calendar.fecha,
+            card.cliente === calendar.cliente &&
+            card.fecha === calendar.fecha &&
+            card.fechaFin === calendar.fechaFin,
         ),
     );
 
@@ -1985,6 +2004,8 @@ function ordenarPorFecha55({
 
 // Funcion para comparar reservas con calendario
 function compararReservas(reserva, calendar) {
+  console.log(reserva);
+  console.log(calendar);
   if (!reserva) return;
   const normalizarTexto = (texto) =>
     String(texto || "")
