@@ -819,6 +819,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       //console.log(btnElimina);
       btnElimina.addEventListener("click", () => {
         const option = select.options[select.selectedIndex];
+        const lala = document.getElementById("editaPrecio").value.split(" ");
 
         //console.log(d.id);
         idSeleccionado = d.id;
@@ -1006,6 +1007,7 @@ function mostrarDatos() {
     const btnElimina = document.querySelector(`#${d.id}`);
     btnElimina.addEventListener("click", () => {
       const option = select.options[select.selectedIndex];
+      const lala = document.getElementById("editaPrecio").value.split(" ");
 
       //console.log(d.id);
       idSeleccionado = d.id;
@@ -1298,6 +1300,7 @@ function procesarEventoGoogle(ev) {
 }
 
 guarda.addEventListener("click", () => {
+  const lala = document.getElementById("editaPrecio").value.split(" ");
   if (elementos.length > 0) {
     const ultimo = elementos[elementos.length - 1];
     const numero = parseInt(ultimo.className.match(/card-(\d+)/)[1]);
@@ -1322,6 +1325,7 @@ guarda.addEventListener("click", () => {
 });
 
 actualizar.addEventListener("click", (e) => {
+  const lala = document.getElementById("editaPrecio").value.split(" ");
   nuevo = {
     id: idCard2,
     cliente: document.getElementById("editaCliente").value,
@@ -1343,6 +1347,8 @@ actualizar.addEventListener("click", (e) => {
     if (btnEliminar.checked) {
       eliminar();
     } else {
+      console.log(nuevo);
+      console.log(lala);
       editar(nuevo);
     }
   }
