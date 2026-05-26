@@ -28,6 +28,7 @@ const reservas = [];
 const modificados = [];
 let nuevo;
 const datosNuevos = [];
+let fechaFin = null;
 let existe = null;
 let noexiste = null;
 let indiceEditando = null;
@@ -270,18 +271,23 @@ fetch(url)
         cliente: nomCli.toLowerCase(),
         descripcion: detalle,
       });
-      //console.log(fechaInicio);
+
       //console.log(formatearFecha(fechaInicio.replace("start:", "").trim()));
       if (ev?.start.date) {
+        //console.log(`si es date:${fechaInicio.replace("start: ", "").trim()}`);
         //console.log(fechaInicio.replace("start:", "").trim());
         fechaFormateada = fechaInicio.replace("start:", "").trim();
         //console.log(fechaFormateada);
-        return;
+        //return;
       } else {
+        // console.log(
+        //   `si es dateTime:${normalizarFecha(fechaInicio.replace("start: ", "").trim())}`,
+        // );
         fechaFormateada = formatearFecha(
           fechaInicio.replace("start:", "").trim(),
         );
       }
+      //console.log(fechaFormateada);
 
       //const fechaInicio: ev.start.dateTime || ev.start.date,
       const fechaFin = `end: ${fechaFn}`;
@@ -294,9 +300,10 @@ fetch(url)
       idCalendar = ev?.id;
       clientesCalendar.push({
         id: id.toLowerCase().trim(),
-        cliente: cliente.toLowerCase().trim(),
+        cliente: cliente.trim(),
         //fecha: fechaInicio.toLowerCase().trim(),
         fecha: fechaFormateada,
+        //fecha: normalizarFecha(fechaInicio.replace("start:", "").trim()),
         precio: precio.replace("precio: ", "").toLowerCase().trim(),
         moneda: moneda.replace("moneda: ", "").toLowerCase().trim(),
       });
@@ -419,7 +426,7 @@ async function cargarDatos() {
 }
 
 function cargarEnFormulario(dato, index, indiceAnteriors) {
-  console.log(dato);
+  //console.log(dato);
   if (comidaCheck == "No") {
     comidaCheck = false;
   } else {
@@ -433,11 +440,14 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaCliente").value = dato.cliente;
   const fecha2 = formatearFecha(dato.fechaInicio) || formatearFecha(dato.fecha);
   document.getElementById("editaFechaInicio").value = fecha2;
-  const fechaFin = restarDias(
-    dato.fechaInicio,
-    dato.fechaFin.replace("end: ", ""),
-    1,
-  );
+  //console.log(dato.fechaFin);
+  if (dato.fechaFin > fechaFin) {
+    fechaFin = restarDias(
+      dato.fechaInicio,
+      dato.fechaFin.replace("end: ", ""),
+      1,
+    );
+  }
   document.getElementById("editaFechaFin").value = fechaFin;
   document.getElementById("editaVehiculosClientes").value = dato?.vc || "";
   document.getElementById("editaVehiculosOrg").value = dato?.vo || "";
@@ -897,11 +907,14 @@ function mostrarDatosGoogle(d, index = 0) {
       }
     }
   }, 3000);
-  const fechaFin = restarDias(
-    d.fechaInicio,
-    d.fechaFin.replace("end: ", ""),
-    1,
-  );
+  // const fechaFin = restarDias(
+  //   d.fechaInicio,
+  //   d.fechaFin.replace("end: ", ""),
+  //   1,
+  // );
+  if (d.fechaFin > fechaFin) {
+    fechaFin = restarDias(d.fechaInicio, d.fechaFin.replace("end: ", ""), 1);
+  }
   const fecha2 = formatearFecha(d.fechaInicio);
 
   const div = document.createElement("div");
@@ -1095,13 +1108,17 @@ function procesarEventoGoogle(ev) {
 
   const datosExtraidos = procesarDescripcionEvento(descripcion);
   //console.log(datosExtraidos);
+  const fechaInicio = ev.start.dateTime || ev.start.date;
+  const fechaFin = ev.end.dateTime || ev.end.date;
 
   return {
     id: ev?.id,
     cliente: ev?.summary || ev?.cliente || "",
-    fechaInicio: ev?.start?.dateTime || ev?.start?.date || ev?.fecha,
+    //fechaInicio: ev?.start?.date || ev?.start?.dateTime || ev?.fecha,
 
-    fechaFin: ev?.end?.dateTime || ev?.end?.date || ev?.fechaFin,
+    //fechaFin: ev?.end?.dateTime || ev?.end?.date || ev?.fechaFin,
+    fechaInicio: normalizarFecha(fechaInicio),
+    fechaFin: normalizarFecha(fechaFin),
 
     vc: datosExtraidos?.vehiculos,
     vo: datosExtraidos?.organizadores,
@@ -1111,6 +1128,7 @@ function procesarEventoGoogle(ev) {
 
     sena: false,
     senaRecibida: "",
+    descripcion: descripcion,
   };
 }
 
@@ -1284,7 +1302,8 @@ function mostrarFechas(eventos) {
       .map((c) => ({
         cliente: c.cliente.replace("cliente:", "").trim().toLowerCase(),
 
-        fecha: c.fecha.replace("start:", "").trim().toLowerCase(),
+        //fecha: c.fecha.replace("start:", "").trim().toLowerCase(),
+        fecha: c.fecha,
 
         precio: c.precio.replace("precio: ", "").trim().toLowerCase(),
 
@@ -1372,7 +1391,8 @@ function mostrarFechas(eventos) {
 
     if (cambios2.length > 0) {
       cambios2.forEach((cambio, index) => {
-        cambio.fecha = formatearFecha(cambio.fecha.trim());
+        //console.log(cambio);
+        //cambio.fecha = formatearFecha(cambio.fecha.trim());
         const fechaComparada = compararFechas(cambio.fecha, fechaHoy);
 
         // menor a hoy → ignorar
@@ -1413,10 +1433,12 @@ function mostrarFechas(eventos) {
     eventos.forEach((ev, index) => {
       //console.log(ev);
       const datos = procesarEventoGoogle(ev);
-      //console.log(datos.fechaInicio);
+      //console.log(datos);
       const cliente = datos.cliente.toLowerCase();
       const fecha = datos.fechaInicio.toLowerCase();
+      //const fecha = normalizarFecha(datos.fechaInicio.toLowerCase());
       const fecha2 = formatearFecha(datos.fechaInicio);
+      //console.log(fecha);
       //console.log(fecha2);
       //console.log(fechaFormateada);
       const precio = datos.precio;
@@ -1425,7 +1447,7 @@ function mostrarFechas(eventos) {
       // verificar si existe
       const existe = clientesCards3.some(
         (card) =>
-          (card.cliente === cliente && card.fecha === fecha2) ||
+          (card.cliente === cliente && normalizarFecha(card.fecha) === fecha) ||
           card.precio === precio,
       );
       //console.log(existe);
@@ -1433,26 +1455,26 @@ function mostrarFechas(eventos) {
       // si YA existe → no agregar
       if (existe) return;
       const yaExisteOption = [...select.options].some(
-        (opt) => opt.textContent === `${fecha2} - ${cliente}`,
+        (opt) => opt.textContent === `${fecha} - ${cliente}`,
       );
 
       if (yaExisteOption) return;
 
       if (cambios2.length > 0) {
         // fechaFormateada = formatearFecha(fecha.replace("start:", "").trim());
-        // console.log(fechaFormateada);
+        //console.log(fechaFormateada);
         // console.log(fecha);
-        const fechaComparada = compararFechas(fecha2, fechaHoy);
+        const fechaComparada = compararFechas(fecha, fechaHoy);
 
         // menor a hoy → ignorar
-        if (fechaComparada === -1) {
-          return;
-        }
+        // if (fechaComparada === -1) {
+        //   return;
+        // }
         //console.log(formatearFecha(fecha));
 
         agregarOption(
           select,
-          `${fecha2} - ${cliente}`,
+          `${fecha} - ${cliente}`,
           nuevoNumero,
           idcCalendar,
         );
@@ -1498,11 +1520,11 @@ function mostrarFechas(eventos) {
       // evento original de Google
 
       const eventoSeleccionado = eventos[indexEvento];
-      //console.log(eventoSeleccionado);
+      //console.log(eventoSeleccionado.end);
 
       // procesar
       const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-      //console.log(datosProcesados);
+      //console.log(datosProcesados.id);
 
       // normalizar
       const cliente = datosProcesados.cliente
@@ -1519,7 +1541,9 @@ function mostrarFechas(eventos) {
       const reservaExistente = reservas.find(
         (r) =>
           r.cliente.trim().toLowerCase() === cliente &&
-          r.fecha.replace("fecha:", "").trim().toLowerCase() === fecha,
+          normalizarFecha(
+            r.fecha.replace("fecha:", "").trim().toLowerCase(),
+          ) === fecha,
       );
       //console.log(reservaExistente);
       //const valorComida = String(datosProcesados.comida).trim().toLowerCase();
@@ -1564,38 +1588,30 @@ function mostrarFechas(eventos) {
         // console.log("NO EXISTE");
         estado = "NO EXISTE";
         idCard2 = `card-${numeroMayor}`;
+        //let fechaFin;
         // if (indiceAnterior === null) {
         //   indiceAnterior = numero;
         // }
-        const fechaFin = restarDias(
-          datosProcesados.fechaInicio,
-          datosProcesados.fechaFin,
-          1,
-        );
+        //console.log(eventos);
+        if (eventoSeleccionado?.end.date) {
+          fechaFin = restarDias(
+            datosProcesados?.fechaInicio,
+            datosProcesados?.fechaFin,
+            1,
+          );
+        } else {
+          fechaFin = datosProcesados?.fechaFin;
+        }
+        //console.log(fechaFin);
         const fecha2 = formatearFecha(datosProcesados.fechaInicio);
-        nuevo = {
-          id: idCard2,
-          cliente: cliente,
-          fechaInicio: fecha2,
-          fechaFin: fechaFin,
-          vc: datosProcesados?.vc,
-          vo: datosProcesados?.vo,
-          comida: comidaCheck,
-          precio: datosProcesados?.precio,
-          moneda: datosProcesados?.moneda,
-          sena: señaCheck,
-          senaRecibida: datosProcesados?.senaRecibida,
-        };
+
         //datosNuevos.push(nuevo);
         // reservas.push({
         //   cliente: datosProcesados.cliente.toLowerCase().trim(),
         //   fecha: datosProcesados.fechaInicio.toLowerCase(),
         //   precio: datosProcesados.precio,
         // });
-        reservas.push({
-          nuevo,
-          desc: datosProcesados,
-        });
+
         const todos1 = lista.querySelectorAll("#card");
         const total = todos1.length;
         //console.log(total);
@@ -1611,15 +1627,38 @@ function mostrarFechas(eventos) {
           nuevoNumero = total;
           numeroMayor = numeroMayor + 1;
         }
-
+        nuevo = {
+          id: idCard2,
+          cardID: `card-${nuevoNumero}`,
+          cliente: datosProcesados?.cliente,
+          fecha: fecha2,
+          fechaFin: fechaFin,
+          vc: datosProcesados?.vc,
+          vo: datosProcesados?.vo,
+          comida: comidaCheck,
+          precio: datosProcesados?.precio,
+          moneda: datosProcesados?.moneda,
+          sena: señaCheck,
+          senaRecibida: datosProcesados?.senaRecibida,
+          descripcion: datosProcesados?.descripcion,
+        };
         tarjetaAnterior = `card-${nuevoNumero}`;
         mostrarDatosGoogle(datosProcesados, nuevoNumero);
         cargarEnFormulario(datosProcesados, idCalendar, numero);
+        reservas.push(
+          nuevo,
+          //desc: datosProcesados,
+        );
         eleEdita.style.background = "#888";
         eleEdita.scrollIntoView({
           behavior: "smooth",
           block: "center",
         });
+        const option = select.options[select.selectedIndex];
+        if (option) {
+          option.remove();
+        }
+        //console.log(tarjetaAnterior);
 
         //console.log(`nuevo: ${numeros.nuevo2} - mayor: ${numeros.mayor}`);
         tarjetaAnterior = null;
@@ -1631,7 +1670,7 @@ function mostrarFechas(eventos) {
       indiceSelect = index;
       //}
       numeroIDSelect = `card-${indiceSelect}`;
-      // console.log(numeroIDSelect);
+      //console.log(numeroIDSelect);
       // } else {
       //   indiceSelect =
       // }
@@ -2230,6 +2269,7 @@ function renderizarCards({
   transformar = null,
   onClick = null,
   clickable = false,
+  revisa = false,
 }) {
   //console.log(datos);
   if (!contenedor) return;
@@ -2373,6 +2413,10 @@ function renderizarCards({
     // if (elti.textContent === "Eventos desde Calendario") {
     //   console.log(card);
     // }
+    if (revisa) {
+      const datosProcesados = procesarEventoGoogle(item);
+      console.log(datosProcesados);
+    }
     if (clickable) {
       card.classList.add("sinHover");
       card.addEventListener("click", () => {
@@ -2444,7 +2488,7 @@ function renderizarCards({
         señaCheck = valorSeña.trim(); //!(valorSeña === "No" || valorSeña === "false");
         //console.log(datosProcesados.cliente);
         cargarEnFormulario(datosProcesados, index, indiceAnterior);
-        console.log("Item seleccionado:", item);
+        //console.log("Item seleccionado:", item);
         cerrarModalEventos();
 
         if (onClick) {
@@ -2557,6 +2601,7 @@ function cerrarModalEventos() {
           tituloContenedorCards.className = "tituloEventos";
           tituloContenedorCards.textContent = "Eventos desde Calendario";
           contenedorCards.appendChild(tituloContenedorCards);
+
           //lista.appendChild(cardContainer);
         }
         lista.appendChild(contenedorCards);
@@ -2566,16 +2611,29 @@ function cerrarModalEventos() {
 
           contenedor: contenedorCards,
           clickable: false,
+          revisa: true,
 
           transformar: (ev) => {
             const descrip = procesarDescripcionEvento(ev?.description);
+            if (ev?.start.date) {
+              //console.log("Evento de día completo");
+              //console.log(ev?.start.date);
+              fechaFin = restarDias(ev?.start?.date, ev?.end?.date, 1);
+            } else {
+              //console.log("Evento con hora específica");
+              //console.log(ev?.start.dateTime);
+              fechaFin = ev?.end?.dateTime;
+            }
+
+            //console.log(fechaFin);
 
             return {
               titulo: ev?.summary,
 
               fechaInicio: ev?.start?.dateTime || ev?.start?.date,
 
-              fechaFin: ev?.end?.dateTime || ev?.end?.date,
+              //fechaFin: ev?.end?.dateTime || ev?.end?.date,
+              fechaFin: fechaFin || null,
 
               descripcion: ev?.description,
 
@@ -2614,6 +2672,7 @@ function cerrarModalEventos() {
 
           contenedor: contenedorCards,
           clickable: true,
+          revisa: false,
 
           transformar: (d) => ({
             titulo: d.cliente,
@@ -2687,3 +2746,14 @@ function cerrarModalEventos() {
     //console.log("Modal de eventos cargado. CTRL + SHIFT + E");
   }, 2000);
 })();
+
+function normalizarFecha(fecha) {
+  if (!fecha) return "";
+
+  // si viene con T (datetime)
+  if (fecha.includes("T")) {
+    return fecha.split("T")[0];
+  }
+  //console.log(fecha.trim());
+  return fecha.trim();
+}
