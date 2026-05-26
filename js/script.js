@@ -702,7 +702,7 @@ function mostrarDatos() {
 
   datos.forEach((d, index) => {
     //visibles.push(d);
-    //console.log(d);
+    console.log(datos);
     const div = document.createElement("div");
     const divContainer = document.createElement("div");
     divContainer.className = "divcontainer";
@@ -784,7 +784,7 @@ function mostrarDatos() {
     <!-- <div class="divcontainer"> -->
       <h2 class="elCliente"><strong>${d.cliente}</strong></h2><br>
       <span class="datosTitulos"><strong>Fecha Inicio:</strong> <span class="datosVisibles" id="fechaInicio">${d.fechaInicio}</span></span>
-      <span class="datosTitulos"><strong>Fecha Fin:</strong> <span class="datosVisibles" id="fechaFin">${resultado}</span></span>
+      <span class="datosTitulos"><strong>Fecha Fin:</strong> <span class="datosVisibles" id="fechaFin">${d.fechaFin}</span></span>
       <span class="datosTitulos"><strong>Vehículos clientes:</strong> <span class="datosVisibles" id="vc">${d.vc}</span></span>
       <span class="datosTitulos"><strong>Vehículos org:</strong> <span class="datosVisibles" id="vo">${d.vo}</span></span>
       <span class="datosTitulos"><strong>Comida:</strong> <span class="datosVisibles" id="comida">${comidaCheck}</span></span>
@@ -1057,8 +1057,8 @@ function mostrarDatosGoogle(d, index = 0) {
     if (btnElimina.textContent == "Eliminar") {
       eliminar();
     } else if (btnElimina.textContent == "Guardar") {
-      //console.log(nuevo);
-      guardar(nuevo);
+      console.log(nuevo);
+      //guardar(nuevo);
     }
   });
   // const botonEliminar = document.querySelector(`#card-${nuevoNumero}`);
