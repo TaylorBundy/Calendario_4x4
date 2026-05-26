@@ -316,7 +316,7 @@ fetch(url)
         precio: precio.replace("precio: ", "").toLowerCase().trim(),
         moneda: moneda.replace("moneda: ", "").toLowerCase().trim(),
       });
-      console.log(clientesCalendar);
+      //console.log(clientesCalendar);
       clientes = nomCli.toLowerCase();
       fechasInicio = fechaInicio.toLowerCase();
     });
@@ -450,7 +450,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaCliente").value = dato.cliente;
   const fecha2 = formatearFecha(dato.fechaInicio) || formatearFecha(dato.fecha);
   document.getElementById("editaFechaInicio").value = fecha2;
-  console.log(dato.fechaFin);
+  //console.log(dato.fechaFin);
   if (dato.fechaFin > fechaFin) {
     fechaFin = restarDias(
       dato.fechaInicio,
@@ -665,7 +665,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       const btnElimina = document.querySelector(`#${d.id}`);
       //console.log(btnElimina);
       btnElimina.addEventListener("click", () => {
-        const option = select.options[select.selectedIndex];
+        //const option = select.options[select.selectedIndex];
 
         //console.log(d.id);
         idSeleccionado = d.id;
@@ -712,7 +712,7 @@ function mostrarDatos() {
 
   datos.forEach((d, index) => {
     //visibles.push(d);
-    console.log(datos);
+    //console.log(datos);
     const div = document.createElement("div");
     const divContainer = document.createElement("div");
     divContainer.className = "divcontainer";
@@ -851,7 +851,7 @@ function mostrarDatos() {
 
     const btnElimina = document.querySelector(`#${d.id}`);
     btnElimina.addEventListener("click", () => {
-      const option = select.options[select.selectedIndex];
+      //const option = select.options[select.selectedIndex];
 
       //console.log(d.id);
       idSeleccionado = d.id;
@@ -1067,8 +1067,8 @@ function mostrarDatosGoogle(d, index = 0) {
     if (btnElimina.textContent == "Eliminar") {
       eliminar();
     } else if (btnElimina.textContent == "Guardar") {
-      console.log(nuevo);
-      //guardar(nuevo);
+      //console.log(nuevo);
+      guardar(nuevo);
     }
   });
   // const botonEliminar = document.querySelector(`#card-${nuevoNumero}`);
@@ -1310,7 +1310,7 @@ function mostrarFechas(eventos) {
 
     const clientesCalendar2 = clientesCalendar
       .map((c) => ({
-        cliente: c.cliente.replace("cliente:", "").trim().toLowerCase(),
+        cliente: c.cliente.replace("cliente:", "").trim(),
 
         //fecha: c.fecha.replace("start:", "").trim().toLowerCase(),
         fecha: c.fecha,
@@ -1323,10 +1323,10 @@ function mostrarFechas(eventos) {
         //}));
       }))
       .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-    console.log(clientesCalendar2);
+    //console.log(clientesCalendar2);
 
     const clientesCards3 = reservas.map((c) => ({
-      cliente: c.cliente.trim().toLowerCase(),
+      cliente: c.cliente.trim(),
 
       fecha: c.fecha.replace("fecha:", "").trim().toLowerCase(),
       fechaFin: c.fechaFin,
@@ -1339,7 +1339,7 @@ function mostrarFechas(eventos) {
 
       moneda: moneda.trim().toLowerCase(),
     }));
-    console.log(clientesCards3);
+    //console.log(clientesCards3);
 
     // limpiar array
     const cambios2 = [];
@@ -1354,7 +1354,7 @@ function mostrarFechas(eventos) {
           card.fechaFin === calendar.fechaFin &&
           card.cliente === calendar.cliente,
       );
-      console.log(reserva2);
+      //console.log(reserva2);
       // ✅ evitar duplicados
       // const yaExiste = cambios2.some(
       //   (item) =>
@@ -1377,7 +1377,7 @@ function mostrarFechas(eventos) {
       }
 
       const resultado2 = compararReservas(reserva2, calendar);
-      console.log(resultado2);
+      //console.log(resultado2);
 
       // ✅ IMPORTANTE
       // limpiar cambios por iteración
@@ -1407,7 +1407,7 @@ function mostrarFechas(eventos) {
 
     if (cambios2.length > 0) {
       cambios2.forEach((cambio, index) => {
-        console.log(cambio);
+        //console.log(cambio);
         //cambio.fecha = formatearFecha(cambio.fecha.trim());
         const fechaComparada = compararFechas(cambio.fecha, fechaHoy);
 
@@ -1454,7 +1454,7 @@ function mostrarFechas(eventos) {
       //console.log(ev);
       const datos = procesarEventoGoogle(ev);
       //console.log(datos);
-      const cliente = datos.cliente.toLowerCase();
+      const cliente = datos.cliente;
       const fecha = datos.fechaInicio.toLowerCase();
       //const fecha = normalizarFecha(datos.fechaInicio.toLowerCase());
       const fecha2 = formatearFecha(datos.fechaInicio);
@@ -1503,6 +1503,7 @@ function mostrarFechas(eventos) {
       }
     });
     select.onchange = () => {
+      const option = select.options[select.selectedIndex];
       indiceSelect = null;
       numeroIDSelect = null;
       origen = "select";
@@ -1674,10 +1675,10 @@ function mostrarFechas(eventos) {
           behavior: "smooth",
           block: "center",
         });
-        const option = select.options[select.selectedIndex];
-        if (option) {
-          option.remove();
-        }
+
+        // if (option) {
+        //   option.remove();
+        // }
         //console.log(tarjetaAnterior);
 
         //console.log(`nuevo: ${numeros.nuevo2} - mayor: ${numeros.mayor}`);
@@ -1771,6 +1772,9 @@ function mostrarFechas(eventos) {
             block: "center",
           });
         }
+        // if (option) {
+        //   option.remove();
+        // }
       } else if (indiceNuevo == indiceAnterior) {
         const card = document.querySelector(`.${numeroIDSelect}`);
         // resaltar
@@ -1784,7 +1788,7 @@ function mostrarFechas(eventos) {
           compararCards(card2);
           card2.click();
           const botonEliminar = document.querySelector(`.${idCard} > button`);
-          console.log(botonEliminar);
+          //console.log(botonEliminar);
           idCard2 = botonEliminar.id;
           const fechaFin = restarDias(
             datosProcesados.fechaInicio,
@@ -1845,7 +1849,12 @@ function mostrarFechas(eventos) {
       }
 
       eleEdita.style.background = "#2c2c2c";
+
       cargarEnFormulario(nuevo, idCalendar, indiceAnterior);
+      if (option) {
+        console.log("es aca?");
+        option.remove();
+      }
     };
   }, 2000);
 }
@@ -2005,8 +2014,8 @@ function ordenarPorFecha55({
 
 // Funcion para comparar reservas con calendario
 function compararReservas(reserva, calendar) {
-  console.log(reserva);
-  console.log(calendar);
+  //console.log(reserva);
+  //console.log(calendar);
   if (!reserva) return;
   const normalizarTexto = (texto) =>
     String(texto || "")
