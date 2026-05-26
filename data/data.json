@@ -172,5 +172,17 @@
     "moneda": "ARS",
     "sena": "No",
     "senaRecibida": ""
+  },
+  {
+    "id": "card-15",
+    "cliente": "Marcaca",
+    "fechaInicio": "2026-08-09",
+    "fechaFin": "2026-08-21",
+    "vc": "4",
+    "vo": "2",
+    "comida": true,
+    "precio": "100000",
+    "sena": false,
+    "senaRecibida": ""
   }
 ]
