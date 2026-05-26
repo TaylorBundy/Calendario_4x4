@@ -13,6 +13,8 @@ const eleEdita = document.querySelector(".editaClientes");
 const eleCarga = document.querySelector(".cargaClientes");
 const recargar = document.querySelector(".recargar");
 const select = document.getElementById("fechas");
+const editaPrecio = document.getElementById("editaPrecio").value;
+const lala = editaPrecio.split(" ");
 const API = "https://calendario-4x4.onrender.com";
 const btnModal = document.querySelector("#btnModal");
 const plataforma = navigator.userAgent;
@@ -255,111 +257,225 @@ fetch(url)
   .then((res) => res.json())
   .then((data) => {
     //console.log(data);
+    // eventosCalen.push(data);
+    // //descripciones.push(data.items);
+    // const items = data.items;
+    // items.forEach((ev) => {
+    //   //console.log(ev);
+    //   const fechaIn = ev?.start.date || ev?.start.dateTime;
+    //   const fechaFn = ev?.end.date || ev?.end.dateTime;
+    //   const nomCli = ev?.summary;
+    //   const descrip = procesarDescripcionEvento(ev?.description) || null;
+    //   const cliente = `cliente: ${nomCli}`;
+    //   const fechaInicio = `start: ${fechaIn}`;
+    //   const detalle = ev?.description || null;
+    //   descripciones.push({
+    //     cliente: nomCli.toLowerCase(),
+    //     descripcion: detalle,
+    //   });
+    //   const fechaFin1 = `end: ${fechaFn}`;
+
+    //   //console.log(formatearFecha(fechaInicio.replace("start:", "").trim()));
+    //   if (ev?.start.date) {
+    //     //console.log(`si es date:${fechaInicio.replace("start: ", "").trim()}`);
+    //     //console.log(fechaInicio.replace("start:", "").trim());
+    //     fechaFormateada = fechaInicio.replace("start: ", "").trim();
+    //     //fechaFin = fechaFin1.replace("end: ", "").trim();
+    //     fechaFin = restarDias(
+    //       fechaFormateada,
+    //       fechaFin1.replace("end: ", "").trim(),
+    //       1,
+    //     );
+    //     //console.log(fechaFormateada);
+    //     //return;
+    //   } else {
+    //     // console.log(
+    //     //   `si es dateTime:${normalizarFecha(fechaInicio.replace("start: ", "").trim())}`,
+    //     // );
+    //     fechaFormateada = formatearFecha(
+    //       fechaInicio.replace("start: ", "").trim(),
+    //     );
+    //     fechaFin = formatearFecha(fechaFin1.replace("end: ", "").trim());
+    //   }
+    //   //console.log(fechaFormateada);
+
+    //   //const fechaInicio: ev.start.dateTime || ev.start.date,
+
+    //   const vehiculosClientes = `vehiculos: ${descrip?.vehiculos}` || null;
+    //   const vehiculosOrganizadores = `vehiculos organizadores: ${descrip?.organizadores}`;
+    //   const comida = `comida: ${descrip?.comida}`;
+    //   const moneda = `moneda: ${descrip?.moneda}`;
+    //   const precio = `precio: ${descrip?.precio}`;
+    //   const id = ev?.id;
+    //   idCalendar = ev?.id;
+    //   clientesCalendar.push({
+    //     id: id.toLowerCase().trim(),
+    //     cliente: cliente.trim(),
+    //     //fecha: fechaInicio.toLowerCase().trim(),
+    //     fecha: fechaFormateada,
+    //     fechaFin: fechaFin,
+    //     //fecha: normalizarFecha(fechaInicio.replace("start:", "").trim()),
+    //     precio: precio.replace("precio: ", "").toLowerCase().trim(),
+    //     moneda: moneda.replace("moneda: ", "").toLowerCase().trim(),
+    //   });
+    //   //console.log(clientesCalendar);
+    //   clientes = nomCli.toLowerCase();
+    //   fechasInicio = fechaInicio.toLowerCase();
+    // });
+    cargarEventosGoogle(url);
+    //mostrarFechas(data.items);
+  });
+
+async function cargarEventosGoogle(url) {
+  try {
+    // limpiar antes de recargar
+    clientesCalendar.length = 0;
+    descripciones.length = 0;
+
+    // limpiar select
+    select.innerHTML = "";
+
+    const res = await fetch(url);
+
+    const data = await res.json();
+
+    eventosCalen.length = 0;
     eventosCalen.push(data);
-    //descripciones.push(data.items);
-    const items = data.items;
+
+    const items = data.items || [];
+
     items.forEach((ev) => {
-      //console.log(ev);
       const fechaIn = ev?.start.date || ev?.start.dateTime;
+
       const fechaFn = ev?.end.date || ev?.end.dateTime;
+
       const nomCli = ev?.summary;
+
       const descrip = procesarDescripcionEvento(ev?.description) || null;
-      const cliente = `cliente: ${nomCli}`;
-      const fechaInicio = `start: ${fechaIn}`;
+
       const detalle = ev?.description || null;
+
       descripciones.push({
         cliente: nomCli.toLowerCase(),
         descripcion: detalle,
       });
-      const fechaFin1 = `end: ${fechaFn}`;
 
-      //console.log(formatearFecha(fechaInicio.replace("start:", "").trim()));
+      let fechaFormateada = "";
+      let fechaFin = "";
+
+      // EVENTO TODO EL DIA
       if (ev?.start.date) {
-        //console.log(`si es date:${fechaInicio.replace("start: ", "").trim()}`);
-        //console.log(fechaInicio.replace("start:", "").trim());
-        fechaFormateada = fechaInicio.replace("start: ", "").trim();
-        //fechaFin = fechaFin1.replace("end: ", "").trim();
-        fechaFin = restarDias(
-          fechaFormateada,
-          fechaFin1.replace("end: ", "").trim(),
-          1,
-        );
-        //console.log(fechaFormateada);
-        //return;
-      } else {
-        // console.log(
-        //   `si es dateTime:${normalizarFecha(fechaInicio.replace("start: ", "").trim())}`,
-        // );
-        fechaFormateada = formatearFecha(
-          fechaInicio.replace("start: ", "").trim(),
-        );
-        fechaFin = formatearFecha(fechaFin1.replace("end: ", "").trim());
+        fechaFormateada = fechaIn;
+
+        fechaFin = restarDias(fechaIn, fechaFn, 1);
       }
-      //console.log(fechaFormateada);
 
-      //const fechaInicio: ev.start.dateTime || ev.start.date,
+      // EVENTO CON HORA
+      else {
+        fechaFormateada = formatearFecha(fechaIn);
 
-      const vehiculosClientes = `vehiculos: ${descrip?.vehiculos}` || null;
-      const vehiculosOrganizadores = `vehiculos organizadores: ${descrip?.organizadores}`;
-      const comida = `comida: ${descrip?.comida}`;
-      const moneda = `moneda: ${descrip?.moneda}`;
-      const precio = `precio: ${descrip?.precio}`;
-      const id = ev?.id;
-      idCalendar = ev?.id;
+        fechaFin = formatearFecha(fechaFn);
+      }
+
       clientesCalendar.push({
-        id: id.toLowerCase().trim(),
-        cliente: cliente.trim(),
-        //fecha: fechaInicio.toLowerCase().trim(),
+        id: ev?.id.toLowerCase().trim(),
+
+        cliente: `cliente: ${nomCli}`,
+
         fecha: fechaFormateada,
+
         fechaFin: fechaFin,
-        //fecha: normalizarFecha(fechaInicio.replace("start:", "").trim()),
-        precio: precio.replace("precio: ", "").toLowerCase().trim(),
-        moneda: moneda.replace("moneda: ", "").toLowerCase().trim(),
+
+        precio: `${descrip?.precio || ""}`.toLowerCase().trim(),
+
+        moneda: `${descrip?.moneda || ""}`.toLowerCase().trim(),
       });
-      //console.log(clientesCalendar);
-      clientes = nomCli.toLowerCase();
-      fechasInicio = fechaInicio.toLowerCase();
     });
-    mostrarFechas(data.items);
+
+    // volver a llenar select
+    mostrarFechas(items);
+  } catch (error) {
+    console.error("Error cargando Google Calendar:", error);
+  }
+}
+
+function reconstruirReservasDesdeDOM() {
+  reservas.length = 0;
+
+  const mapa = {};
+
+  lista.querySelectorAll(".divcontainer").forEach((card) => {
+    const card2 = card.closest("[data-card-id]");
+
+    reservas.push({
+      cardID: card2.dataset.id,
+
+      cliente: card.querySelector("h2")?.textContent.trim(),
+
+      fecha: card.querySelector("#fechaInicio")?.textContent.toLowerCase(),
+
+      fechaFin: card.querySelector("#fechaFin")?.textContent.toLowerCase(),
+
+      vc: card.querySelector("#vc")?.textContent.toLowerCase(),
+
+      vo: card.querySelector("#vo")?.textContent.toLowerCase(),
+
+      comida: card.querySelector("#comida")?.textContent.toLowerCase(),
+
+      precio: card
+        .querySelector("#precio")
+        ?.textContent.replace(`${moneda} `, "")
+        .toLowerCase(),
+    });
   });
+
+  descripciones.forEach((d) => {
+    mapa[d.cliente.toLowerCase().trim()] = d.descripcion;
+  });
+
+  reservas.forEach((reserva) => {
+    reserva.descripcion = mapa[reserva.cliente.toLowerCase().trim()] || "";
+  });
+}
 
 window.addEventListener("DOMContentLoaded", () => {
   fechaFin = null;
+  reconstruirReservasDesdeDOM();
   setTimeout(() => {
-    const mapa = {};
+    // const mapa = {};
 
-    // console.log(visibles);
-    // console.log(ocultas);
-    //console.log(descripciones);
-    lista.querySelectorAll(".divcontainer").forEach((card) => {
-      const card2 = card.closest("[data-card-id]");
-      //console.log(card2.dataset.id);
-      reservas.push({
-        cardID: card2.dataset.id,
-        cliente: card.querySelector("h2")?.textContent.trim(),
-        fecha: card.querySelector("#fechaInicio")?.textContent.toLowerCase(),
-        fechaFin: card.querySelector("#fechaFin")?.textContent.toLowerCase(),
-        vc: card.querySelector("#vc")?.textContent.toLowerCase(),
-        vo: card.querySelector("#vo")?.textContent.toLowerCase(),
-        comida: card.querySelector("#comida")?.textContent.toLowerCase(),
-        //descripcion: descripciones?.descripcion,
-        precio: card
-          .querySelector("#precio")
-          ?.textContent.replace(`${moneda} `, "")
-          .toLowerCase(),
-      });
-      //console.log(reservas);
-    });
-    // reservas.forEach((reserva) => {
-    //   console.log(reserva.cardID);
+    // // console.log(visibles);
+    // // console.log(ocultas);
+    // //console.log(descripciones);
+    // lista.querySelectorAll(".divcontainer").forEach((card) => {
+    //   const card2 = card.closest("[data-card-id]");
+    //   //console.log(card2.dataset.id);
+    //   reservas.push({
+    //     cardID: card2.dataset.id,
+    //     cliente: card.querySelector("h2")?.textContent.trim(),
+    //     fecha: card.querySelector("#fechaInicio")?.textContent.toLowerCase(),
+    //     fechaFin: card.querySelector("#fechaFin")?.textContent.toLowerCase(),
+    //     vc: card.querySelector("#vc")?.textContent.toLowerCase(),
+    //     vo: card.querySelector("#vo")?.textContent.toLowerCase(),
+    //     comida: card.querySelector("#comida")?.textContent.toLowerCase(),
+    //     //descripcion: descripciones?.descripcion,
+    //     precio: card
+    //       .querySelector("#precio")
+    //       ?.textContent.replace(`${moneda} `, "")
+    //       .toLowerCase(),
+    //   });
+    //   //console.log(reservas);
     // });
+    // // reservas.forEach((reserva) => {
+    // //   console.log(reserva.cardID);
+    // // });
 
-    descripciones.forEach((d) => {
-      mapa[d.cliente.toLowerCase().trim()] = d.descripcion;
-    });
-    reservas.forEach((reserva) => {
-      reserva.descripcion = mapa[reserva.cliente.toLowerCase().trim()] || "";
-    });
+    // descripciones.forEach((d) => {
+    //   mapa[d.cliente.toLowerCase().trim()] = d.descripcion;
+    // });
+    // reservas.forEach((reserva) => {
+    //   reserva.descripcion = mapa[reserva.cliente.toLowerCase().trim()] || "";
+    // });
 
     document.querySelectorAll("#card").forEach((card) => {
       card.addEventListener("click", () => {
@@ -374,11 +490,12 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     const numeros = obtenerNumeros();
     numeroInicial = numeros.mayor;
+
     //console.log(reservas);
     lista2.style.display = "none";
     muestraBoton();
   }, 2000);
-
+  cargarDatosDesde("data/data.json");
   // recargar.addEventListener("click", () => {
   //   cargarDatos();
   //   //console.log(datos);
@@ -471,7 +588,7 @@ async function cargarDatos3() {
 }
 
 function cargarEnFormulario(dato, index, indiceAnteriors) {
-  //console.log(dato);
+  console.log(dato);
   if (comidaCheck == "No") {
     comidaCheck = false;
   } else {
@@ -497,7 +614,8 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaVehiculosClientes").value = dato?.vc || "";
   document.getElementById("editaVehiculosOrg").value = dato?.vo || "";
   document.getElementById("editaComida").checked = comidaCheck;
-  document.getElementById("editaPrecio").value = dato?.precio || "";
+  document.getElementById("editaPrecio").value =
+    `${moneda} ${dato?.precio || ""}`;
   document.getElementById("editaSeña").checked = señaCheck;
   document.getElementById("editaImporteSeña").value = dato?.senaRecibida || "";
   document.querySelector(`.clienteSel`).textContent =
@@ -722,8 +840,9 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
             vc: document.getElementById("editaVehiculosClientes").value,
             vo: document.getElementById("editaVehiculosOrg").value,
             comida: document.getElementById("editaComida").checked,
-            precio: document.getElementById("editaPrecio").value,
+            precio: lala[1],
             sena: document.getElementById("editaSeña").checked,
+            moneda: lala[0],
             senaRecibida: document.getElementById("editaImporteSeña").value,
           };
           editar(nuevo);
@@ -907,7 +1026,8 @@ function mostrarDatos() {
           vc: document.getElementById("editaVehiculosClientes").value,
           vo: document.getElementById("editaVehiculosOrg").value,
           comida: document.getElementById("editaComida").checked,
-          precio: document.getElementById("editaPrecio").value,
+          precio: lala[1],
+          moneda: lala[0],
           sena: document.getElementById("editaSeña").checked,
           senaRecibida: document.getElementById("editaImporteSeña").value,
         };
@@ -1191,7 +1311,8 @@ guarda.addEventListener("click", () => {
     vc: document.getElementById("vehiculosClientes").value,
     vo: document.getElementById("vehiculosOrg").value,
     comida: document.getElementById("comida").checked,
-    precio: document.getElementById("precio").value,
+    precio: lala[1],
+    moneda: lala[0],
     sena: document.getElementById("seña").checked,
     senaRecibida: document.getElementById("importeSeña").value,
   };
@@ -1209,7 +1330,8 @@ actualizar.addEventListener("click", (e) => {
     vc: document.getElementById("editaVehiculosClientes").value,
     vo: document.getElementById("editaVehiculosOrg").value,
     comida: document.getElementById("editaComida").checked,
-    precio: document.getElementById("editaPrecio").value,
+    precio: lala[1],
+    moneda: lala[0],
     sena: document.getElementById("editaSeña").checked,
     senaRecibida: document.getElementById("editaImporteSeña").value,
   };
@@ -2328,7 +2450,7 @@ function compararCards(cardActual) {
 }
 
 //cargarDatos();
-cargarDatosDesde("data/data.json");
+//cargarDatosDesde("data/data.json");
 
 function renderizarCards({
   datos = [],
@@ -3026,16 +3148,19 @@ function crearModalJSON() {
       const tipo = btn.dataset.tipo;
 
       try {
+        reservas.length = 0;
+        //select.innerHTML = "";
         if (tipo === "local") {
           await cargarDatosDesde("data/data.json");
+          await cargarEventosGoogle(url);
         }
 
         if (tipo === "github") {
           await cargarDatosDesde(
             "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json",
           );
+          await cargarEventosGoogle(url);
         }
-
         modal.remove();
       } catch (error) {
         console.error(error);
@@ -3062,6 +3187,7 @@ async function cargarDatosDesde(url) {
   }
 
   datos = await res.json();
+  reservas.push(...datos);
 
   const total = contarRegistrosVisibles(datos);
 
@@ -3074,4 +3200,6 @@ async function cargarDatosDesde(url) {
 
   mostrarDatos();
   mostrarDatos2(lista2, true);
+  reconstruirReservasDesdeDOM();
+  //reservas.push(datos);
 }
