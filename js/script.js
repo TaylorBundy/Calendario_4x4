@@ -379,10 +379,10 @@ window.addEventListener("DOMContentLoaded", () => {
     muestraBoton();
   }, 2000);
 
-  recargar.addEventListener("click", () => {
-    cargarDatos();
-    //console.log(datos);
-  });
+  // recargar.addEventListener("click", () => {
+  //   cargarDatos();
+  //   //console.log(datos);
+  // });
 
   const ele = eleEdita.querySelectorAll("input");
   ele.forEach((el) => {
@@ -421,8 +421,24 @@ function contarRegistrosVisibles(datos) {
   }).length;
 }
 
+async function cargarJSON(urls = []) {
+  for (const url of urls) {
+    try {
+      const res = await fetch(url);
+
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.warn(`Error en ${url}`, err);
+    }
+  }
+
+  throw new Error("No se pudo cargar ningún JSON");
+}
+
 // Cargar datos
-async function cargarDatos() {
+async function cargarDatos2() {
   const res = await fetch("data/data.json");
   datos = await res.json();
   //const total = contarRegistros(datos);
@@ -431,6 +447,25 @@ async function cargarDatos() {
   totalReservas.innerHTML = `
     <span class="reservasTitulos"><strong>Total de reservas:</strong> <span class="reservasVisibles">${total}</span></span>
     `;
+  mostrarDatos();
+  mostrarDatos2(lista2, true);
+}
+
+async function cargarDatos3() {
+  datos = await cargarJSON([
+    //"data/data.json",
+    "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json",
+  ]);
+
+  const total = contarRegistrosVisibles(datos);
+
+  totalReservas.innerHTML = `
+    <span class="reservasTitulos">
+      <strong>Total de reservas:</strong>
+      <span class="reservasVisibles">${total}</span>
+    </span>
+  `;
+
   mostrarDatos();
   mostrarDatos2(lista2, true);
 }
@@ -665,7 +700,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       const btnElimina = document.querySelector(`#${d.id}`);
       //console.log(btnElimina);
       btnElimina.addEventListener("click", () => {
-        //const option = select.options[select.selectedIndex];
+        const option = select.options[select.selectedIndex];
 
         //console.log(d.id);
         idSeleccionado = d.id;
@@ -851,7 +886,7 @@ function mostrarDatos() {
 
     const btnElimina = document.querySelector(`#${d.id}`);
     btnElimina.addEventListener("click", () => {
-      //const option = select.options[select.selectedIndex];
+      const option = select.options[select.selectedIndex];
 
       //console.log(d.id);
       idSeleccionado = d.id;
@@ -2292,7 +2327,8 @@ function compararCards(cardActual) {
   return { anterior: cardAnterior, nueva: cardNueva };
 }
 
-cargarDatos();
+//cargarDatos();
+cargarDatosDesde("data/data.json");
 
 function renderizarCards({
   datos = [],
@@ -2446,7 +2482,7 @@ function renderizarCards({
     // }
     if (revisa) {
       const datosProcesados = procesarEventoGoogle(item);
-      console.log(datosProcesados);
+      //console.log(datosProcesados);
     }
     if (clickable) {
       card.classList.add("sinHover");
@@ -2778,6 +2814,14 @@ function cerrarModalEventos() {
   }, 2000);
 })();
 
+// document.addEventListener("keydown", (e) => {
+//   if (e.shiftKey && e.key.toLowerCase() === "j") {
+//     e.preventDefault();
+
+//     abrirModalEventos();
+//   }
+// });
+
 function normalizarFecha(fecha) {
   if (!fecha) return "";
 
@@ -2787,4 +2831,247 @@ function normalizarFecha(fecha) {
   }
   //console.log(fecha.trim());
   return fecha.trim();
+}
+
+// const modalJson = document.getElementById("modalJson");
+
+// function abrirModalEventos() {
+//   modalJson.classList.remove("hidden");
+// }
+
+// function cerrarModalEventos() {
+//   modalJson.classList.add("hidden");
+// }
+
+// document
+//   .getElementById("cerrarModalJson")
+//   .addEventListener("click", cerrarModalEventos);
+
+// // cerrar tocando afuera
+// modalJson.addEventListener("click", (e) => {
+//   if (e.target === modalJson) {
+//     cerrarModalEventos();
+//   }
+// });
+
+// // SHIFT + J
+// document.addEventListener("keydown", (e) => {
+//   if (e.shiftKey && e.key.toLowerCase() === "j") {
+//     e.preventDefault();
+
+//     abrirModalEventos();
+//   }
+// });
+
+// // botones
+// document.querySelectorAll(".btnJson").forEach((btn) => {
+//   btn.addEventListener("click", async () => {
+//     const tipo = btn.dataset.tipo;
+
+//     try {
+//       if (tipo === "local") {
+//         console.log("Cargando LOCAL");
+
+//         await cargarDatosDesde("data/data.json");
+//       }
+
+//       if (tipo === "github") {
+//         console.log("Cargando GITHUB");
+
+//         await cargarDatosDesde(
+//           "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json",
+//         );
+//       }
+
+//       cerrarModalEventos();
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   });
+// });
+
+// async function cargarDatosDesde(url) {
+//   const res = await fetch(url);
+
+//   if (!res.ok) {
+//     throw new Error("No se pudo cargar el JSON");
+//   }
+
+//   datos = await res.json();
+
+//   const total = contarRegistrosVisibles(datos);
+
+//   totalReservas.innerHTML = `
+//     <span class="reservasTitulos">
+//       <strong>Total de reservas:</strong>
+//       <span class="reservasVisibles">${total}</span>
+//     </span>
+//   `;
+
+//   mostrarDatos();
+//   mostrarDatos2(lista2, true);
+// }
+
+function crearModalJSON() {
+  // evitar duplicados
+  if (document.getElementById("modalJson")) return;
+
+  const modal = document.createElement("div");
+
+  modal.id = "modalJson";
+
+  modal.innerHTML = `
+    <div class="modalContenido">
+
+      <div class="modalHeader">
+        <h2>Cargar JSON</h2>
+
+        <button id="cerrarModalJson">✕</button>
+      </div>
+
+      <div class="modalBody">
+
+        <button class="btnJson" data-tipo="local">
+          📁 Cargar JSON Local
+        </button>
+
+        <button class="btnJson" data-tipo="github">
+          🌐 Cargar JSON GitHub
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  // estilos inline
+  Object.assign(modal.style, {
+    position: "fixed",
+    inset: "0",
+    background: "rgba(0,0,0,.65)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: "999999",
+    backdropFilter: "blur(5px)",
+  });
+
+  const contenido = modal.querySelector(".modalContenido");
+
+  Object.assign(contenido.style, {
+    width: "400px",
+    background: "#1e1e1e",
+    borderRadius: "14px",
+    padding: "20px",
+    boxShadow: "0 0 30px rgba(0,0,0,.5)",
+    color: "white",
+    animation: "aparecer .18s ease",
+  });
+
+  const header = modal.querySelector(".modalHeader");
+
+  Object.assign(header.style, {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+  });
+
+  const body = modal.querySelector(".modalBody");
+
+  Object.assign(body.style, {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+  });
+
+  modal.querySelectorAll(".btnJson").forEach((btn) => {
+    Object.assign(btn.style, {
+      padding: "14px",
+      border: "none",
+      borderRadius: "10px",
+      background: "#2c2c2c",
+      color: "white",
+      cursor: "pointer",
+      fontSize: "15px",
+      transition: ".2s",
+    });
+
+    btn.addEventListener("mouseenter", () => {
+      btn.style.background = "#3a3a3a";
+      btn.style.transform = "scale(1.02)";
+    });
+
+    btn.addEventListener("mouseleave", () => {
+      btn.style.background = "#2c2c2c";
+      btn.style.transform = "scale(1)";
+    });
+  });
+
+  // cerrar
+  modal.querySelector("#cerrarModalJson").addEventListener("click", () => {
+    modal.remove();
+  });
+
+  // click afuera
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.remove();
+    }
+  });
+
+  // botones
+  modal.querySelectorAll(".btnJson").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const tipo = btn.dataset.tipo;
+
+      try {
+        if (tipo === "local") {
+          await cargarDatosDesde("data/data.json");
+        }
+
+        if (tipo === "github") {
+          await cargarDatosDesde(
+            "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json",
+          );
+        }
+
+        modal.remove();
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  });
+
+  document.body.appendChild(modal);
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.shiftKey && e.key.toLowerCase() === "j") {
+    e.preventDefault();
+
+    crearModalJSON();
+  }
+});
+
+async function cargarDatosDesde(url) {
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    throw new Error("No se pudo cargar el JSON");
+  }
+
+  datos = await res.json();
+
+  const total = contarRegistrosVisibles(datos);
+
+  totalReservas.innerHTML = `
+    <span class="reservasTitulos">
+      <strong>Total de reservas:</strong>
+      <span class="reservasVisibles">${total}</span>
+    </span>
+  `;
+
+  mostrarDatos();
+  mostrarDatos2(lista2, true);
 }
