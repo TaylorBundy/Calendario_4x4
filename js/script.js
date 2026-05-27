@@ -18,7 +18,10 @@ const lala = editaPrecio.split(" ");
 const API = "https://calendario-4x4.onrender.com";
 const btnModal = document.querySelector("#btnModal");
 const plataforma = navigator.userAgent;
+const urlObj = new URL(window.location.toString());
+const domain = urlObj.hostname;
 
+let urlJSON = null;
 let datos = [];
 let eventosCalen = [];
 let descripciones = [];
@@ -571,7 +574,13 @@ window.addEventListener("DOMContentLoaded", async () => {
       scrollFunction();
     };
   }
-  cargarDatosDesde("data/data.json");
+  if (!domain.includes("github.io")) {
+    urlJSON = "data/data.json";
+  } else {
+    urlJSON =
+      "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json";
+  }
+  cargarDatosDesde(urlJSON);
   setTimeout(() => {
     const numeros = obtenerNumeros();
     numeroInicial = numeros.mayor;
@@ -3280,7 +3289,13 @@ document.addEventListener("keydown", (e) => {
   if (e.shiftKey && e.key.toLowerCase() === "j") {
     e.preventDefault();
 
-    crearModalJSON();
+    if (!domain.includes("github.io")) {
+      //urlJSON = "data/data.json";
+      crearModalJSON();
+    } else {
+      return;
+    }
+    //crearModalJSON();
   }
 });
 
