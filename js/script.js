@@ -946,7 +946,7 @@ function mostrarDatos() {
 
   datos.forEach((d, index) => {
     //visibles.push(d);
-    //console.log(datos);
+    //console.log(d);
     const div = document.createElement("div");
     const divContainer = document.createElement("div");
     divContainer.className = "divcontainer";
@@ -1022,12 +1022,13 @@ function mostrarDatos() {
       d.fechaFin.replace("end: ", ""),
       1,
     );
+    const fechafinal = d.fechaInicio || d.fecha;
 
     divContainer.innerHTML = `
     <!-- <button class="btnelimina" id="${d.id}"> Eliminar </button> -->
     <!-- <div class="divcontainer"> -->
       <h2 class="elCliente"><strong>${d.cliente}</strong></h2><br>
-      <span class="datosTitulos"><strong>Fecha Inicio:</strong> <span class="datosVisibles" id="fechaInicio">${d.fechaInicio}</span></span>
+      <span class="datosTitulos"><strong>Fecha Inicio:</strong> <span class="datosVisibles" id="fechaInicio">${fechafinal}</span></span>
       <span class="datosTitulos"><strong>Fecha Fin:</strong> <span class="datosVisibles" id="fechaFin">${d.fechaFin}</span></span>
       <span class="datosTitulos"><strong>Vehículos clientes:</strong> <span class="datosVisibles" id="vc">${d.vc}</span></span>
       <span class="datosTitulos"><strong>Vehículos org:</strong> <span class="datosVisibles" id="vo">${d.vo}</span></span>
@@ -1900,7 +1901,7 @@ function mostrarFechas(eventos) {
           id: idCard2,
           cardID: `card-${nuevoNumero}`,
           cliente: datosProcesados?.cliente,
-          fecha: fecha2,
+          fechaInicio: fecha2,
           fechaFin: fechaFin,
           vc: datosProcesados?.vc,
           vo: datosProcesados?.vo,
@@ -3291,6 +3292,7 @@ async function cargarDatosDesde(url) {
   }
 
   datos = await res.json();
+  //console.log(datos);
   reservas.push(...datos);
 
   const total = contarRegistrosVisibles(datos);
