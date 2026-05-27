@@ -42,9 +42,9 @@
     "fechaFin": "2026-07-27",
     "vc": "4",
     "vo": "2",
-    "comida": false,
+    "comida": true,
     "precio": "50",
-    "moneda": "",
+    "moneda": "USD",
     "sena": false,
     "senaRecibida": ""
   },
@@ -103,8 +103,9 @@
     "fechaFin": "2026-06-24",
     "vc": "9",
     "vo": "",
-    "comida": true,
+    "comida": false,
     "precio": "60",
+    "moneda": "USD",
     "sena": false,
     "senaRecibida": ""
   },
@@ -149,13 +150,13 @@
     "id": "card-13",
     "cliente": "Salvatierra",
     "fechaInicio": "2026-07-20",
-    "fechaFin": "2026-07-24",
-    "vc": 4,
-    "vo": 2,
-    "comida": false,
+    "fechaFin": "2026-07-23",
+    "vc": "4",
+    "vo": "2",
+    "comida": true,
     "precio": "100000",
     "moneda": "ARS",
-    "sena": "No",
+    "sena": false,
     "senaRecibida": ""
   },
   {
@@ -170,5 +171,20 @@
     "moneda": "ARS",
     "sena": false,
     "senaRecibida": ""
+  },
+  {
+    "id": "card-15",
+    "cardID": "card-14",
+    "cliente": "Alberto toti",
+    "fecha": "2026-07-21",
+    "fechaFin": "2026-07-23",
+    "vc": 4,
+    "vo": null,
+    "comida": "No",
+    "precio": 100,
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "4 veh\u00edculos, 100 d\u00f3lares por vehiculo"
   }
 ]
