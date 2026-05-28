@@ -6,7 +6,7 @@ const cards = Array.from(lista.children);
 const totalReservas = document.querySelector(".totalReservas");
 const guarda = document.querySelector(".guardar");
 const actualizar = document.querySelector(".actualizar");
-//const probar = document.querySelector(".probar");
+const probar = document.querySelector(".probar");
 const botones = document.querySelectorAll("button");
 const btnEliminar = document.querySelector("#editaElimina");
 const eleEdita = document.querySelector(".editaClientes");
@@ -240,6 +240,9 @@ btnOcultas.addEventListener("click", () => {
   // //ocultas.forEach((item) => {
   // mostrarDatos2(lista2, true);
   //});
+});
+probar.addEventListener("click", () => {
+  limpiarFormulario(eleEdita);
 });
 datos.forEach((item) => {
   const ahora = new Date();
@@ -739,6 +742,7 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   } else {
     elementoSelected = document.querySelector(`.card-${indiceAnteriors}`);
   }
+  //console.log(elementoSelected);
 
   const elementoSelected1 = document.querySelector(`.card-${indiceAnteriors}`);
   // console.log(elementoSelected1);
@@ -871,15 +875,15 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
         const form = document.querySelector(".editaClientes");
         // console.log(form);
         seleccionarCard(card, eleEdita);
-        if (card.dataset.selected === "true") {
-          eleEdita.style.background = "#888";
-          eleEdita.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        } else {
-          eleEdita.style.background = "#2c2c2c";
-        }
+        // if (card.dataset.selected === "true") {
+        //   eleEdita.style.background = "#888";
+        //   eleEdita.scrollIntoView({
+        //     behavior: "smooth",
+        //     block: "center",
+        //   });
+        // } else {
+        //   eleEdita.style.background = "#2c2c2c";
+        // }
         const clases = div.className;
         const numero = parseInt(clases.match(/card-(\d+)/)[1]);
         // console.log(numero);
@@ -892,7 +896,18 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
 
         estado = "EXISTE";
 
-        cargarEnFormulario(d, index, indiceAnterior);
+        //cargarEnFormulario(d, index, indiceAnterior);
+        if (card.dataset.selected === "true") {
+          eleEdita.style.background = "#888";
+          eleEdita.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+          cargarEnFormulario(d, globalIndex, indiceAnterior);
+        } else {
+          eleEdita.style.background = "#2c2c2c";
+          //limpiarFormulario(eleEdita);
+        }
       });
 
       div.prepend(divContainer);
@@ -921,6 +936,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
           (async () => {
             await eliminar();
             recargarEn5Minutos();
+            eliminarCard(elementoEliminar);
           })();
           //console.log(d.id);
           // console.log("eliminar");
@@ -1114,15 +1130,16 @@ function mostrarDatos() {
         const form = document.querySelector(".editaClientes");
         // console.log(form);
         seleccionarCard(card, eleEdita);
-        if (card.dataset.selected === "true") {
-          eleEdita.style.background = "#888";
-          eleEdita.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        } else {
-          eleEdita.style.background = "#2c2c2c";
-        }
+        // if (card.dataset.selected === "true") {
+        //   eleEdita.style.background = "#888";
+        //   eleEdita.scrollIntoView({
+        //     behavior: "smooth",
+        //     block: "center",
+        //   });
+        // } else {
+        //   eleEdita.style.background = "#2c2c2c";
+        //   //limpiarFormulario(eleEdita);
+        // }
         const clases = div.className;
         const numero = parseInt(clases.match(/card-(\d+)/)[1]);
         // console.log(numero);
@@ -1134,8 +1151,18 @@ function mostrarDatos() {
         }
 
         estado = "EXISTE";
-
-        cargarEnFormulario(d, globalIndex, indiceAnterior);
+        if (card.dataset.selected === "true") {
+          eleEdita.style.background = "#888";
+          eleEdita.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+          cargarEnFormulario(d, globalIndex, indiceAnterior);
+        } else {
+          eleEdita.style.background = "#2c2c2c";
+          //limpiarFormulario(eleEdita);
+        }
+        //cargarEnFormulario(d, globalIndex, indiceAnterior);
       });
       //globalIndex++;
 
@@ -1161,6 +1188,7 @@ function mostrarDatos() {
           (async () => {
             await eliminar();
             recargarEn5Minutos();
+            eliminarCard(elementoEliminar);
           })();
           if (option) {
             option.remove();
@@ -1348,7 +1376,18 @@ function mostrarDatosGoogle(d, index = 0) {
       indiceNuevo = numero;
     }
 
-    cargarEnFormulario(d, index, indiceAnterior);
+    //cargarEnFormulario(d, index, indiceAnterior);
+    if (card.dataset.selected === "true") {
+      eleEdita.style.background = "#888";
+      eleEdita.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      cargarEnFormulario(d, index, indiceAnterior);
+    } else {
+      eleEdita.style.background = "#2c2c2c";
+      //limpiarFormulario(eleEdita);
+    }
   });
 
   div.prepend(divContainer);
@@ -1372,13 +1411,15 @@ function mostrarDatosGoogle(d, index = 0) {
       btnElimina.textContent = "Guardar";
     }
   });
-  btnElimina.addEventListener("click", () => {
+  btnElimina.addEventListener("click", (e) => {
+    const card = e.target.closest("#card");
     idSeleccionado = d.id;
     //console.log(idCard2);
     if (btnElimina.textContent == "Eliminar") {
       (async () => {
         await eliminar();
         recargarEn5Minutos();
+        eliminarCard(card);
       })();
     } else if (btnElimina.textContent == "Guardar") {
       //console.log(nuevo);
@@ -1538,6 +1579,7 @@ actualizar.addEventListener("click", (e) => {
       (async () => {
         await eliminar();
         recargarEn5Minutos();
+        eliminarCard(elementoEliminar);
       })();
     } else {
       //console.log(nuevo);
@@ -1706,6 +1748,7 @@ async function eliminar() {
 }
 
 function limpiarFormulario(contenedor) {
+  console.log("Limpiando formulario:", contenedor);
   if (!contenedor) return;
 
   const inputs = contenedor.querySelectorAll("input");
@@ -1717,6 +1760,11 @@ function limpiarFormulario(contenedor) {
       input.value = "";
     }
   });
+}
+
+function eliminarCard(card) {
+  console.log("Eliminando card:", card);
+  card.remove();
 }
 
 setInterval(async () => {
@@ -2283,6 +2331,7 @@ function mostrarFechas(eventos) {
           seleccionarCard(card2, eleEdita);
           botonEliminar.textContent = "Actualizar";
           actualizar.textContent = "Actualizar";
+          elementoEliminar = card2;
 
           // scroll automático
           card2.scrollIntoView({
@@ -2305,7 +2354,18 @@ function mostrarFechas(eventos) {
 
       eleEdita.style.background = "#2c2c2c";
 
-      cargarEnFormulario(nuevo, idCalendar, indiceAnterior);
+      //cargarEnFormulario(nuevo, idCalendar, indiceAnterior);
+      if (elementoEliminar.dataset.selected === "true") {
+        eleEdita.style.background = "#888";
+        eleEdita.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        cargarEnFormulario(nuevo, idCalendar, indiceAnterior);
+      } else {
+        eleEdita.style.background = "#2c2c2c";
+        //limpiarFormulario(eleEdita);
+      }
       if (option) {
         //console.log("es aca?");
         option.remove();
@@ -2562,9 +2622,11 @@ function seleccionarCard(card, formulario) {
 
   // si ya estaba seleccionada → deseleccionar
   if (card.dataset.selected === "true") {
+    limpiarFormulario(eleEdita);
     card.dataset.selected = "false";
     card.classList.remove("selected");
-    limpiarFormulario(eleEdita);
+    //console.log(eleEdita);
+
     document.querySelector(`.clienteSel`).textContent =
       `Editar Cliente Seleccionado:`;
     return;
@@ -3541,23 +3603,23 @@ async function cargarDatosDesde(url) {
   //reservas.push(datos);
 }
 
-function esperarBackend(url) {
-  const intervalo = setInterval(async () => {
-    try {
-      const res = await fetch(url);
+// function esperarBackend(url) {
+//   const intervalo = setInterval(async () => {
+//     try {
+//       const res = await fetch(url);
 
-      if (res.ok) {
-        clearInterval(intervalo);
+//       if (res.ok) {
+//         clearInterval(intervalo);
 
-        console.log("Backend online");
+//         console.log("Backend online");
 
-        location.reload();
-      }
-    } catch (err) {
-      console.log("Backend todavía iniciando...");
-    }
-  }, 5000);
-}
+//         location.reload();
+//       }
+//     } catch (err) {
+//       console.log("Backend todavía iniciando...");
+//     }
+//   }, 5000);
+// }
 
 // function recargarEn5Minutos() {
 //   clearTimeout(timerRecarga);
