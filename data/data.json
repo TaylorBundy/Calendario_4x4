@@ -60,6 +60,7 @@
     "vo": "2",
     "comida": true,
     "precio": "75",
+    "moneda": "USD",
     "sena": false,
     "senaRecibida": ""
   },
