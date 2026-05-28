@@ -186,5 +186,20 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "4 veh\u00edculos, 100 d\u00f3lares por vehiculo"
+  },
+  {
+    "id": "card-16",
+    "cardID": "card-15",
+    "cliente": "Misma fecha",
+    "fechaInicio": "2026-07-20",
+    "fechaFin": "2026-07-27",
+    "vc": 4,
+    "vo": null,
+    "comida": "No",
+    "precio": 100,
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "4 veh\u00edculos, 100 d\u00f3lares por vehiculo"
   }
 ]
