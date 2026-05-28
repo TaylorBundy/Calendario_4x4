@@ -3609,6 +3609,7 @@ document.addEventListener("keydown", (e) => {
       //urlJSON = "data/data.json";
       crearModalJSON();
     } else {
+      select.innerHTML = "";
       delete select.dataset.placeholderAgregado;
       (async () => {
         await cargarEventosGoogle(url);
@@ -3684,6 +3685,7 @@ function recargarEn5Minutos() {
     () => {
       console.log("Recargando...");
       //location.reload();
+      select.innerHTML = "";
       delete select.dataset.placeholderAgregado;
       cargarDatosDesde(urlJSON);
       (async () => {
