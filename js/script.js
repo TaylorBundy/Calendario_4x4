@@ -63,6 +63,7 @@ let nombreAnterior = null;
 let nombreNuevo = null;
 let elID;
 let elementoEliminar = null;
+let timerRecarga = null;
 const visibles = [];
 const ocultas = [];
 const ahora = new Date();
@@ -909,12 +910,14 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       btnElimina.addEventListener("click", () => {
         const option = select.options[select.selectedIndex];
         const lala = document.getElementById("editaPrecio").value.split(" ");
+        const card = e.target.closest("#card");
 
         //console.log(d.id);
         idSeleccionado = d.id;
         idCard = idSeleccionado;
         idCard2 = btnElimina.id;
         if (btnElimina.textContent == "Eliminar") {
+          elementoEliminar = card;
           eliminar();
           //console.log(d.id);
           // console.log("eliminar");
@@ -935,7 +938,14 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
             moneda: lala[0],
             senaRecibida: document.getElementById("editaImporteSeña").value,
           };
-          editar(nuevo);
+          //editar(nuevo);
+          (async () => {
+            const resultado = await editar(nuevo);
+
+            if (resultado.status === "editado correctamente") {
+              recargarEn5Minutos();
+            }
+          })();
           //console.log(idCard2);
           //console.log(nuevo);
           if (option) {
@@ -1096,6 +1106,7 @@ function mostrarDatos() {
         // console.log(e.target.closest('div[id="card"]'));
         //const card = e.target.closest("#card");
         const card = e.target.closest("[data-card-id]");
+        elementoEliminar = card;
         if (!card) return;
         const form = document.querySelector(".editaClientes");
         // console.log(form);
@@ -1161,7 +1172,14 @@ function mostrarDatos() {
             sena: document.getElementById("editaSeña").checked,
             senaRecibida: document.getElementById("editaImporteSeña").value,
           };
-          editar(nuevo);
+          //editar(nuevo);
+          (async () => {
+            const resultado = await editar(nuevo);
+
+            if (resultado.status === "editado correctamente") {
+              recargarEn5Minutos();
+            }
+          })();
           if (option) {
             option.remove();
           }
@@ -1357,14 +1375,12 @@ function mostrarDatosGoogle(d, index = 0) {
       //guardar(nuevo);
       (async () => {
         const resultado = await guardar(nuevo);
-
-        console.log(resultado);
-
         if (resultado.ok === false) {
           console.log("Falló:", resultado.error);
         } else {
           console.log("Respuesta backend:", resultado);
-          esperarBackend(`${API}/health`);
+          //esperarBackend(`${API}/health`);
+          recargarEn5Minutos();
         }
       })();
     }
@@ -1465,13 +1481,12 @@ guarda.addEventListener("click", () => {
   (async () => {
     const resultado = await guardar(nuevo);
 
-    console.log(resultado);
-
     if (resultado.ok === false) {
       console.log("Falló:", resultado.error);
     } else {
       console.log("Respuesta backend:", resultado);
-      esperarBackend(`${API}/health`);
+      //esperarBackend(`${API}/health`);
+      recargarEn5Minutos();
     }
   })();
   limpiarFormulario(eleCarga);
@@ -1494,15 +1509,34 @@ actualizar.addEventListener("click", (e) => {
   };
   if (actualizar.textContent === "guardar") {
     // console.log(idSeleccionado);
-    guardar(nuevo);
+    //guardar(nuevo);
+    (async () => {
+      const resultado = await guardar(nuevo);
+
+      if (resultado.ok === false) {
+        console.log("Falló:", resultado.error);
+      } else {
+        console.log("Respuesta backend:", resultado);
+        //esperarBackend(`${API}/health`);
+        recargarEn5Minutos();
+      }
+    })();
   } else {
     //console.log(idCard2);
     if (btnEliminar.checked) {
+      //console.log(elementoEliminar);
       eliminar();
     } else {
       //console.log(nuevo);
       //console.log(lala);
-      editar(nuevo);
+      //editar(nuevo);
+      (async () => {
+        const resultado = await editar(nuevo);
+
+        if (resultado.status === "editado correctamente") {
+          recargarEn5Minutos();
+        }
+      })();
     }
   }
   limpiarFormulario(eleEdita);
@@ -1594,20 +1628,27 @@ async function guardar(contenido) {
 
 async function editar(contenido) {
   //console.log(idCard2);
-  const res = await fetch(`${API}/editar`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      path: "data/data.json",
-      id: idCard2,
-      content: contenido,
-    }),
-  });
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API}/editar`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        path: "data/data.json",
+        id: idCard2,
+        content: contenido,
+      }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      await cargarDatosDesde(urlJSON);
+    }
 
-  data.logs.forEach((l) => console.log(l));
+    //data.logs.forEach((l) => console.log(l));
 
-  alert("Editado");
+    alert("Editado");
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function eliminar() {
@@ -1624,14 +1665,28 @@ async function eliminar() {
       }),
     });
 
+    //   const data = await res.json();
+
+    //   if (res.ok) {
+    //     elementoEliminar.remove();
+    //     await cargarDatosDesde(urlJSON);
+    //   }
+    //   console.log("STATUS:", res.status);
+    //   //console.log(data);
+    // } catch (err) {
+    //   console.error(err);
+    // }
     const data = await res.json();
 
-    if (res.ok) {
-      elementoEliminar.remove();
-      await cargarDatosDesde(urlJSON);
+    if (!res.ok) {
+      console.error(data);
+      return;
     }
-    console.log("STATUS:", res.status);
-    //console.log(data);
+    elementoEliminar.remove();
+
+    await esperarBackend(`${API}/health`);
+
+    await cargarDatosDesde(urlJSON);
   } catch (err) {
     console.error(err);
   }
@@ -3489,4 +3544,15 @@ function esperarBackend(url) {
       console.log("Backend todavía iniciando...");
     }
   }, 5000);
+}
+
+function recargarEn5Minutos() {
+  clearTimeout(timerRecarga);
+
+  timerRecarga = setTimeout(
+    () => {
+      location.reload();
+    },
+    5 * 60 * 1000,
+  );
 }
