@@ -86,6 +86,7 @@
     "vo": "1",
     "comida": false,
     "precio": "75",
+    "moneda": "USD",
     "sena": false,
     "senaRecibida": ""
   },
