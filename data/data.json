@@ -34,6 +34,7 @@
     "vo": "2",
     "comida": true,
     "precio": "100000",
+    "moneda": "ARS",
     "sena": false,
     "senaRecibida": ""
   },
