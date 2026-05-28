@@ -62,6 +62,7 @@ let cardNueva = null;
 let nombreAnterior = null;
 let nombreNuevo = null;
 let elID;
+let elementoEliminar = null;
 const visibles = [];
 const ocultas = [];
 const ahora = new Date();
@@ -1132,14 +1133,16 @@ function mostrarDatos() {
       contenedorActual.appendChild(div);
 
       const btnElimina = div.querySelector(`.btnelimina`);
-      btnElimina.addEventListener("click", () => {
+      btnElimina.addEventListener("click", (e) => {
         const option = select.options[select.selectedIndex];
         const lala = document.getElementById("editaPrecio").value.split(" ");
+        const card = e.target.closest("#card");
 
         idSeleccionado = d.id;
         idCard = idSeleccionado;
         idCard2 = btnElimina.id;
         if (btnElimina.textContent == "Eliminar") {
+          elementoEliminar = card;
           eliminar();
           if (option) {
             option.remove();
@@ -1351,7 +1354,18 @@ function mostrarDatosGoogle(d, index = 0) {
       eliminar();
     } else if (btnElimina.textContent == "Guardar") {
       //console.log(nuevo);
-      guardar(nuevo);
+      //guardar(nuevo);
+      (async () => {
+        const resultado = await guardar(nuevo);
+
+        console.log(resultado);
+
+        if (resultado.ok === false) {
+          console.log("Falló:", resultado.error);
+        } else {
+          console.log("Respuesta backend:", resultado);
+        }
+      })();
     }
   });
   // const botonEliminar = document.querySelector(`#card-${nuevoNumero}`);
@@ -1446,7 +1460,18 @@ guarda.addEventListener("click", () => {
     senaRecibida: document.getElementById("importeSeña").value,
   };
   //console.log(nuevo);
-  guardar(nuevo);
+  //guardar(nuevo);
+  (async () => {
+    const resultado = await guardar(nuevo);
+
+    console.log(resultado);
+
+    if (resultado.ok === false) {
+      console.log("Falló:", resultado.error);
+    } else {
+      console.log("Respuesta backend:", resultado);
+    }
+  })();
   limpiarFormulario(eleCarga);
 });
 
@@ -1482,26 +1507,87 @@ actualizar.addEventListener("click", (e) => {
   eleEdita.style.background = "#2c2c2c";
 });
 
-async function guardar(contenido) {
-  const res = await fetch(`${API}/save`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      path: "data/data.json",
-      content: contenido,
-    }),
-  });
-  const data = await res.json();
-  if (res.ok && data.status === "registro agregado") {
-    // console.log("Guardado correctamente");
-    await cargarDatos(); // 👈 recargás la lista
-    //console.log(datos);
-  } else {
-    console.error("Error al guardar", data);
-  }
-  data.logs.forEach((l) => console.log(l));
+async function guardar2(contenido) {
+  try {
+    const res = await fetch(`${API}/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        path: "data/data.json",
+        content: contenido,
+      }),
+    });
+    const data = await res.json();
+    if (res.ok && data.status === "registro agregado") {
+      // console.log("Guardado correctamente");
+      await cargarDatosDesde(urlJSON);
+      //await cargarDatos(); // 👈 recargás la lista
+      //console.log(datos);
+    } else {
+      console.error("Error al guardar", data);
+    }
+    data.logs.forEach((l) => console.log(l));
 
-  alert("Guardado");
+    alert("Guardado");
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function guardar(contenido) {
+  try {
+    const res = await fetch(`${API}/save`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        path: "data/data.json",
+        content: contenido,
+      }),
+    });
+
+    // Intentar leer la respuesta
+    let data;
+
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error("El servidor devolvió una respuesta inválida");
+    }
+
+    // Error HTTP
+    if (!res.ok) {
+      throw new Error(
+        data?.message || data?.error || `Error HTTP ${res.status}`,
+      );
+    }
+
+    // Mostrar logs del backend
+    if (Array.isArray(data.logs)) {
+      data.logs.forEach((l) => console.log(l));
+    }
+
+    // Validar resultado esperado
+    if (data.status !== "registro agregado") {
+      throw new Error(data?.message || `Respuesta inesperada: ${data.status}`);
+    }
+
+    await cargarDatosDesde(urlJSON);
+
+    console.log("Guardado correctamente");
+
+    return data; // 👈 devuelve toda la respuesta del backend
+  } catch (err) {
+    console.error("Error al guardar:", err);
+
+    alert(err.message || "Error desconocido");
+
+    return {
+      ok: false,
+      error: err.message,
+    };
+  }
 }
 
 async function editar(contenido) {
@@ -1538,6 +1624,10 @@ async function eliminar() {
 
     const data = await res.json();
 
+    if (res.ok) {
+      elementoEliminar.remove();
+      await cargarDatosDesde(urlJSON);
+    }
     console.log("STATUS:", res.status);
     //console.log(data);
   } catch (err) {
@@ -3315,7 +3405,8 @@ function crearModalJSON() {
 
       try {
         reservas.length = 0;
-        //select.innerHTML = "";
+        select.innerHTML = "";
+        delete select.dataset.placeholderAgregado;
         if (tipo === "local") {
           await cargarDatosDesde("data/data.json");
           await cargarEventosGoogle(url);
