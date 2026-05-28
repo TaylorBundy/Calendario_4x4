@@ -356,6 +356,36 @@ label {
   padding: 5px;
   border-radius: 8px;
 }
+.grupo-fecha {
+  border: 3px solid orange;
+
+  border-radius: 8px;
+
+  /* padding: 10px; */
+  padding: 5px 0;
+
+  /* margin-bottom: 15px; */
+
+  /* display: flex; */
+
+  /* flex-wrap: wrap; */
+
+  gap: 10px;
+}
+.cards-grupo {
+  display: flex;
+  gap: 10px;
+}
+.cards-grupo #card {
+  flex-grow: 1;
+}
+.titulo-fecha {
+  width: 100%;
+  color: #7804e5;
+  margin: 0;
+  text-align: center;
+  font-size: 1em;
+}
 @media only screen and (min-width: 360px) and (max-width: 1154px) {
   header {
     margin-bottom: 10px;
@@ -610,5 +640,26 @@ label {
     background: #141414;
     padding: 5px;
     border-radius: 8px;
+  }
+  .grupo-fecha {
+    /* flex-wrap: nowrap; */
+    padding: 10px;
+    flex-direction: column;
+    flex-wrap: unset;
+  }
+  .cards-grupo {
+    flex-direction: column;
+  }
+  .grupo-fecha #card {
+    font-size: 1.5em;
+  }
+  .titulo-fecha {
+    width: 100%;
+    /* color: orange; */
+    color: #7804e5;
+    margin: 0;
+    /* margin-bottom: 10px; */
+    text-align: center;
+    font-size: 2em;
   }
 }
