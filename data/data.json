@@ -125,7 +125,7 @@
     "vo": "",
     "comida": true,
     "precio": "60",
-    "moneda": "",
+    "moneda": "USD",
     "sena": false,
     "senaRecibida": ""
   },
