@@ -918,7 +918,10 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
         idCard2 = btnElimina.id;
         if (btnElimina.textContent == "Eliminar") {
           elementoEliminar = card;
-          eliminar();
+          (async () => {
+            await eliminar();
+            recargarEn5Minutos();
+          })();
           //console.log(d.id);
           // console.log("eliminar");
           if (option) {
@@ -1154,7 +1157,11 @@ function mostrarDatos() {
         idCard2 = btnElimina.id;
         if (btnElimina.textContent == "Eliminar") {
           elementoEliminar = card;
-          eliminar();
+          //eliminar();
+          (async () => {
+            await eliminar();
+            recargarEn5Minutos();
+          })();
           if (option) {
             option.remove();
           }
@@ -1369,7 +1376,10 @@ function mostrarDatosGoogle(d, index = 0) {
     idSeleccionado = d.id;
     //console.log(idCard2);
     if (btnElimina.textContent == "Eliminar") {
-      eliminar();
+      (async () => {
+        await eliminar();
+        recargarEn5Minutos();
+      })();
     } else if (btnElimina.textContent == "Guardar") {
       //console.log(nuevo);
       //guardar(nuevo);
@@ -1525,7 +1535,10 @@ actualizar.addEventListener("click", (e) => {
     //console.log(idCard2);
     if (btnEliminar.checked) {
       //console.log(elementoEliminar);
-      eliminar();
+      (async () => {
+        await eliminar();
+        recargarEn5Minutos();
+      })();
     } else {
       //console.log(nuevo);
       //console.log(lala);
@@ -1684,7 +1697,7 @@ async function eliminar() {
     }
     elementoEliminar.remove();
 
-    await esperarBackend(`${API}/health`);
+    //await esperarBackend(`${API}/health`);
 
     await cargarDatosDesde(urlJSON);
   } catch (err) {
