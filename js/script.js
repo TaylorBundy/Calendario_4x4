@@ -73,6 +73,8 @@ const fechaHoy =
   "-" +
   String(ahora.getDate()).padStart(2, "0");
 let fechaFormateada = null;
+const horaActual = new Date().toLocaleTimeString("es-AR");
+
 //let indiceSelect = null;
 const API_KEY = "AIzaSyAVearlKR2iIcQd2eeS8zXqiKB2OITgIxU";
 const CALENDAR_ID = "diegomartinbarbosa2@gmail.com";
@@ -980,8 +982,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
           //editar(nuevo);
           (async () => {
             const resultado = await editar(nuevo);
-
-            if (resultado.status === "editado correctamente") {
+            if (resultado.status === "ok") {
               recargarEn5Minutos();
             }
           })();
@@ -1247,8 +1248,7 @@ function mostrarDatos() {
           //editar(nuevo);
           (async () => {
             const resultado = await editar(nuevo);
-
-            if (resultado.status === "editado correctamente") {
+            if (resultado.status === "ok") {
               recargarEn5Minutos();
             }
           })();
@@ -1624,8 +1624,9 @@ actualizar.addEventListener("click", (e) => {
       //editar(nuevo);
       (async () => {
         const resultado = await editar(nuevo);
+        console.log("Resultado edición:", resultado);
 
-        if (resultado.status === "editado correctamente") {
+        if (resultado.status === "ok") {
           recargarEn5Minutos();
         }
       })();
@@ -1737,7 +1738,7 @@ async function editar(contenido) {
 
     //data.logs.forEach((l) => console.log(l));
 
-    alert("Editado");
+    console.log("Editado");
     return data;
   } catch (err) {
     console.error(err);
@@ -3675,6 +3676,7 @@ function recargarEn5Minutos() {
   clearTimeout(timerRecarga);
 
   console.log("Recarga programada para dentro de 2 minutos");
+  console.log(`Hora actual: ${horaActual}`);
 
   timerRecarga = setTimeout(
     () => {
