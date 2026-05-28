@@ -171,5 +171,20 @@
     "moneda": "ARS",
     "sena": false,
     "senaRecibida": ""
+  },
+  {
+    "id": "card-15",
+    "cardID": "card-14",
+    "cliente": "Alberto toti",
+    "fechaInicio": "2026-07-21",
+    "fechaFin": "2026-07-23",
+    "vc": 4,
+    "vo": null,
+    "comida": "No",
+    "precio": 100,
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "4 veh\u00edculos, 100 d\u00f3lares por vehiculo"
   }
 ]
