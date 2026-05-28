@@ -6,7 +6,6 @@ const cards = Array.from(lista.children);
 const totalReservas = document.querySelector(".totalReservas");
 const guarda = document.querySelector(".guardar");
 const actualizar = document.querySelector(".actualizar");
-const probar = document.querySelector(".probar");
 const botones = document.querySelectorAll("button");
 const btnEliminar = document.querySelector("#editaElimina");
 const eleEdita = document.querySelector(".editaClientes");
@@ -240,9 +239,6 @@ btnOcultas.addEventListener("click", () => {
   // //ocultas.forEach((item) => {
   // mostrarDatos2(lista2, true);
   //});
-});
-probar.addEventListener("click", () => {
-  limpiarFormulario(eleEdita);
 });
 datos.forEach((item) => {
   const ahora = new Date();
