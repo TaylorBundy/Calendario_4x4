@@ -8,6 +8,7 @@
     "vo": "1",
     "comida": false,
     "precio": "75",
+    "moneda": "USD",
     "sena": false,
     "senaRecibida": ""
   },
@@ -20,6 +21,7 @@
     "vo": "2",
     "comida": true,
     "precio": "100000",
+    "moneda": "ARS",
     "sena": false,
     "senaRecibida": ""
   },
@@ -32,6 +34,7 @@
     "vo": "2",
     "comida": true,
     "precio": "100000",
+    "moneda": "ARS",
     "sena": false,
     "senaRecibida": ""
   },
@@ -57,6 +60,7 @@
     "vo": "2",
     "comida": true,
     "precio": "75",
+    "moneda": "USD",
     "sena": false,
     "senaRecibida": ""
   },
