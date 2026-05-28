@@ -15,6 +15,10 @@ GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
 
 API_URL = f"https://api.github.com/repos/{REPO}/contents/{FILE_PATH}"
 
+@app.route("/health")
+def health():
+    return {"status": "ok"}, 200
+
 @app.route("/")
 def home():
     return "Servidor activo"

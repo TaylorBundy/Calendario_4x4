@@ -1364,6 +1364,7 @@ function mostrarDatosGoogle(d, index = 0) {
           console.log("Falló:", resultado.error);
         } else {
           console.log("Respuesta backend:", resultado);
+          esperarBackend(`${API}/health`);
         }
       })();
     }
@@ -1470,6 +1471,7 @@ guarda.addEventListener("click", () => {
       console.log("Falló:", resultado.error);
     } else {
       console.log("Respuesta backend:", resultado);
+      esperarBackend(`${API}/health`);
     }
   })();
   limpiarFormulario(eleCarga);
@@ -3436,6 +3438,9 @@ document.addEventListener("keydown", (e) => {
       //urlJSON = "data/data.json";
       crearModalJSON();
     } else {
+      (async () => {
+        await cargarEventosGoogle(url);
+      })();
       return;
     }
     //crearModalJSON();
@@ -3466,4 +3471,22 @@ async function cargarDatosDesde(url) {
   mostrarDatos2(lista2, true);
   reconstruirReservasDesdeDOM();
   //reservas.push(datos);
+}
+
+function esperarBackend(url) {
+  const intervalo = setInterval(async () => {
+    try {
+      const res = await fetch(url);
+
+      if (res.ok) {
+        clearInterval(intervalo);
+
+        console.log("Backend online");
+
+        location.reload();
+      }
+    } catch (err) {
+      console.log("Backend todavía iniciando...");
+    }
+  }, 5000);
 }
