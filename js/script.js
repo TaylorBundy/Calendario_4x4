@@ -677,7 +677,8 @@ function contarRegistrosVisibles(datos) {
 // }
 
 function cargarEnFormulario(dato, index, indiceAnteriors) {
-  //console.log(dato);
+  //console.log(dato.precio);
+
   if (comidaCheck == "No") {
     comidaCheck = false;
   } else {
@@ -688,6 +689,29 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   } else {
     señaCheck = true;
   }
+  const comida =
+    dato.comida === true ||
+    dato.comida === "Sí" ||
+    dato.comida === "Si" ||
+    dato.comida === "true";
+  //console.log(comida);
+
+  const sena =
+    dato.sena === true ||
+    dato.sena === "Sí" ||
+    dato.sena === "Si" ||
+    dato.sena === "true";
+
+  //const longitud = dato?.precio;
+  const longitud = String(dato?.precio || "").length;
+  //console.log(longitud);
+  const moneda = longitud > 3 ? "ARS" : "USD";
+  // if (longitud.length <= 3) {
+  //   moneda = "USD";
+  // } else if (longitud.length > 3) {
+  //   moneda = "ARS";
+  // }
+
   document.getElementById("editaCliente").value = dato.cliente;
   const fecha2 = formatearFecha(dato.fechaInicio) || formatearFecha(dato.fecha);
   document.getElementById("editaFechaInicio").value = fecha2;
@@ -702,10 +726,10 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   document.getElementById("editaFechaFin").value = dato?.fechaFin;
   document.getElementById("editaVehiculosClientes").value = dato?.vc || "";
   document.getElementById("editaVehiculosOrg").value = dato?.vo || "";
-  document.getElementById("editaComida").checked = comidaCheck;
+  document.getElementById("editaComida").checked = comida;
   document.getElementById("editaPrecio").value =
     `${moneda} ${dato?.precio || ""}`;
-  document.getElementById("editaSeña").checked = señaCheck;
+  document.getElementById("editaSeña").checked = sena;
   document.getElementById("editaImporteSeña").value = dato?.senaRecibida || "";
   document.querySelector(`.clienteSel`).textContent =
     `Editar Cliente Seleccionado: ${dato.cliente}`;
@@ -1038,7 +1062,7 @@ function mostrarDatos() {
 
     items.forEach((d, index) => {
       //visibles.push(d);
-      //console.log(d.id);
+      //console.log(d);
       const div = document.createElement("div");
       const divContainer = document.createElement("div");
       divContainer.className = "divcontainer";
@@ -1060,6 +1084,7 @@ function mostrarDatos() {
     <button class="btnelimina" id="${d.id}">Eliminar</button>
     `;
       const longitud = d?.precio;
+      //console.log(longitud);
       if (longitud.length <= 3) {
         moneda = "USD";
       } else if (longitud.length > 3) {
@@ -1092,6 +1117,19 @@ function mostrarDatos() {
       comidaCheck = valorComida.trim();
       //comidaCheck = !(valorComida === "no" || valorComida === "false");
       señaCheck = valorSeña.trim(); //!(valorSeña === "No" || valorSeña === "false");
+      // console.log(comidaCheck);
+      // console.log(señaCheck);
+      // const comida =
+      //   d.comida === true ||
+      //   d.comida === "Sí" ||
+      //   d.comida === "Si" ||
+      //   d.comida === "true";
+
+      // const sena =
+      //   d.sena === true ||
+      //   d.sena === "Sí" ||
+      //   d.sena === "Si" ||
+      //   d.sena === "true";
       const resultado = restarDias(
         d.fechaInicio,
         d.fechaFin.replace("end: ", ""),
@@ -1115,6 +1153,8 @@ function mostrarDatos() {
     `;
       // 👉 CLICK PARA EDITAR
       divContainer.addEventListener("click", (e) => {
+        // console.log(comidaCheck);
+        // console.log(señaCheck);
         idSeleccionado = d.id;
         //console.log(idSeleccionado);
         idCard2 = idSeleccionado;
@@ -1156,6 +1196,7 @@ function mostrarDatos() {
           cargarEnFormulario(d, globalIndex, indiceAnterior);
         } else {
           eleEdita.style.background = "#2c2c2c";
+
           //limpiarFormulario(eleEdita);
         }
         //cargarEnFormulario(d, globalIndex, indiceAnterior);
@@ -1697,6 +1738,7 @@ async function editar(contenido) {
     //data.logs.forEach((l) => console.log(l));
 
     alert("Editado");
+    return data;
   } catch (err) {
     console.error(err);
   }
@@ -2619,6 +2661,8 @@ function seleccionarCard(card, formulario) {
   // si ya estaba seleccionada → deseleccionar
   if (card.dataset.selected === "true") {
     limpiarFormulario(eleEdita);
+    comidaCheck = false;
+    señaCheck = false;
     card.dataset.selected = "false";
     card.classList.remove("selected");
     //console.log(eleEdita);
