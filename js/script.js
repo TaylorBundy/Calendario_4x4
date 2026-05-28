@@ -300,75 +300,75 @@ function formatearFecha(fecha) {
   return `${year}-${month}-${day}`;
 }
 
-fetch(url)
-  .then((res) => res.json())
-  .then((data) => {
-    //console.log(data);
-    // eventosCalen.push(data);
-    // //descripciones.push(data.items);
-    // const items = data.items;
-    // items.forEach((ev) => {
-    //   //console.log(ev);
-    //   const fechaIn = ev?.start.date || ev?.start.dateTime;
-    //   const fechaFn = ev?.end.date || ev?.end.dateTime;
-    //   const nomCli = ev?.summary;
-    //   const descrip = procesarDescripcionEvento(ev?.description) || null;
-    //   const cliente = `cliente: ${nomCli}`;
-    //   const fechaInicio = `start: ${fechaIn}`;
-    //   const detalle = ev?.description || null;
-    //   descripciones.push({
-    //     cliente: nomCli.toLowerCase(),
-    //     descripcion: detalle,
-    //   });
-    //   const fechaFin1 = `end: ${fechaFn}`;
-    //   //console.log(formatearFecha(fechaInicio.replace("start:", "").trim()));
-    //   if (ev?.start.date) {
-    //     //console.log(`si es date:${fechaInicio.replace("start: ", "").trim()}`);
-    //     //console.log(fechaInicio.replace("start:", "").trim());
-    //     fechaFormateada = fechaInicio.replace("start: ", "").trim();
-    //     //fechaFin = fechaFin1.replace("end: ", "").trim();
-    //     fechaFin = restarDias(
-    //       fechaFormateada,
-    //       fechaFin1.replace("end: ", "").trim(),
-    //       1,
-    //     );
-    //     //console.log(fechaFormateada);
-    //     //return;
-    //   } else {
-    //     // console.log(
-    //     //   `si es dateTime:${normalizarFecha(fechaInicio.replace("start: ", "").trim())}`,
-    //     // );
-    //     fechaFormateada = formatearFecha(
-    //       fechaInicio.replace("start: ", "").trim(),
-    //     );
-    //     fechaFin = formatearFecha(fechaFin1.replace("end: ", "").trim());
-    //   }
-    //   //console.log(fechaFormateada);
-    //   //const fechaInicio: ev.start.dateTime || ev.start.date,
-    //   const vehiculosClientes = `vehiculos: ${descrip?.vehiculos}` || null;
-    //   const vehiculosOrganizadores = `vehiculos organizadores: ${descrip?.organizadores}`;
-    //   const comida = `comida: ${descrip?.comida}`;
-    //   const moneda = `moneda: ${descrip?.moneda}`;
-    //   const precio = `precio: ${descrip?.precio}`;
-    //   const id = ev?.id;
-    //   idCalendar = ev?.id;
-    //   clientesCalendar.push({
-    //     id: id.toLowerCase().trim(),
-    //     cliente: cliente.trim(),
-    //     //fecha: fechaInicio.toLowerCase().trim(),
-    //     fecha: fechaFormateada,
-    //     fechaFin: fechaFin,
-    //     //fecha: normalizarFecha(fechaInicio.replace("start:", "").trim()),
-    //     precio: precio.replace("precio: ", "").toLowerCase().trim(),
-    //     moneda: moneda.replace("moneda: ", "").toLowerCase().trim(),
-    //   });
-    //   //console.log(clientesCalendar);
-    //   clientes = nomCli.toLowerCase();
-    //   fechasInicio = fechaInicio.toLowerCase();
-    // });
-    //cargarEventosGoogle(url);
-    //mostrarFechas(data.items);
-  });
+// fetch(url)
+//   .then((res) => res.json())
+//   .then((data) => {
+//     //console.log(data);
+//     // eventosCalen.push(data);
+//     // //descripciones.push(data.items);
+//     // const items = data.items;
+//     // items.forEach((ev) => {
+//     //   //console.log(ev);
+//     //   const fechaIn = ev?.start.date || ev?.start.dateTime;
+//     //   const fechaFn = ev?.end.date || ev?.end.dateTime;
+//     //   const nomCli = ev?.summary;
+//     //   const descrip = procesarDescripcionEvento(ev?.description) || null;
+//     //   const cliente = `cliente: ${nomCli}`;
+//     //   const fechaInicio = `start: ${fechaIn}`;
+//     //   const detalle = ev?.description || null;
+//     //   descripciones.push({
+//     //     cliente: nomCli.toLowerCase(),
+//     //     descripcion: detalle,
+//     //   });
+//     //   const fechaFin1 = `end: ${fechaFn}`;
+//     //   //console.log(formatearFecha(fechaInicio.replace("start:", "").trim()));
+//     //   if (ev?.start.date) {
+//     //     //console.log(`si es date:${fechaInicio.replace("start: ", "").trim()}`);
+//     //     //console.log(fechaInicio.replace("start:", "").trim());
+//     //     fechaFormateada = fechaInicio.replace("start: ", "").trim();
+//     //     //fechaFin = fechaFin1.replace("end: ", "").trim();
+//     //     fechaFin = restarDias(
+//     //       fechaFormateada,
+//     //       fechaFin1.replace("end: ", "").trim(),
+//     //       1,
+//     //     );
+//     //     //console.log(fechaFormateada);
+//     //     //return;
+//     //   } else {
+//     //     // console.log(
+//     //     //   `si es dateTime:${normalizarFecha(fechaInicio.replace("start: ", "").trim())}`,
+//     //     // );
+//     //     fechaFormateada = formatearFecha(
+//     //       fechaInicio.replace("start: ", "").trim(),
+//     //     );
+//     //     fechaFin = formatearFecha(fechaFin1.replace("end: ", "").trim());
+//     //   }
+//     //   //console.log(fechaFormateada);
+//     //   //const fechaInicio: ev.start.dateTime || ev.start.date,
+//     //   const vehiculosClientes = `vehiculos: ${descrip?.vehiculos}` || null;
+//     //   const vehiculosOrganizadores = `vehiculos organizadores: ${descrip?.organizadores}`;
+//     //   const comida = `comida: ${descrip?.comida}`;
+//     //   const moneda = `moneda: ${descrip?.moneda}`;
+//     //   const precio = `precio: ${descrip?.precio}`;
+//     //   const id = ev?.id;
+//     //   idCalendar = ev?.id;
+//     //   clientesCalendar.push({
+//     //     id: id.toLowerCase().trim(),
+//     //     cliente: cliente.trim(),
+//     //     //fecha: fechaInicio.toLowerCase().trim(),
+//     //     fecha: fechaFormateada,
+//     //     fechaFin: fechaFin,
+//     //     //fecha: normalizarFecha(fechaInicio.replace("start:", "").trim()),
+//     //     precio: precio.replace("precio: ", "").toLowerCase().trim(),
+//     //     moneda: moneda.replace("moneda: ", "").toLowerCase().trim(),
+//     //   });
+//     //   //console.log(clientesCalendar);
+//     //   clientes = nomCli.toLowerCase();
+//     //   fechasInicio = fechaInicio.toLowerCase();
+//     // });
+//     //cargarEventosGoogle(url);
+//     //mostrarFechas(data.items);
+//   });
 
 async function cargarEventosGoogle(url) {
   try {
@@ -628,54 +628,54 @@ function contarRegistrosVisibles(datos) {
   }).length;
 }
 
-async function cargarJSON(urls = []) {
-  for (const url of urls) {
-    try {
-      const res = await fetch(url);
+// async function cargarJSON(urls = []) {
+//   for (const url of urls) {
+//     try {
+//       const res = await fetch(url);
 
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch (err) {
-      console.warn(`Error en ${url}`, err);
-    }
-  }
+//       if (res.ok) {
+//         return await res.json();
+//       }
+//     } catch (err) {
+//       console.warn(`Error en ${url}`, err);
+//     }
+//   }
 
-  throw new Error("No se pudo cargar ningún JSON");
-}
+//   throw new Error("No se pudo cargar ningún JSON");
+// }
 
 // Cargar datos
-async function cargarDatos2() {
-  const res = await fetch("data/data.json");
-  datos = await res.json();
-  //const total = contarRegistros(datos);
-  const total = contarRegistrosVisibles(datos);
-  //totalReservas.textContent = `Total de reservas: ${total}`;
-  totalReservas.innerHTML = `
-    <span class="reservasTitulos"><strong>Total de reservas:</strong> <span class="reservasVisibles">${total}</span></span>
-    `;
-  mostrarDatos();
-  mostrarDatos2(lista2, true);
-}
+// async function cargarDatos2() {
+//   const res = await fetch("data/data.json");
+//   datos = await res.json();
+//   //const total = contarRegistros(datos);
+//   const total = contarRegistrosVisibles(datos);
+//   //totalReservas.textContent = `Total de reservas: ${total}`;
+//   totalReservas.innerHTML = `
+//     <span class="reservasTitulos"><strong>Total de reservas:</strong> <span class="reservasVisibles">${total}</span></span>
+//     `;
+//   mostrarDatos();
+//   mostrarDatos2(lista2, true);
+// }
 
-async function cargarDatos3() {
-  datos = await cargarJSON([
-    //"data/data.json",
-    "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json",
-  ]);
+// async function cargarDatos3() {
+//   datos = await cargarJSON([
+//     //"data/data.json",
+//     "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json",
+//   ]);
 
-  const total = contarRegistrosVisibles(datos);
+//   const total = contarRegistrosVisibles(datos);
 
-  totalReservas.innerHTML = `
-    <span class="reservasTitulos">
-      <strong>Total de reservas:</strong>
-      <span class="reservasVisibles">${total}</span>
-    </span>
-  `;
+//   totalReservas.innerHTML = `
+//     <span class="reservasTitulos">
+//       <strong>Total de reservas:</strong>
+//       <span class="reservasVisibles">${total}</span>
+//     </span>
+//   `;
 
-  mostrarDatos();
-  mostrarDatos2(lista2, true);
-}
+//   mostrarDatos();
+//   mostrarDatos2(lista2, true);
+// }
 
 function cargarEnFormulario(dato, index, indiceAnteriors) {
   //console.log(dato);
@@ -1556,32 +1556,32 @@ actualizar.addEventListener("click", (e) => {
   eleEdita.style.background = "#2c2c2c";
 });
 
-async function guardar2(contenido) {
-  try {
-    const res = await fetch(`${API}/save`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        path: "data/data.json",
-        content: contenido,
-      }),
-    });
-    const data = await res.json();
-    if (res.ok && data.status === "registro agregado") {
-      // console.log("Guardado correctamente");
-      await cargarDatosDesde(urlJSON);
-      //await cargarDatos(); // 👈 recargás la lista
-      //console.log(datos);
-    } else {
-      console.error("Error al guardar", data);
-    }
-    data.logs.forEach((l) => console.log(l));
+// async function guardar2(contenido) {
+//   try {
+//     const res = await fetch(`${API}/save`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         path: "data/data.json",
+//         content: contenido,
+//       }),
+//     });
+//     const data = await res.json();
+//     if (res.ok && data.status === "registro agregado") {
+//       // console.log("Guardado correctamente");
+//       await cargarDatosDesde(urlJSON);
+//       //await cargarDatos(); // 👈 recargás la lista
+//       //console.log(datos);
+//     } else {
+//       console.error("Error al guardar", data);
+//     }
+//     data.logs.forEach((l) => console.log(l));
 
-    alert("Guardado");
-  } catch (err) {
-    console.error(err);
-  }
-}
+//     alert("Guardado");
+//   } catch (err) {
+//     console.error(err);
+//   }
+// }
 
 async function guardar(contenido) {
   try {
@@ -2314,54 +2314,54 @@ function mostrarFechas(eventos) {
   }, 2000);
 }
 // Funcion para ordenar por fecha
-function ordenarPorFecha2() {
-  const cards = Array.from(lista.children);
+// function ordenarPorFecha2() {
+//   const cards = Array.from(lista.children);
 
-  cards.sort((a, b) => {
-    const fechaA = new Date(a.querySelector("#fechaInicio").textContent);
-    const fechaB = new Date(b.querySelector("#fechaInicio").textContent);
+//   cards.sort((a, b) => {
+//     const fechaA = new Date(a.querySelector("#fechaInicio").textContent);
+//     const fechaB = new Date(b.querySelector("#fechaInicio").textContent);
 
-    return fechaA - fechaB;
-  });
+//     return fechaA - fechaB;
+//   });
 
-  // volver a insertar ordenados
-  cards.forEach((card) => lista.appendChild(card));
-}
+//   // volver a insertar ordenados
+//   cards.forEach((card) => lista.appendChild(card));
+// }
 
-function ordenarPorFecha3() {
-  const hoy = new Date();
+// function ordenarPorFecha3() {
+//   const hoy = new Date();
 
-  // quitar horas para comparar solo fechas
-  hoy.setHours(0, 0, 0, 0);
+//   // quitar horas para comparar solo fechas
+//   hoy.setHours(0, 0, 0, 0);
 
-  const cards = Array.from(lista.children).filter((card) => {
-    const fechaFinTexto = card.querySelector("#fechaFin").textContent;
+//   const cards = Array.from(lista.children).filter((card) => {
+//     const fechaFinTexto = card.querySelector("#fechaFin").textContent;
 
-    const fechaFin = new Date(fechaFinTexto);
+//     const fechaFin = new Date(fechaFinTexto);
 
-    fechaFin.setHours(0, 0, 0, 0);
+//     fechaFin.setHours(0, 0, 0, 0);
 
-    // ✅ mostrar solo si fechaFin es MAYOR que hoy
-    return fechaFin > hoy;
-  });
+//     // ✅ mostrar solo si fechaFin es MAYOR que hoy
+//     return fechaFin > hoy;
+//   });
 
-  // ordenar por fechaInicio
-  cards.sort((a, b) => {
-    const fechaA = new Date(a.querySelector("#fechaInicio").textContent);
+//   // ordenar por fechaInicio
+//   cards.sort((a, b) => {
+//     const fechaA = new Date(a.querySelector("#fechaInicio").textContent);
 
-    const fechaB = new Date(b.querySelector("#fechaInicio").textContent);
+//     const fechaB = new Date(b.querySelector("#fechaInicio").textContent);
 
-    return fechaA - fechaB;
-  });
+//     return fechaA - fechaB;
+//   });
 
-  // limpiar lista
-  lista.innerHTML = "";
+//   // limpiar lista
+//   lista.innerHTML = "";
 
-  // volver a insertar ordenadas
-  cards.forEach((card) => {
-    lista.appendChild(card);
-  });
-}
+//   // volver a insertar ordenadas
+//   cards.forEach((card) => {
+//     lista.appendChild(card);
+//   });
+// }
 
 function ordenarPorFecha() {
   const ahora = new Date();
@@ -3559,13 +3559,30 @@ function esperarBackend(url) {
   }, 5000);
 }
 
+// function recargarEn5Minutos() {
+//   clearTimeout(timerRecarga);
+
+//   timerRecarga = setTimeout(
+//     () => {
+//       location.reload();
+//     },
+//     5 * 60 * 1000,
+//   );
+// }
 function recargarEn5Minutos() {
   clearTimeout(timerRecarga);
 
+  console.log("Recarga programada para dentro de 2 minutos");
+
   timerRecarga = setTimeout(
     () => {
-      location.reload();
+      console.log("Recargando...");
+      //location.reload();
+      cargarDatosDesde(urlJSON);
+      (async () => {
+        await cargarEventosGoogle(url);
+      })();
     },
-    5 * 60 * 1000,
+    2 * 60 * 1000,
   );
 }
