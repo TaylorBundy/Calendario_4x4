@@ -73,7 +73,7 @@ const fechaHoy =
   "-" +
   String(ahora.getDate()).padStart(2, "0");
 let fechaFormateada = null;
-const horaActual = new Date().toLocaleTimeString("es-AR");
+let horaActual = new Date().toLocaleTimeString("es-AR");
 
 //let indiceSelect = null;
 const API_KEY = "AIzaSyAVearlKR2iIcQd2eeS8zXqiKB2OITgIxU";
@@ -3609,6 +3609,7 @@ document.addEventListener("keydown", (e) => {
       //urlJSON = "data/data.json";
       crearModalJSON();
     } else {
+      delete select.dataset.placeholderAgregado;
       (async () => {
         await cargarEventosGoogle(url);
       })();
@@ -3674,6 +3675,7 @@ async function cargarDatosDesde(url) {
 // }
 function recargarEn5Minutos() {
   clearTimeout(timerRecarga);
+  horaActual = new Date().toLocaleTimeString("es-AR");
 
   console.log("Recarga programada para dentro de 2 minutos");
   console.log(`Hora actual: ${horaActual}`);
@@ -3682,6 +3684,7 @@ function recargarEn5Minutos() {
     () => {
       console.log("Recargando...");
       //location.reload();
+      delete select.dataset.placeholderAgregado;
       cargarDatosDesde(urlJSON);
       (async () => {
         await cargarEventosGoogle(url);
