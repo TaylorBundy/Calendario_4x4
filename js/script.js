@@ -1,3 +1,6 @@
+// ================================================================================
+// Variables de los elementos
+// ================================================================================
 const form = document.getElementById("formulario");
 const lista = document.getElementById("lista");
 const lista2 = document.getElementById("lista2");
@@ -14,16 +17,28 @@ const recargar = document.querySelector(".recargar");
 const select = document.getElementById("fechas");
 const editaPrecio = document.getElementById("editaPrecio").value;
 const lala = editaPrecio.split(" ");
-const API = "https://calendario-4x4.onrender.com";
 const btnModal = document.querySelector("#btnModal");
+const btnOcultas = document.querySelector("#btnOcultas");
+select.selectedIndex = -1;
+
 const plataforma = navigator.userAgent;
 const urlObj = new URL(window.location.toString());
 const domain = urlObj.hostname;
 
-let urlJSON = null;
+// ================================================================================
+// Variables para los eventos obtenidos de google calendar
+// ================================================================================
+let eventosAnteriores = [];
+let primeraCarga = true;
 let datos = [];
 let eventosCalen = [];
 let descripciones = [];
+let intervaloCalendario = null;
+let verificacionesSinCambios = 0;
+
+const API = "https://calendario-4x4.onrender.com";
+let urlJSON = null;
+
 let clientes = null;
 let fechasInicio = null;
 //const cambios2 = [];
@@ -65,6 +80,14 @@ let elementoEliminar = null;
 let timerRecarga = null;
 const visibles = [];
 const ocultas = [];
+let a = "";
+let b = "";
+let scrolll = "";
+const inicios = 85;
+const target = 20;
+let final = "";
+//const TargetHeight = document.documentElement.offsetHeight - screen.height;
+const TargetHeight = document.documentElement.offsetHeight - window.innerHeight;
 const ahora = new Date();
 const fechaHoy =
   ahora.getFullYear() +
@@ -82,6 +105,10 @@ const CALENDAR_ID = "diegomartinbarbosa2@gmail.com";
 const url = `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?key=${API_KEY}`;
 let precioMatch;
 let moneda;
+
+// ================================================================================
+// Funcion para procesar la descripción del evento y extraer información relevante
+// ================================================================================
 function procesarDescripcionEvento(texto) {
   if (!texto || texto == null) return;
   //console.log(texto);
@@ -159,36 +186,9 @@ function procesarDescripcionEvento(texto) {
       }
     }
   }
-
   // =========================
   // COMIDA
   // =========================
-  // if (/\b(true|s[ií])\b|incluye\s*comida|con\s*comida/i.test(texto)) {
-  //   resultado.comida = "Sí";
-  // } else if (/\b(false|no)\b|No|no\s*incluye\s*comida/i.test(texto)) {
-  //   resultado.comida = "No";
-  // }
-  // console.log(resultado.comida);
-  // if (/\b(false|no)\b|no\s*incluye\s*comida/i.test(texto)) {
-  //   resultado.comida = "No";
-  // } else if (
-  //   /\b(true|s[ií])\b|(?<!no\s)incluye\s*comida|con\s*comida/i.test(texto)
-  // ) {
-  //   resultado.comida = "Sí";
-  // }
-  // if (
-  //   !texto ||
-  //   textoLower.includes("no incluye comida") ||
-  //   /\bno\b/.test(textoLower)
-  // ) {
-  //   resultado.comida = "No";
-  // } else if (
-  //   textoLower.includes("incluye comida") ||
-  //   textoLower.includes("con comida") ||
-  //   /\b(si|sí|true)\b/.test(textoLower)
-  // ) {
-  //   resultado.comida = "Sí";
-  // }
   const tieneComida = [
     "desayuno",
     "almuerzo",
@@ -207,8 +207,6 @@ function procesarDescripcionEvento(texto) {
   } else {
     resultado.comida = "Sí";
   }
-
-  //console.log(resultado.comida);
   // =========================
   // SEÑA
   // =========================
@@ -220,11 +218,13 @@ function procesarDescripcionEvento(texto) {
 
   return resultado;
 }
-const btnOcultas = document.querySelector("#btnOcultas");
+
+// ================================================================================
+// Función para mostrar u ocultar reservas ocultas
+// ================================================================================
 btnOcultas.addEventListener("click", () => {
   const visible = lista2.style.display === "grid";
 
-  //lista2.style.display = visible ? "none" : "block";
   if (visible) {
     lista2.style.display = "none";
     mostrarDatos2(lista2, false);
@@ -234,14 +234,11 @@ btnOcultas.addEventListener("click", () => {
     mostrarDatos2(lista2, true);
     btnOcultas.textContent = "Ocultar reservas ocultas";
   }
-
-  // btnOcultas.textContent = visible
-  //   ? "Mostrar reservas ocultas"
-  //   : "Ocultar reservas ocultas";
-  // //ocultas.forEach((item) => {
-  // mostrarDatos2(lista2, true);
-  //});
 });
+
+// ================================================================================
+// Separar reservas visibles de las ocultas según la fecha de fin
+// ================================================================================
 datos.forEach((item) => {
   const ahora = new Date();
 
@@ -258,7 +255,9 @@ datos.forEach((item) => {
   }
 });
 
+// ================================================================================
 // MOSTRAR U OCULTAR BOTÓN
+// ================================================================================
 function muestraBoton() {
   if (ocultas.length === 0) {
     btnOcultas.style.display = "none";
@@ -267,6 +266,10 @@ function muestraBoton() {
   }
 }
 
+// ================================================================================
+// Función para restar días a una fecha
+// (útil para eventos de todo el día que terminan al día siguiente)
+// ================================================================================
 function restarDias(fechaInicio, fechaFin, dias) {
   // Si son iguales, devolver la misma fecha
   if (fechaInicio === fechaFin) {
@@ -280,6 +283,9 @@ function restarDias(fechaInicio, fechaFin, dias) {
   return nuevaFecha.toISOString().split("T")[0];
 }
 
+// ================================================================================
+// Función para formatear fechas en formato yyyy-mm-dd (compatible con input type="date")
+// ================================================================================
 function formatearFecha(fecha) {
   // yyyy-mm-dd
   if (typeof fecha === "string" && /^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
@@ -301,76 +307,10 @@ function formatearFecha(fecha) {
   return `${year}-${month}-${day}`;
 }
 
-// fetch(url)
-//   .then((res) => res.json())
-//   .then((data) => {
-//     //console.log(data);
-//     // eventosCalen.push(data);
-//     // //descripciones.push(data.items);
-//     // const items = data.items;
-//     // items.forEach((ev) => {
-//     //   //console.log(ev);
-//     //   const fechaIn = ev?.start.date || ev?.start.dateTime;
-//     //   const fechaFn = ev?.end.date || ev?.end.dateTime;
-//     //   const nomCli = ev?.summary;
-//     //   const descrip = procesarDescripcionEvento(ev?.description) || null;
-//     //   const cliente = `cliente: ${nomCli}`;
-//     //   const fechaInicio = `start: ${fechaIn}`;
-//     //   const detalle = ev?.description || null;
-//     //   descripciones.push({
-//     //     cliente: nomCli.toLowerCase(),
-//     //     descripcion: detalle,
-//     //   });
-//     //   const fechaFin1 = `end: ${fechaFn}`;
-//     //   //console.log(formatearFecha(fechaInicio.replace("start:", "").trim()));
-//     //   if (ev?.start.date) {
-//     //     //console.log(`si es date:${fechaInicio.replace("start: ", "").trim()}`);
-//     //     //console.log(fechaInicio.replace("start:", "").trim());
-//     //     fechaFormateada = fechaInicio.replace("start: ", "").trim();
-//     //     //fechaFin = fechaFin1.replace("end: ", "").trim();
-//     //     fechaFin = restarDias(
-//     //       fechaFormateada,
-//     //       fechaFin1.replace("end: ", "").trim(),
-//     //       1,
-//     //     );
-//     //     //console.log(fechaFormateada);
-//     //     //return;
-//     //   } else {
-//     //     // console.log(
-//     //     //   `si es dateTime:${normalizarFecha(fechaInicio.replace("start: ", "").trim())}`,
-//     //     // );
-//     //     fechaFormateada = formatearFecha(
-//     //       fechaInicio.replace("start: ", "").trim(),
-//     //     );
-//     //     fechaFin = formatearFecha(fechaFin1.replace("end: ", "").trim());
-//     //   }
-//     //   //console.log(fechaFormateada);
-//     //   //const fechaInicio: ev.start.dateTime || ev.start.date,
-//     //   const vehiculosClientes = `vehiculos: ${descrip?.vehiculos}` || null;
-//     //   const vehiculosOrganizadores = `vehiculos organizadores: ${descrip?.organizadores}`;
-//     //   const comida = `comida: ${descrip?.comida}`;
-//     //   const moneda = `moneda: ${descrip?.moneda}`;
-//     //   const precio = `precio: ${descrip?.precio}`;
-//     //   const id = ev?.id;
-//     //   idCalendar = ev?.id;
-//     //   clientesCalendar.push({
-//     //     id: id.toLowerCase().trim(),
-//     //     cliente: cliente.trim(),
-//     //     //fecha: fechaInicio.toLowerCase().trim(),
-//     //     fecha: fechaFormateada,
-//     //     fechaFin: fechaFin,
-//     //     //fecha: normalizarFecha(fechaInicio.replace("start:", "").trim()),
-//     //     precio: precio.replace("precio: ", "").toLowerCase().trim(),
-//     //     moneda: moneda.replace("moneda: ", "").toLowerCase().trim(),
-//     //   });
-//     //   //console.log(clientesCalendar);
-//     //   clientes = nomCli.toLowerCase();
-//     //   fechasInicio = fechaInicio.toLowerCase();
-//     // });
-//     //cargarEventosGoogle(url);
-//     //mostrarFechas(data.items);
-//   });
-
+// ================================================================================
+// Función para cargar eventos desde Google Calendar, procesarlos y almacenarlos
+// en el formato necesario para la aplicación
+// ================================================================================
 async function cargarEventosGoogle(url) {
   try {
     // limpiar antes de recargar
@@ -379,15 +319,105 @@ async function cargarEventosGoogle(url) {
 
     // limpiar select
     select.innerHTML = "";
+    delete select.dataset.placeholderAgregado;
 
     const res = await fetch(url);
 
     const data = await res.json();
+    console.log(data);
 
     eventosCalen.length = 0;
     eventosCalen.push(data);
 
     const items = data.items || [];
+    if (!primeraCarga) {
+      const cambios = detectarCambios(eventosAnteriores, items);
+      const sinCambios =
+        cambios.agregados.length === 0 &&
+        cambios.modificados.length === 0 &&
+        cambios.eliminados.length === 0;
+
+      // if (cambios.agregados.length) {
+      //   mostrarNotificacion(
+      //     `Se detectaron ${cambios.agregados.length} cambios agregados en Google Calendar.<br>Cliente agregado: ${cambios.agregados[0].summary}`,
+      //     5000,
+      //   );
+      //   //console.log("Agregados:", cambios.agregados);
+      //   //console.log("Modificados:", cambios.modificados);
+      // } else if (cambios.modificados.length) {
+      //   mostrarNotificacion(
+      //     `Se detectaron ${cambios.modificados.length} cambios modificados en Google Calendar.<br>Cliente modificado: ${cambios.modificados[0].summary}`,
+      //     5000,
+      //   );
+      // } else if (cambios.eliminados.length) {
+      //   //console.log(cambios.eliminados[0].summary);
+      //   mostrarNotificacion(
+      //     `Se detectaron ${
+      //       cambios.eliminados.length
+      //     } cambio eliminado en Google Calendar.<br>Cliente eliminado: ${cambios.eliminados[0].summary}`,
+      //     5000,
+      //   );
+      // } else if (
+      //   !cambios.agregados.length ||
+      //   !cambios.modificados.length ||
+      //   !cambios.eliminados.length
+      // ) {
+      //   mostrarNotificacion(
+      //     `Se detectaron ${
+      //       cambios.agregados.length
+      //     } cambios agregados en Google Calendar.<br>Se detectaron ${cambios.modificados.length} cambios modificados en Google Calendar.<br>Se detectaron ${cambios.eliminados.length} cambios eliminados en Google Calendar.`,
+      //     5000,
+      //   );
+      // }
+      if (sinCambios) {
+        mostrarNotificacion(
+          `Se detectaron ${cambios.agregados.length} cambios ➕ agregados en Google Calendar.<br>Se detectaron ${cambios.modificados.length} cambios ✏️ modificados en Google Calendar.<br>Se detectaron ${cambios.eliminados.length} cambios ❌ eliminados en Google Calendar.`,
+          3000,
+        );
+        verificacionesSinCambios++;
+        if (verificacionesSinCambios >= 3) {
+          setTimeout(() => {
+            preguntarContinuarMonitor();
+          }, 3000);
+          verificacionesSinCambios = 0;
+        }
+        //preguntarContinuarMonitor();
+      } else {
+        let mensaje = "";
+        verificacionesSinCambios = 0;
+
+        if (cambios.agregados.length) {
+          mensaje += `➕ Agregados: ${cambios.agregados.length}<br>`;
+
+          cambios.agregados.forEach((ev) => {
+            mensaje += `   • ${ev.summary}<br>`;
+          });
+        }
+
+        if (cambios.modificados.length) {
+          mensaje += `✏️ Modificados: ${cambios.modificados.length}<br>`;
+
+          cambios.modificados.forEach((ev) => {
+            mensaje += `   • ${ev.summary}<br>`;
+          });
+        }
+
+        if (cambios.eliminados.length) {
+          mensaje += `❌ Eliminados: ${cambios.eliminados.length}<br>`;
+
+          cambios.eliminados.forEach((ev) => {
+            mensaje += `   • ${ev.summary}<br>`;
+          });
+        }
+
+        if (mensaje) {
+          mostrarNotificacion(mensaje, 5000);
+        }
+      }
+    }
+
+    eventosAnteriores = structuredClone(items);
+    primeraCarga = false;
 
     items.forEach((ev) => {
       const fechaIn = ev?.start.date || ev?.start.dateTime;
@@ -446,6 +476,144 @@ async function cargarEventosGoogle(url) {
   }
 }
 
+// ================================================================================
+// Función para verificar cambios en el calendario comparando los eventos actuales con los anteriores
+// ================================================================================
+function detectarCambios(viejos, nuevos) {
+  const mapaViejos = new Map(viejos.map((e) => [e.id, e.updated]));
+
+  const agregados = [];
+  const modificados = [];
+
+  nuevos.forEach((evento) => {
+    if (!mapaViejos.has(evento.id)) {
+      agregados.push(evento);
+    } else if (mapaViejos.get(evento.id) !== evento.updated) {
+      modificados.push(evento);
+    }
+  });
+  const idsNuevos = new Set(nuevos.map((e) => e.id));
+
+  const eliminados = viejos.filter((e) => !idsNuevos.has(e.id));
+
+  return {
+    agregados,
+    modificados,
+    eliminados,
+  };
+}
+
+function mostrarNotificacion(mensaje, tiempo = 5000) {
+  const div = document.createElement("div");
+
+  //div.textContent = mensaje;
+  div.innerHTML = mensaje;
+
+  div.style.position = "fixed";
+  div.style.top = "20px";
+  div.style.right = "20px";
+  div.style.padding = "15px";
+  div.style.background = "#ff9800";
+  div.style.color = "#fff";
+  div.style.borderRadius = "8px";
+  div.style.zIndex = "999999";
+
+  document.body.appendChild(div);
+
+  setTimeout(() => {
+    div.remove();
+  }, tiempo);
+}
+
+// setInterval(
+//   () => {
+//     mostrarNotificacion("Revisando cambios en Google Calendar...", 2000);
+//     setTimeout(() => {
+//       cargarEventosGoogle(url);
+//     }, 2000);
+//   },
+//   1 * 30 * 1000,
+// );
+
+function iniciarMonitorCalendario() {
+  if (intervaloCalendario) return;
+
+  intervaloCalendario = setInterval(
+    () => {
+      mostrarNotificacion("Revisando cambios en Google Calendar...", 2000);
+
+      setTimeout(() => {
+        cargarEventosGoogle(url);
+      }, 2000);
+    },
+    1 * 60 * 1000,
+  );
+}
+
+function detenerMonitorCalendario() {
+  clearInterval(intervaloCalendario);
+
+  intervaloCalendario = null;
+
+  console.log("Monitor de Google Calendar detenido.");
+}
+
+function preguntarContinuarMonitor() {
+  const overlay = document.createElement("div");
+
+  overlay.innerHTML = `
+    <div class="modalPregunta">
+
+      <h3>
+        No se detectaron cambios
+      </h3>
+
+      <p>
+        ¿Deseás seguir monitoreando
+        Google Calendar?
+      </p>
+
+      <button id="btnContinuar">
+        Continuar
+      </button>
+
+      <button id="btnDetener">
+        Detener
+      </button>
+
+    </div>
+  `;
+
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.querySelector("#btnContinuar").addEventListener("click", () => {
+    overlay.remove();
+
+    console.log("Continuando monitoreo...");
+  });
+
+  document.querySelector("#btnDetener").addEventListener("click", () => {
+    detenerMonitorCalendario();
+
+    overlay.remove();
+  });
+}
+
+// ================================================================================
+// Función para reconstruir el array de reservas a partir del DOM,
+// útil para mantener el estado actualizado después de cargar eventos desde Google Calendar
+// o al recargar la página
+// ================================================================================
 function reconstruirReservasDesdeDOM() {
   reservas.length = 0;
 
@@ -484,85 +652,14 @@ function reconstruirReservasDesdeDOM() {
   });
 }
 
-// window.addEventListener("DOMContentLoaded", () => {
-//   fechaFin = null;
-//   reconstruirReservasDesdeDOM();
-//   setTimeout(() => {
-//     // const mapa = {};
-
-//     // // console.log(visibles);
-//     // // console.log(ocultas);
-//     // //console.log(descripciones);
-//     // lista.querySelectorAll(".divcontainer").forEach((card) => {
-//     //   const card2 = card.closest("[data-card-id]");
-//     //   //console.log(card2.dataset.id);
-//     //   reservas.push({
-//     //     cardID: card2.dataset.id,
-//     //     cliente: card.querySelector("h2")?.textContent.trim(),
-//     //     fecha: card.querySelector("#fechaInicio")?.textContent.toLowerCase(),
-//     //     fechaFin: card.querySelector("#fechaFin")?.textContent.toLowerCase(),
-//     //     vc: card.querySelector("#vc")?.textContent.toLowerCase(),
-//     //     vo: card.querySelector("#vo")?.textContent.toLowerCase(),
-//     //     comida: card.querySelector("#comida")?.textContent.toLowerCase(),
-//     //     //descripcion: descripciones?.descripcion,
-//     //     precio: card
-//     //       .querySelector("#precio")
-//     //       ?.textContent.replace(`${moneda} `, "")
-//     //       .toLowerCase(),
-//     //   });
-//     //   //console.log(reservas);
-//     // });
-//     // // reservas.forEach((reserva) => {
-//     // //   console.log(reserva.cardID);
-//     // // });
-
-//     // descripciones.forEach((d) => {
-//     //   mapa[d.cliente.toLowerCase().trim()] = d.descripcion;
-//     // });
-//     // reservas.forEach((reserva) => {
-//     //   reserva.descripcion = mapa[reserva.cliente.toLowerCase().trim()] || "";
-//     // });
-
-//     document.querySelectorAll("#card").forEach((card) => {
-//       card.addEventListener("click", () => {
-//         compararCards(card);
-//       });
-//     });
-//     if (plataforma.includes("Android")) {
-//       creaTop();
-//       window.onscroll = function () {
-//         scrollFunction();
-//       };
-//     }
-//     const numeros = obtenerNumeros();
-//     numeroInicial = numeros.mayor;
-
-//     //console.log(reservas);
-//     lista2.style.display = "none";
-//     muestraBoton();
-//   }, 2000);
-//   cargarDatosDesde("data/data.json");
-//   // recargar.addEventListener("click", () => {
-//   //   cargarDatos();
-//   //   //console.log(datos);
-//   // });
-
-//   const ele = eleEdita.querySelectorAll("input");
-//   ele.forEach((el) => {
-//     if (el.type === "text" || el.type === "number") {
-//       if (el.value === "") {
-//         //console.log(el);
-//         actualizar.disabled = true;
-//         actualizar.classList.add("desactive");
-//         //actualizar.style.background = "#888";
-//         //actualizar.style.cursor = "wait";
-//       }
-//     }
-//   });
-//   //console.log(eleEdita);
-// });
+// ================================================================================
+// Función para comparar los datos de una card con el array de reservas y cargar
+// la información en el formulario de edición si se encuentra una coincidencia,
+// o limpiar el formulario si no se encuentra
+// ================================================================================
 window.addEventListener("DOMContentLoaded", async () => {
   await cargarEventosGoogle(url);
+  iniciarMonitorCalendario();
 
   reconstruirReservasDesdeDOM();
 
@@ -607,6 +704,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
+// ================================================================================
+// Función para contar el total de registros visibles (no ocultos) en el array de datos
+// ================================================================================
 function contarRegistrosVisibles(datos) {
   const ahora = new Date();
 
@@ -629,55 +729,11 @@ function contarRegistrosVisibles(datos) {
   }).length;
 }
 
-// async function cargarJSON(urls = []) {
-//   for (const url of urls) {
-//     try {
-//       const res = await fetch(url);
-
-//       if (res.ok) {
-//         return await res.json();
-//       }
-//     } catch (err) {
-//       console.warn(`Error en ${url}`, err);
-//     }
-//   }
-
-//   throw new Error("No se pudo cargar ningún JSON");
-// }
-
-// Cargar datos
-// async function cargarDatos2() {
-//   const res = await fetch("data/data.json");
-//   datos = await res.json();
-//   //const total = contarRegistros(datos);
-//   const total = contarRegistrosVisibles(datos);
-//   //totalReservas.textContent = `Total de reservas: ${total}`;
-//   totalReservas.innerHTML = `
-//     <span class="reservasTitulos"><strong>Total de reservas:</strong> <span class="reservasVisibles">${total}</span></span>
-//     `;
-//   mostrarDatos();
-//   mostrarDatos2(lista2, true);
-// }
-
-// async function cargarDatos3() {
-//   datos = await cargarJSON([
-//     //"data/data.json",
-//     "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json",
-//   ]);
-
-//   const total = contarRegistrosVisibles(datos);
-
-//   totalReservas.innerHTML = `
-//     <span class="reservasTitulos">
-//       <strong>Total de reservas:</strong>
-//       <span class="reservasVisibles">${total}</span>
-//     </span>
-//   `;
-
-//   mostrarDatos();
-//   mostrarDatos2(lista2, true);
-// }
-
+// ================================================================================
+// Función para comparar los datos de una card con el array de reservas y cargar la información
+// en el formulario de edición si se encuentra una coincidencia,
+// o limpiar el formulario si no se encuentra
+// ================================================================================
 function cargarEnFormulario(dato, index, indiceAnteriors) {
   //console.log(dato.precio);
 
@@ -797,6 +853,11 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
     }
   }
 }
+
+// ================================================================================
+// Función para mostrar datos en el DOM, con opción de mostrar solo visibles u ocultas
+// según la fecha de fin
+// ================================================================================
 function mostrarDatos2(listaDestino, mostrarOcultas = false) {
   //console.log(listaDestino);
   listaDestino.innerHTML = "";
@@ -999,7 +1060,9 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
   //});
 }
 
+// ================================================================================
 // Funcion para agrupar por fecha
+// ================================================================================
 function agruparPorFecha(datos) {
   return datos.reduce((acc, item) => {
     const fecha = item.fechaInicio;
@@ -1014,31 +1077,21 @@ function agruparPorFecha(datos) {
   }, {});
 }
 
+// ================================================================================
 // Funcion para mostrar datos en el DOM
+// ================================================================================
 function mostrarDatos() {
   let globalIndex = 0;
   lista.innerHTML = "";
 
   datos.sort((a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio));
   const agrupados = agruparPorFecha(datos);
-  //console.log(agrupados);
 
-  //datos.forEach((d, index) => {
   Object.entries(agrupados).forEach(([fechaGrupo, items]) => {
-    // contenedor grupo
-    //console.log(fechaGrupo);
-    // const grupo = document.createElement("div");
-
-    // grupo.className = "grupo-fecha";
-    // console.log(grupo);
-
-    // // opcional:
-    // grupo.dataset.fecha = fechaGrupo;
     let contenedorActual = lista;
 
     // solo grupos repetidos
     if (items.length > 1) {
-      //console.log(items.length);
       const grupo = document.createElement("div");
 
       grupo.className = "grupo-fecha";
@@ -1062,8 +1115,6 @@ function mostrarDatos() {
     }
 
     items.forEach((d, index) => {
-      //visibles.push(d);
-      //console.log(d);
       const div = document.createElement("div");
       const divContainer = document.createElement("div");
       divContainer.className = "divcontainer";
@@ -1118,19 +1169,6 @@ function mostrarDatos() {
       comidaCheck = valorComida.trim();
       //comidaCheck = !(valorComida === "no" || valorComida === "false");
       señaCheck = valorSeña.trim(); //!(valorSeña === "No" || valorSeña === "false");
-      // console.log(comidaCheck);
-      // console.log(señaCheck);
-      // const comida =
-      //   d.comida === true ||
-      //   d.comida === "Sí" ||
-      //   d.comida === "Si" ||
-      //   d.comida === "true";
-
-      // const sena =
-      //   d.sena === true ||
-      //   d.sena === "Sí" ||
-      //   d.sena === "Si" ||
-      //   d.sena === "true";
       const resultado = restarDias(
         d.fechaInicio,
         d.fechaFin.replace("end: ", ""),
@@ -1167,16 +1205,6 @@ function mostrarDatos() {
         const form = document.querySelector(".editaClientes");
         // console.log(form);
         seleccionarCard(card, eleEdita);
-        // if (card.dataset.selected === "true") {
-        //   eleEdita.style.background = "#888";
-        //   eleEdita.scrollIntoView({
-        //     behavior: "smooth",
-        //     block: "center",
-        //   });
-        // } else {
-        //   eleEdita.style.background = "#2c2c2c";
-        //   //limpiarFormulario(eleEdita);
-        // }
         const clases = div.className;
         const numero = parseInt(clases.match(/card-(\d+)/)[1]);
         // console.log(numero);
@@ -1265,6 +1293,11 @@ function mostrarDatos() {
   });
 }
 
+// ================================================================================
+// Función para mostrar datos de Google Calendar en el DOM, con lógica para verificar
+// si el cliente ya existe en las reservas
+// y para formatear las fechas correctamente
+// ================================================================================
 function mostrarDatosGoogle(d, index = 0) {
   //console.log(d);
   //console.log(d.cliente.toLowerCase());
@@ -1514,6 +1547,9 @@ function mostrarDatosGoogle(d, index = 0) {
   ordenarPorFecha();
 }
 
+// ================================================================================
+// Función para procesar un evento de Google Calendar y extraer los datos relevantes
+// ================================================================================
 function procesarEventoGoogle(ev) {
   //console.log(ev);
   const descripcion = ev?.description || ev?.descripcion || "";
@@ -1544,6 +1580,9 @@ function procesarEventoGoogle(ev) {
   };
 }
 
+// ================================================================================
+// Función para manejar el evento de clic en el botón de guardar
+// ================================================================================
 guarda.addEventListener("click", () => {
   const lala = document.getElementById("editaPrecio").value.split(" ");
   if (elementos.length > 0) {
@@ -1580,6 +1619,11 @@ guarda.addEventListener("click", () => {
   limpiarFormulario(eleCarga);
 });
 
+// ================================================================================
+// Función para manejar el evento de clic en el botón de actualizar,
+// con lógica para determinar si se está guardando un nuevo registro
+// o editando uno existente, y para llamar a las funciones correspondientes
+// ================================================================================
 actualizar.addEventListener("click", (e) => {
   const lala = document.getElementById("editaPrecio").value.split(" ");
   nuevo = {
@@ -1635,34 +1679,10 @@ actualizar.addEventListener("click", (e) => {
   limpiarFormulario(eleEdita);
   eleEdita.style.background = "#2c2c2c";
 });
-
-// async function guardar2(contenido) {
-//   try {
-//     const res = await fetch(`${API}/save`, {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({
-//         path: "data/data.json",
-//         content: contenido,
-//       }),
-//     });
-//     const data = await res.json();
-//     if (res.ok && data.status === "registro agregado") {
-//       // console.log("Guardado correctamente");
-//       await cargarDatosDesde(urlJSON);
-//       //await cargarDatos(); // 👈 recargás la lista
-//       //console.log(datos);
-//     } else {
-//       console.error("Error al guardar", data);
-//     }
-//     data.logs.forEach((l) => console.log(l));
-
-//     alert("Guardado");
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }
-
+// ================================================================================
+// Función para guardar un nuevo registro en el backend, con manejo de errores
+// y validación de la respuesta, además de recargar los datos desde el JSON después de guardar
+// ================================================================================
 async function guardar(contenido) {
   try {
     const res = await fetch(`${API}/save`, {
@@ -1719,6 +1739,10 @@ async function guardar(contenido) {
   }
 }
 
+// ================================================================================
+// Función para editar un registro existente en el backend, con manejo de errores
+// y validación de la respuesta, además de recargar los datos desde el JSON después de editar
+// ================================================================================
 async function editar(contenido) {
   //console.log(idCard2);
   try {
@@ -1745,6 +1769,10 @@ async function editar(contenido) {
   }
 }
 
+// ================================================================================
+// Función para eliminar un registro existente en el backend, con manejo de errores
+// y validación de la respuesta, además de recargar los datos desde el JSON después de eliminar
+// ================================================================================
 async function eliminar() {
   //console.log(idCard2);
   try {
@@ -1786,6 +1814,9 @@ async function eliminar() {
   }
 }
 
+// ================================================================================
+// Función para limpiar los campos de un formulario, restableciendo su estado inicial
+// ================================================================================
 function limpiarFormulario(contenedor) {
   console.log("Limpiando formulario:", contenedor);
   if (!contenedor) return;
@@ -1801,6 +1832,9 @@ function limpiarFormulario(contenedor) {
   });
 }
 
+// ================================================================================
+// Función para eliminar una card del DOM, con validación y manejo de errores
+// ================================================================================
 function eliminarCard(card) {
   console.log("Eliminando card:", card);
   card.remove();
@@ -1814,6 +1848,10 @@ setInterval(async () => {
   logs.forEach((l) => console.log(l));
 }, 5000);
 
+// ================================================================================
+// Función para comparar dos fechas sin considerar las horas,
+// devolviendo -1, 0 o 1 según corresponda
+// ================================================================================
 function compararFechas(fecha1, fecha2) {
   const f1 = new Date(fecha1);
   const f2 = new Date(fecha2);
@@ -1835,8 +1873,11 @@ function compararFechas(fecha1, fecha2) {
   // fecha1 menor
   return -1;
 }
-select.selectedIndex = -1;
 
+// ================================================================================
+// Función para mostrar las fechas de los eventos de Google Calendar en un select,
+// comparándolas con las reservas existentes y formateándolas correctamente
+// ================================================================================
 function mostrarFechas(eventos) {
   //console.log(eventos);
   const opciones = [];
@@ -2242,6 +2283,7 @@ function mostrarFechas(eventos) {
       );
 
       if (indiceNuevo != indiceAnterior) {
+        console.log("linea2287");
         // console.log(numeroIDSelect);
         // buscar card
         indiceNuevo = index;
@@ -2318,6 +2360,7 @@ function mostrarFechas(eventos) {
         //   option.remove();
         // }
       } else if (indiceNuevo == indiceAnterior) {
+        console.log("linea2364");
         const card = document.querySelector(`.${numeroIDSelect}`);
         // resaltar
         if (card) {
@@ -2328,7 +2371,7 @@ function mostrarFechas(eventos) {
           //console.log(idCard);
           const card2 = document.querySelector(`.${idCard}`);
           compararCards(card2);
-          card2.click();
+          //card2.click();
           const botonEliminar = document.querySelector(`.${idCard} > button`);
           //console.log(botonEliminar);
           idCard2 = botonEliminar.id;
@@ -2407,61 +2450,18 @@ function mostrarFechas(eventos) {
       }
       if (option) {
         //console.log("es aca?");
+        delete select.dataset.placeholderAgregado;
         option.remove();
+        select.selectedIndex = 0;
       }
     };
   }, 2000);
 }
-// Funcion para ordenar por fecha
-// function ordenarPorFecha2() {
-//   const cards = Array.from(lista.children);
 
-//   cards.sort((a, b) => {
-//     const fechaA = new Date(a.querySelector("#fechaInicio").textContent);
-//     const fechaB = new Date(b.querySelector("#fechaInicio").textContent);
-
-//     return fechaA - fechaB;
-//   });
-
-//   // volver a insertar ordenados
-//   cards.forEach((card) => lista.appendChild(card));
-// }
-
-// function ordenarPorFecha3() {
-//   const hoy = new Date();
-
-//   // quitar horas para comparar solo fechas
-//   hoy.setHours(0, 0, 0, 0);
-
-//   const cards = Array.from(lista.children).filter((card) => {
-//     const fechaFinTexto = card.querySelector("#fechaFin").textContent;
-
-//     const fechaFin = new Date(fechaFinTexto);
-
-//     fechaFin.setHours(0, 0, 0, 0);
-
-//     // ✅ mostrar solo si fechaFin es MAYOR que hoy
-//     return fechaFin > hoy;
-//   });
-
-//   // ordenar por fechaInicio
-//   cards.sort((a, b) => {
-//     const fechaA = new Date(a.querySelector("#fechaInicio").textContent);
-
-//     const fechaB = new Date(b.querySelector("#fechaInicio").textContent);
-
-//     return fechaA - fechaB;
-//   });
-
-//   // limpiar lista
-//   lista.innerHTML = "";
-
-//   // volver a insertar ordenadas
-//   cards.forEach((card) => {
-//     lista.appendChild(card);
-//   });
-// }
-
+// ================================================================================
+// Función para ordenar las cards por fecha de inicio, mostrando solo las que no han vencido,
+// y reinsertándolas en el DOM en el orden correcto
+// ================================================================================
 function ordenarPorFecha() {
   const ahora = new Date();
 
@@ -2494,6 +2494,10 @@ function ordenarPorFecha() {
   });
 }
 
+// ================================================================================
+// Función mejorada para ordenar las cards por fecha, con opciones para seleccionar los elementos,
+// filtrar por vencidas, y ordenar de forma ascendente o descendente
+// ================================================================================
 function ordenarPorFecha55({
   contenedor,
   selectorCards = ".eventoCard",
@@ -2566,7 +2570,10 @@ function ordenarPorFecha55({
   });
 }
 
+// ================================================================================
 // Funcion para comparar reservas con calendario
+// devuelve un objeto con los campos comparados y un booleano indicando si son iguales o no
+// ================================================================================
 function compararReservas(reserva, calendar) {
   //console.log(reserva);
   //console.log(calendar);
@@ -2609,7 +2616,10 @@ function compararReservas(reserva, calendar) {
   };
 }
 
+// ================================================================================
 // Funcion para agregar items al select
+// con opciones para deshabilitar, seleccionar, agregar clases, y dataset personalizado
+// ================================================================================
 function agregarOption(select, texto, valor, idc, options = {}) {
   //console.log(valor);
   // agregar placeholder solo una vez
@@ -2655,7 +2665,11 @@ function agregarOption(select, texto, valor, idc, options = {}) {
   return option;
 }
 
+// ================================================================================
 // Funcion para seleccionar una card y resaltarla
+// con validación para evitar errores si no se encuentra la card,
+// y para manejar el estado de selección
+// ================================================================================
 function seleccionarCard(card, formulario) {
   if (!card) return;
 
@@ -2666,6 +2680,8 @@ function seleccionarCard(card, formulario) {
     señaCheck = false;
     card.dataset.selected = "false";
     card.classList.remove("selected");
+    actualizar.classList.add("desactive");
+    actualizar.disabled = true;
     //console.log(eleEdita);
 
     document.querySelector(`.clienteSel`).textContent =
@@ -2683,7 +2699,12 @@ function seleccionarCard(card, formulario) {
   card.dataset.selected = "true";
   card.classList.add("selected");
 }
+
+// ================================================================================
 // Funcion para obtener el ID de cada card
+// con validación para evitar errores si no se encuentra la card,
+// y para comparar por cliente y fecha
+// ================================================================================
 function obtenerIdCardPorCliente(cliente, fechaBuscada) {
   const cards = document.querySelectorAll("#card");
 
@@ -2708,7 +2729,10 @@ function obtenerIdCardPorCliente(cliente, fechaBuscada) {
   return null;
 }
 
+// ================================================================================
 // Funcion para obtener el ultimo id de la card, y el ultimo id del boton eliminar
+// y devolver el siguiente numero a usar para cada uno, con validación para evitar errores
+// ================================================================================
 function obtenerNumeros() {
   const ultimo = lista.lastElementChild;
   const ultimo2 = lista2.lastElementChild;
@@ -2762,15 +2786,11 @@ function obtenerNumeros() {
   };
 }
 
-let a = "";
-let b = "";
-let scrolll = "";
-const inicios = 85;
-const target = 20;
-let final = "";
-//const TargetHeight = document.documentElement.offsetHeight - screen.height;
-const TargetHeight = document.documentElement.offsetHeight - window.innerHeight;
+// ================================================================================
 // Funcion para crear boton de top
+// con validación para evitar errores si no se encuentra el bloque destino,
+// y para agregar el evento de scroll y click al botón
+// ================================================================================
 function creaTop() {
   var destino = document.querySelector("body");
   if (destino == undefined) alert("No existe el bloque destino");
@@ -2786,6 +2806,10 @@ function creaTop() {
   }
 }
 
+// ================================================================================
+// Funcion para mostrar el botón de top al hacer scroll, y para ajustar su posición
+// dependiendo de si se ha llegado al final de la página o no, con validación para evitar errores
+// ================================================================================
 function scrollFunction() {
   const mybutton = document.getElementById("myBtn");
   const topp = document.querySelector(".top");
@@ -2809,7 +2833,12 @@ function scrollFunction() {
     mybutton.style.display = "none";
   }
 }
+
+// ================================================================================
 // Funcion para determinar cuando llegamos al final de la pagina
+// con validación para evitar errores, y para comparar la posición actual del scroll
+// con la altura total del documento
+// ================================================================================
 function isBottomOfPage() {
   //return window.scrollY + window.innerHeight >= Math.round(document.documentElement.scrollHeight);
   return (
@@ -2817,6 +2846,10 @@ function isBottomOfPage() {
   );
 }
 
+// ================================================================================
+// Funcion para hacer scroll suave hacia el top de la página al hacer click en el botón,
+// con validación para evitar errores
+// ================================================================================
 function topFunction() {
   if ("scrollTo" in window) {
     // Verifica si el navegador soporta scrollTo
@@ -2835,6 +2868,10 @@ function topFunction() {
   }
 }
 
+// ================================================================================
+// Funcion para comparar el cliente de una card con el cliente de la card anterior seleccionada,
+// y para devolver un objeto con el cliente anterior y el nuevo, con validación para evitar errores
+// ================================================================================
 function compararCards(cardActual) {
   const clienteNuevo = cardActual.querySelector(".elCliente").textContent;
 
@@ -2863,9 +2900,11 @@ function compararCards(cardActual) {
   return { anterior: cardAnterior, nueva: cardNueva };
 }
 
-//cargarDatos();
-//cargarDatosDesde("data/data.json");
-
+// ================================================================================
+// Funcion para renderizar las cards de eventos, con opciones para transformar los datos,
+// agregar eventos de click, hacerlas clickeables, revisar datos,
+// y para manejar el origen de los datos
+// ================================================================================
 function renderizarCards({
   datos = [],
   contenedor,
@@ -3120,11 +3159,21 @@ function renderizarCards({
   });
 }
 
+// ================================================================================
+// Funcion para abrir el modal de eventos
+// con validación para evitar errores, y para renderizar las cards de eventos
+// ================================================================================
 function cerrarModalEventos() {
   const overlay = document.querySelector("#modalEventosOverlay");
   overlay.style.display = "none";
 }
 
+// ================================================================================
+// Función autoejecutable para configurar el modal de eventos,
+// con opciones para personalizar la combinación de teclas,
+// manejar los eventos de apertura y cierre del modal, y para renderizar las cards
+// de eventos desde el calendario y reservas
+// ================================================================================
 (function () {
   const titulosClientesModal = document.querySelector(
     "#listaEventosModal > div h2",
@@ -3135,7 +3184,6 @@ function cerrarModalEventos() {
     // =========================
 
     // Combinación:
-    // CTRL + SHIFT + E
     const HOTKEY = {
       ctrl: false,
       shift: true,
@@ -3147,7 +3195,6 @@ function cerrarModalEventos() {
     // Ej:
     // window.eventosCalendario = [...]
     window.eventosCalendario = eventosCalen[0].items;
-    //console.log(eventosCalen[0]);
     const EVENTOS = window.eventosCalendario || [];
 
     // =========================
@@ -3207,7 +3254,6 @@ function cerrarModalEventos() {
         <p>No hay eventos cargados.</p>
       `;
       } else {
-        //console.log(reservas);
         let contenedorCards;
         let tituloContenedorCards;
         if (EVENTOS) {
@@ -3217,8 +3263,6 @@ function cerrarModalEventos() {
           tituloContenedorCards.className = "tituloEventos";
           tituloContenedorCards.textContent = "Eventos desde Calendario";
           contenedorCards.appendChild(tituloContenedorCards);
-
-          //lista.appendChild(cardContainer);
         }
         lista.appendChild(contenedorCards);
 
@@ -3233,23 +3277,16 @@ function cerrarModalEventos() {
           transformar: (ev) => {
             const descrip = procesarDescripcionEvento(ev?.description);
             if (ev?.start.date) {
-              //console.log("Evento de día completo");
-              //console.log(ev?.start.date);
               fechaFin = restarDias(ev?.start?.date, ev?.end?.date, 1);
             } else {
-              //console.log("Evento con hora específica");
-              //console.log(ev?.start.dateTime);
               fechaFin = ev?.end?.dateTime;
             }
-
-            //console.log(fechaFin);
 
             return {
               titulo: ev?.summary,
 
               fechaInicio: ev?.start?.dateTime || ev?.start?.date,
 
-              //fechaFin: ev?.end?.dateTime || ev?.end?.date,
               fechaFin: fechaFin,
 
               descripcion: ev?.description,
@@ -3365,14 +3402,10 @@ function cerrarModalEventos() {
   }, 2000);
 })();
 
-// document.addEventListener("keydown", (e) => {
-//   if (e.shiftKey && e.key.toLowerCase() === "j") {
-//     e.preventDefault();
-
-//     abrirModalEventos();
-//   }
-// });
-
+// ================================================================================
+// Función para normalizar fechas, eliminando horas y minutos si es un datetime,
+// y para manejar casos donde la fecha pueda venir con espacios o en formatos diferentes
+// ================================================================================
 function normalizarFecha(fecha) {
   if (!fecha) return "";
 
@@ -3384,85 +3417,12 @@ function normalizarFecha(fecha) {
   return fecha.trim();
 }
 
-// const modalJson = document.getElementById("modalJson");
-
-// function abrirModalEventos() {
-//   modalJson.classList.remove("hidden");
-// }
-
-// function cerrarModalEventos() {
-//   modalJson.classList.add("hidden");
-// }
-
-// document
-//   .getElementById("cerrarModalJson")
-//   .addEventListener("click", cerrarModalEventos);
-
-// // cerrar tocando afuera
-// modalJson.addEventListener("click", (e) => {
-//   if (e.target === modalJson) {
-//     cerrarModalEventos();
-//   }
-// });
-
-// // SHIFT + J
-// document.addEventListener("keydown", (e) => {
-//   if (e.shiftKey && e.key.toLowerCase() === "j") {
-//     e.preventDefault();
-
-//     abrirModalEventos();
-//   }
-// });
-
-// // botones
-// document.querySelectorAll(".btnJson").forEach((btn) => {
-//   btn.addEventListener("click", async () => {
-//     const tipo = btn.dataset.tipo;
-
-//     try {
-//       if (tipo === "local") {
-//         console.log("Cargando LOCAL");
-
-//         await cargarDatosDesde("data/data.json");
-//       }
-
-//       if (tipo === "github") {
-//         console.log("Cargando GITHUB");
-
-//         await cargarDatosDesde(
-//           "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json",
-//         );
-//       }
-
-//       cerrarModalEventos();
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   });
-// });
-
-// async function cargarDatosDesde(url) {
-//   const res = await fetch(url);
-
-//   if (!res.ok) {
-//     throw new Error("No se pudo cargar el JSON");
-//   }
-
-//   datos = await res.json();
-
-//   const total = contarRegistrosVisibles(datos);
-
-//   totalReservas.innerHTML = `
-//     <span class="reservasTitulos">
-//       <strong>Total de reservas:</strong>
-//       <span class="reservasVisibles">${total}</span>
-//     </span>
-//   `;
-
-//   mostrarDatos();
-//   mostrarDatos2(lista2, true);
-// }
-
+// ================================================================================
+// Función para crear un modal que permita al usuario elegir entre cargar un JSON
+// local o desde GitHub,
+// con validación para evitar duplicados, estilos inline para asegurar su apariencia,
+// y eventos para manejar la interacción del usuario
+// ================================================================================
 function crearModalJSON() {
   // evitar duplicados
   if (document.getElementById("modalJson")) return;
@@ -3601,6 +3561,11 @@ function crearModalJSON() {
   document.body.appendChild(modal);
 }
 
+// ================================================================================
+// Evento para abrir el modal de carga de JSON al presionar Shift + J,
+// con validación para evitar conflictos con otras combinaciones de teclas,
+// y para manejar la carga de datos dependiendo del dominio
+// ================================================================================
 document.addEventListener("keydown", (e) => {
   if (e.shiftKey && e.key.toLowerCase() === "j") {
     e.preventDefault();
@@ -3620,6 +3585,10 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+// ================================================================================
+// Función para cargar datos desde un JSON, con validación para manejar errores de carga,
+// para actualizar el contador de reservas visibles, y para mostrar los datos en el DOM
+// ================================================================================
 async function cargarDatosDesde(url) {
   const res = await fetch(url);
 
@@ -3646,34 +3615,13 @@ async function cargarDatosDesde(url) {
   //reservas.push(datos);
 }
 
-// function esperarBackend(url) {
-//   const intervalo = setInterval(async () => {
-//     try {
-//       const res = await fetch(url);
-
-//       if (res.ok) {
-//         clearInterval(intervalo);
-
-//         console.log("Backend online");
-
-//         location.reload();
-//       }
-//     } catch (err) {
-//       console.log("Backend todavía iniciando...");
-//     }
-//   }, 5000);
-// }
-
-// function recargarEn5Minutos() {
-//   clearTimeout(timerRecarga);
-
-//   timerRecarga = setTimeout(
-//     () => {
-//       location.reload();
-//     },
-//     5 * 60 * 1000,
-//   );
-// }
+// ================================================================================
+// Función para recargar la página después de 5 minutos,
+// con validación para evitar recargas múltiples,
+// para mostrar la hora actual en la consola, y para limpiar el timer anterior
+// si se programa una nueva recarga
+// Actualmente seteado en 2 minutos.
+// ================================================================================
 function recargarEn5Minutos() {
   clearTimeout(timerRecarga);
   horaActual = new Date().toLocaleTimeString("es-AR");
