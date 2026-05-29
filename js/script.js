@@ -349,38 +349,6 @@ async function cargarEventosGoogle(url) {
         cambios.modificados.length === 0 &&
         cambios.eliminados.length === 0;
 
-      // if (cambios.agregados.length) {
-      //   mostrarNotificacion(
-      //     `Se detectaron ${cambios.agregados.length} cambios agregados en Google Calendar.<br>Cliente agregado: ${cambios.agregados[0].summary}`,
-      //     5000,
-      //   );
-      //   //console.log("Agregados:", cambios.agregados);
-      //   //console.log("Modificados:", cambios.modificados);
-      // } else if (cambios.modificados.length) {
-      //   mostrarNotificacion(
-      //     `Se detectaron ${cambios.modificados.length} cambios modificados en Google Calendar.<br>Cliente modificado: ${cambios.modificados[0].summary}`,
-      //     5000,
-      //   );
-      // } else if (cambios.eliminados.length) {
-      //   //console.log(cambios.eliminados[0].summary);
-      //   mostrarNotificacion(
-      //     `Se detectaron ${
-      //       cambios.eliminados.length
-      //     } cambio eliminado en Google Calendar.<br>Cliente eliminado: ${cambios.eliminados[0].summary}`,
-      //     5000,
-      //   );
-      // } else if (
-      //   !cambios.agregados.length ||
-      //   !cambios.modificados.length ||
-      //   !cambios.eliminados.length
-      // ) {
-      //   mostrarNotificacion(
-      //     `Se detectaron ${
-      //       cambios.agregados.length
-      //     } cambios agregados en Google Calendar.<br>Se detectaron ${cambios.modificados.length} cambios modificados en Google Calendar.<br>Se detectaron ${cambios.eliminados.length} cambios eliminados en Google Calendar.`,
-      //     5000,
-      //   );
-      // }
       if (sinCambios) {
         mostrarNotificacion(
           `Se detectaron ${cambios.agregados.length} cambios ➕ agregados en Google Calendar.<br>Se detectaron ${cambios.modificados.length} cambios ✏️ modificados en Google Calendar.<br>Se detectaron ${cambios.eliminados.length} cambios ❌ eliminados en Google Calendar.`,
@@ -702,9 +670,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     };
   }
   if (!domain.includes("github.io")) {
-    //urlJSON = "data/data.json";
-    urlJSON =
-      "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json";
+    urlJSON = "data/data.json";
+    // urlJSON =
+    //   "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json";
   } else {
     urlJSON =
       "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json";
@@ -1106,6 +1074,9 @@ function mostrarDatos() {
             select.selectedIndex = 0;
             option.remove();
           }
+          (async () => {
+            await cargarEventosGoogle(url);
+          })();
         } else if (btnElimina.textContent == "Actualizar") {
           nuevo = {
             id: idCard2,
@@ -1338,6 +1309,9 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
             select.selectedIndex = 0;
             option.remove();
           }
+          (async () => {
+            await cargarEventosGoogle(url);
+          })();
         } else if (btnElimina.textContent == "Actualizar") {
           nuevo = {
             id: idCard2,
@@ -1367,6 +1341,9 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
             select.selectedIndex = 0;
             option.remove();
           }
+          (async () => {
+            await cargarEventosGoogle(url);
+          })();
         }
       });
       globalIndex++;
@@ -1600,6 +1577,9 @@ function mostrarDatosGoogle(d, index = 0) {
         eliminarCard(card);
         limpiarFormulario(eleEdita);
       })();
+      (async () => {
+        await cargarEventosGoogle(url);
+      })();
     } else if (btnElimina.textContent == "Guardar") {
       //console.log(nuevo);
       //guardar(nuevo);
@@ -1772,6 +1752,9 @@ actualizar.addEventListener("click", (e) => {
         await eliminar();
         recargarEn5Minutos();
         eliminarCard(elementoEliminar);
+      })();
+      (async () => {
+        await cargarEventosGoogle(url);
       })();
     } else {
       //console.log(nuevo);
