@@ -78,6 +78,7 @@ let nombreNuevo = null;
 let elID;
 let elementoEliminar = null;
 let timerRecarga = null;
+let tarjetaSeleccionada = null;
 const visibles = [];
 const ocultas = [];
 let a = "";
@@ -324,7 +325,7 @@ async function cargarEventosGoogle(url) {
     const res = await fetch(url);
 
     const data = await res.json();
-    console.log(data);
+    //console.log(data);
 
     eventosCalen.length = 0;
     eventosCalen.push(data);
@@ -736,6 +737,13 @@ function contarRegistrosVisibles(datos) {
 // ================================================================================
 function cargarEnFormulario(dato, index, indiceAnteriors) {
   //console.log(dato.precio);
+  //console.log(tarjetaSeleccionada.dataset.id);
+  const buscamosbtneliminar = tarjetaSeleccionada.querySelector(".btnelimina");
+  // console.log(buscamosbtneliminar);
+  // console.log(indiceAnteriors);
+  // console.log(indiceNuevo);
+  // console.log(indiceEditando);
+  // console.log(indiceAnterior);
 
   if (comidaCheck == "No") {
     comidaCheck = false;
@@ -803,19 +811,27 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   let elementoSelected;
   // console.log(estado);
   // console.log(origen);
+  if (buscamosbtneliminar.textContent === "Actualizar") {
+    actualizar.textContent = "Actualizar";
+  } else if (buscamosbtneliminar.textContent === "Guardar") {
+    actualizar.textContent = "guardar";
+  }
   if (origen === "select") {
     document.querySelectorAll("#card").forEach((card) => {
       // console.log(card);
       //card.classList.remove("selected");
-      if (card.className.includes("nuevo")) {
-        actualizar.textContent = "guardar";
-      }
-      if (
-        card.dataset.selected == "true" &&
-        !card.className.includes("nuevo")
-      ) {
-        actualizar.textContent = "Actualizar";
-      }
+      // if (
+      //   card.className.includes("nuevo") &&
+      //   !card.dataset.selected == "true"
+      // ) {
+      //   actualizar.textContent = "guardar";
+      // }
+      // if (
+      //   card.dataset.selected == "true" &&
+      //   !card.className.includes("nuevo")
+      // ) {
+      //   actualizar.textContent = "Actualizar";
+      // }
     });
     elementoSelected = document.querySelector(`.${numeroIDSelect}`);
   } else {
@@ -832,27 +848,27 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
     actualizar.textContent = "guardar";
   }
 
-  if (indiceNuevo != indiceAnterior) {
-    // console.log(`linea390`);
-    indiceNuevo = index;
-    indiceAnterior = indiceNuevo;
-  } else if (indiceNuevo == indiceAnterior) {
-    if (
-      indiceEditando == indiceAnterior &&
-      elementoActual.dataset.selected == "false"
-    ) {
-      document.querySelector(`.clienteSel`).textContent =
-        `Editar Cliente Seleccionado:`;
-      limpiarFormulario(eleEdita);
-      // console.log("linea525");
-      actualizar.classList.remove("active");
-      actualizar.classList.add("desactive");
-      actualizar.disabled = true;
-      if (btnEliminar.checked) {
-        btnEliminar.checked = false;
-      }
-    }
-  }
+  // if (indiceNuevo != indiceAnterior) {
+  //   // console.log(`linea390`);
+  //   indiceNuevo = index;
+  //   indiceAnterior = indiceNuevo;
+  // } else if (indiceNuevo == indiceAnterior) {
+  //   if (
+  //     indiceEditando == indiceAnterior &&
+  //     elementoActual.dataset.selected == "false"
+  //   ) {
+  //     document.querySelector(`.clienteSel`).textContent =
+  //       `Editar Cliente Seleccionado:`;
+  //     limpiarFormulario(eleEdita);
+  //     // console.log("linea525");
+  //     actualizar.classList.remove("active");
+  //     actualizar.classList.add("desactive");
+  //     actualizar.disabled = true;
+  //     if (btnEliminar.checked) {
+  //       btnEliminar.checked = false;
+  //     }
+  //   }
+  // }
 }
 
 // ================================================================================
@@ -959,6 +975,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
         const form = document.querySelector(".editaClientes");
         // console.log(form);
         seleccionarCard(card, eleEdita);
+        tarjetaSeleccionada = card;
         // if (card.dataset.selected === "true") {
         //   eleEdita.style.background = "#888";
         //   eleEdita.scrollIntoView({
@@ -1020,11 +1037,14 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
           (async () => {
             await eliminar();
             recargarEn5Minutos();
+            limpiarFormulario(eleEdita);
             eliminarCard(elementoEliminar);
           })();
           //console.log(d.id);
           // console.log("eliminar");
           if (option) {
+            delete select.dataset.placeholderAgregado;
+            select.selectedIndex = 0;
             option.remove();
           }
         } else if (btnElimina.textContent == "Actualizar") {
@@ -1046,11 +1066,14 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
             const resultado = await editar(nuevo);
             if (resultado.status === "ok") {
               recargarEn5Minutos();
+              limpiarFormulario(eleEdita);
             }
           })();
           //console.log(idCard2);
           //console.log(nuevo);
           if (option) {
+            delete select.dataset.placeholderAgregado;
+            select.selectedIndex = 0;
             option.remove();
           }
         }
@@ -1201,10 +1224,16 @@ function mostrarDatos() {
         // console.log(e.target.closest('div[id="card"]'));
         //const card = e.target.closest("#card");
         const card = e.target.closest("[data-card-id]");
+        tarjetaSeleccionada = card;
         elementoEliminar = card;
         if (!card) return;
         const form = document.querySelector(".editaClientes");
+        const btnElimina = div.querySelector(`.btnelimina`);
+        //console.log(btnElimina);
         // console.log(form);
+        if (btnElimina.textContent == "Actualizar") {
+          actualizar.textContent = "Actualizar";
+        }
         seleccionarCard(card, eleEdita);
         const clases = div.className;
         const numero = parseInt(clases.match(/card-(\d+)/)[1]);
@@ -1258,6 +1287,8 @@ function mostrarDatos() {
             eliminarCard(elementoEliminar);
           })();
           if (option) {
+            delete select.dataset.placeholderAgregado;
+            select.selectedIndex = 0;
             option.remove();
           }
         } else if (btnElimina.textContent == "Actualizar") {
@@ -1279,9 +1310,12 @@ function mostrarDatos() {
             const resultado = await editar(nuevo);
             if (resultado.status === "ok") {
               recargarEn5Minutos();
+              limpiarFormulario(eleEdita);
             }
           })();
           if (option) {
+            delete select.dataset.placeholderAgregado;
+            select.selectedIndex = 0;
             option.remove();
           }
         }
@@ -1434,6 +1468,7 @@ function mostrarDatosGoogle(d, index = 0) {
 
     //console.log(idSeleccionado);
     //const form = document.querySelector(".editaClientes");
+    tarjetaSeleccionada = card;
     seleccionarCard(card, eleEdita);
     //console.log(idSeleccionado);
 
@@ -1492,6 +1527,7 @@ function mostrarDatosGoogle(d, index = 0) {
         await eliminar();
         recargarEn5Minutos();
         eliminarCard(card);
+        limpiarFormulario(eleEdita);
       })();
     } else if (btnElimina.textContent == "Guardar") {
       //console.log(nuevo);
@@ -1504,6 +1540,7 @@ function mostrarDatosGoogle(d, index = 0) {
           console.log("Respuesta backend:", resultado);
           //esperarBackend(`${API}/health`);
           recargarEn5Minutos();
+          limpiarFormulario(eleEdita);
         }
       })();
     }
@@ -1544,6 +1581,7 @@ function mostrarDatosGoogle(d, index = 0) {
     //   `son distintos: anterior: ${nombreAnterior} - nuevo: ${nombreNuevo}`,
     // );
   }
+  tarjetaSeleccionada = card;
 
   seleccionarCard(card, eleEdita);
   ordenarPorFecha();
@@ -1558,8 +1596,8 @@ function procesarEventoGoogle(ev) {
 
   const datosExtraidos = procesarDescripcionEvento(descripcion);
   //console.log(datosExtraidos);
-  const fechaInicio = ev.start.dateTime || ev.start.date;
-  const fechaFin = ev.end.dateTime || ev.end.date;
+  const fechaInicio = ev?.start?.dateTime || ev?.start?.date || ev?.fecha;
+  const fechaFin = ev?.end?.dateTime || ev?.end?.date || ev?.fechaFin;
 
   return {
     id: ev?.id,
@@ -2241,7 +2279,7 @@ function mostrarFechas(eventos) {
           id: idCard2,
           cardID: `card-${nuevoNumero}`,
           cliente: datosProcesados?.cliente,
-          fechaInicio: fecha2,
+          fecha: fecha2,
           fechaFin: fechaFin,
           vc: datosProcesados?.vc,
           vo: datosProcesados?.vo,
@@ -2290,7 +2328,7 @@ function mostrarFechas(eventos) {
       );
 
       if (indiceNuevo != indiceAnterior) {
-        console.log("linea2287");
+        //console.log("linea2287");
         // console.log(numeroIDSelect);
         // buscar card
         indiceNuevo = index;
@@ -2329,6 +2367,7 @@ function mostrarFechas(eventos) {
             moneda: datosProcesados.moneda,
             sena: señaCheck,
             senaRecibida: datosProcesados.senaRecibida,
+            descripcion: datosProcesados?.descripcion,
           };
 
           //datosNuevos.push(nuevo);
@@ -2353,6 +2392,8 @@ function mostrarFechas(eventos) {
           // console.log(card);
           const form = document.querySelector("editaClientes");
           seleccionarCard(card2, eleEdita);
+          tarjetaSeleccionada = card2;
+          elementoEliminar = card2;
 
           botonEliminar.textContent = "Actualizar";
           actualizar.textContent = "Actualizar";
@@ -2367,7 +2408,7 @@ function mostrarFechas(eventos) {
         //   option.remove();
         // }
       } else if (indiceNuevo == indiceAnterior) {
-        console.log("linea2364");
+        //console.log("linea2364");
         const card = document.querySelector(`.${numeroIDSelect}`);
         // resaltar
         if (card) {
@@ -2400,6 +2441,7 @@ function mostrarFechas(eventos) {
             moneda: datosProcesados.moneda,
             sena: señaCheck,
             senaRecibida: datosProcesados.senaRecibida,
+            descripcion: datosProcesados?.descripcion,
           };
           //const fechaFin = restarDias(nuevo.fechaInicio, nuevo.fechaFin, 1);
           //datosNuevos.push(nuevo);
@@ -2421,6 +2463,7 @@ function mostrarFechas(eventos) {
           botonEliminar.textContent = "Actualizar";
           actualizar.textContent = "Actualizar";
           elementoEliminar = card2;
+          tarjetaSeleccionada = card2;
 
           // scroll automático
           card2.scrollIntoView({
@@ -2455,12 +2498,12 @@ function mostrarFechas(eventos) {
         eleEdita.style.background = "#2c2c2c";
         //limpiarFormulario(eleEdita);
       }
-      if (option) {
-        //console.log("es aca?");
-        delete select.dataset.placeholderAgregado;
-        option.remove();
-        select.selectedIndex = 0;
-      }
+      // if (option) {
+      //   //console.log("es aca?");
+      //   delete select.dataset.placeholderAgregado;
+      //   select.selectedIndex = 0;
+      //   option.remove();
+      // }
     };
   }, 2000);
 }
@@ -2687,9 +2730,12 @@ function seleccionarCard(card, formulario) {
     señaCheck = false;
     card.dataset.selected = "false";
     card.classList.remove("selected");
+    actualizar.classList.remove("active");
     actualizar.classList.add("desactive");
     actualizar.disabled = true;
+    actualizar.textContent = "Actualizar";
     //console.log(eleEdita);
+    tarjetaSeleccionada = null;
 
     document.querySelector(`.clienteSel`).textContent =
       `Editar Cliente Seleccionado:`;
@@ -2980,6 +3026,7 @@ function renderizarCards({
       moneda: data.moneda,
       sena: document.getElementById("editaSeña").checked,
       senaRecibida: document.getElementById("editaImporteSeña").value,
+      descripcion: descripcion,
     };
 
     // =========================
@@ -3100,6 +3147,7 @@ function renderizarCards({
         //   block: "center",
         // });
         seleccionarCard(cardOriginal, eleEdita);
+        tarjetaSeleccionada = cardOriginal;
         cardOriginal.scrollIntoView({
           behavior: "smooth",
           block: "center",
