@@ -197,21 +197,6 @@
     "descripcion": "4 veh\u00edculos, 100 d\u00f3lares por vehiculo"
   },
   {
-    "id": "card-16",
-    "cardID": "card-15",
-    "cliente": "probamos",
-    "fecha": "2026-05-28",
-    "fechaFin": "2026-05-28",
-    "vc": 4,
-    "vo": 2,
-    "comida": "S\u00ed",
-    "precio": "100000",
-    "moneda": "ARS",
-    "sena": "No",
-    "senaRecibida": "",
-    "descripcion": "Posiblemente 4 vehiculos, 2 vehiculos organizadores, 100000 pesos por veh\u00edculo. Incluye comida"
-  },
-  {
     "id": "card-17",
     "cardID": "card-16",
     "cliente": "probamosss 2",
