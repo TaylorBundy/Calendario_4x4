@@ -93,6 +93,9 @@ label {
   width: 20%;
   padding: 8px;
   border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 button {
@@ -121,11 +124,16 @@ button {
 }
 
 #lista2 {
+  display: none;
   /* display: flex; */
   /* flex-direction: column; */
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  /* display: grid; */
+  /* grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); */
   gap: 10px;
+  border: 5px solid #ff0000;
+  border-radius: 8px;
+  /* padding: 5px 0; */
+  padding: 5px;
 }
 .datosVisibles {
   /* color: #c04005; */
@@ -161,6 +169,7 @@ button {
   display: flex;
   flex-direction: column;
   position: relative;
+  cursor: alias;
 }
 .btnelimina {
   position: absolute;
@@ -170,6 +179,14 @@ button {
   padding: 8px;
   right: 10px;
   bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.imgElimina {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
 }
 .recargar {
   position: absolute;
@@ -185,6 +202,9 @@ button {
   /* bottom: 0; */
   top: 0;
   font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .elCliente {
   margin: 0;
@@ -247,6 +267,8 @@ button {
   border-radius: 8px;
   padding: 8px;
   margin-top: 10px;
+  justify-content: center;
+  align-items: center;
 }
 #btnModal {
   display: none;
@@ -348,13 +370,19 @@ label {
   cursor: pointer;
 }
 #listaEventosModal .tituloReservas,
-#listaEventosModal .tituloEventos {
+#listaEventosModal .tituloEventos,
+#listaEventosModal .tituloOcultas {
   color: #7804e5;
   font-size: 2.1em;
   text-align: center;
   background: #141414;
   padding: 5px;
   border-radius: 8px;
+}
+.cardContainerOcultas {
+  border-radius: 8px;
+  border: 5px solid #ff0000;
+  padding: 5px;
 }
 .grupo-fecha {
   border: 3px solid orange;
@@ -374,6 +402,11 @@ label {
 }
 .cards-grupo {
   display: flex;
+  gap: 10px;
+}
+.cards-grupo-finalizadas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 10px;
 }
 .cards-grupo #card {
@@ -454,7 +487,10 @@ label {
     display: flex;
     flex-direction: column;
   }
-  #lista2 {
+  /* #lista2 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  } */
+  .cards-grupo-finalizadas {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
   #lista2 .datosTitulos {
@@ -519,6 +555,11 @@ label {
     top: unset;
     bottom: 10px;
     font-weight: bold;
+  }
+  .imgElimina {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
   }
   .titulo {
     font-size: 3em;
@@ -626,7 +667,7 @@ label {
     margin-bottom: 6px;
   }
   #listaEventosModal {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
   .tituloModal {
     font-size: 2em;
