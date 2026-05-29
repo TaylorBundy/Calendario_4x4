@@ -1314,7 +1314,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
 
       const btnElimina = document.querySelector(`#${d.id}`);
       //console.log(btnElimina);
-      btnElimina.addEventListener("click", () => {
+      btnElimina.addEventListener("click", (e) => {
         const option = select.options[select.selectedIndex];
         const lala = document.getElementById("editaPrecio").value.split(" ");
         const card = e.target.closest("#card");
