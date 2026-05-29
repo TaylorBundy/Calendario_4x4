@@ -546,7 +546,7 @@ function iniciarMonitorCalendario() {
         cargarEventosGoogle(url);
       }, 2000);
     },
-    1 * 60 * 1000,
+    5 * 60 * 1000,
   );
 }
 
@@ -781,12 +781,13 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
       1,
     );
   }
+  const nuevoPrecio = String(dato?.precio);
   document.getElementById("editaFechaFin").value = dato?.fechaFin;
   document.getElementById("editaVehiculosClientes").value = dato?.vc || "";
   document.getElementById("editaVehiculosOrg").value = dato?.vo || "";
   document.getElementById("editaComida").checked = comida;
   document.getElementById("editaPrecio").value =
-    `${moneda} ${dato?.precio || ""}`;
+    `${moneda} ${nuevoPrecio || ""}`;
   document.getElementById("editaSeña").checked = sena;
   document.getElementById("editaImporteSeña").value = dato?.senaRecibida || "";
   document.querySelector(`.clienteSel`).textContent =
@@ -1354,6 +1355,7 @@ function mostrarDatosGoogle(d, index = 0) {
   div.dataset.id = `card-${nuevoNumero}`;
   div.id = "card";
   //div.dataset.selected = div.dataset.selected === "true" ? "false" : "true";
+  const nuevoPrecio = String(d?.precio);
 
   div.innerHTML = `
     <button class="btnelimina" id="card-${numeroMayor}">
@@ -1404,7 +1406,7 @@ function mostrarDatosGoogle(d, index = 0) {
       <span class="datosTitulos">
         <strong>Precio:</strong>
         <span class="datosVisibles" id="precio">
-          ${d.moneda || "ARS"} ${d.precio || "0"}
+          ${d.moneda || "ARS"} ${nuevoPrecio || "0"}
         </span>
       </span>
 
@@ -2141,6 +2143,8 @@ function mostrarFechas(eventos) {
         .trim()
         .toLowerCase();
 
+      const nuevoPrecio = String(datosProcesados?.precio);
+
       // buscar en reservas
       const reservaExistente = reservas.find(
         (r) =>
@@ -2231,6 +2235,8 @@ function mostrarFechas(eventos) {
           nuevoNumero = total;
           numeroMayor = numeroMayor + 1;
         }
+
+        // console.log(nuevoPrecio);
         nuevo = {
           id: idCard2,
           cardID: `card-${nuevoNumero}`,
@@ -2240,12 +2246,13 @@ function mostrarFechas(eventos) {
           vc: datosProcesados?.vc,
           vo: datosProcesados?.vo,
           comida: comidaCheck,
-          precio: datosProcesados?.precio,
+          precio: nuevoPrecio,
           moneda: datosProcesados?.moneda,
           sena: señaCheck,
           senaRecibida: datosProcesados?.senaRecibida,
           descripcion: datosProcesados?.descripcion,
         };
+        //console.log(nuevo);
         tarjetaAnterior = `card-${nuevoNumero}`;
         mostrarDatosGoogle(datosProcesados, nuevoNumero);
         cargarEnFormulario(datosProcesados, idCalendar, numero);
@@ -2318,7 +2325,7 @@ function mostrarFechas(eventos) {
             vc: datosProcesados.vc,
             vo: datosProcesados.vo,
             comida: comidaCheck,
-            precio: datosProcesados.precio,
+            precio: nuevoPrecio,
             moneda: datosProcesados.moneda,
             sena: señaCheck,
             senaRecibida: datosProcesados.senaRecibida,
@@ -2389,7 +2396,7 @@ function mostrarFechas(eventos) {
             vc: datosProcesados.vc,
             vo: datosProcesados.vo,
             comida: comidaCheck,
-            precio: datosProcesados.precio,
+            precio: nuevoPrecio,
             moneda: datosProcesados.moneda,
             sena: señaCheck,
             senaRecibida: datosProcesados.senaRecibida,
