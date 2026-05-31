@@ -508,6 +508,8 @@ label {
   .reservasVisibles {
     /* color: #c04005; */
     color: #ff0000;
+    word-wrap: break-word;
+    word-break: break-word;
   }
   .reservasTitulos {
     color: #5300a1;
