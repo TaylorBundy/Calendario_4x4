@@ -116,7 +116,7 @@ let moneda;
 // ================================================================================
 function procesarDescripcionEvento(texto) {
   if (!texto || texto == null) return;
-  console.log(texto);
+  //console.log(texto);
   const resultado = {
     vehiculos: null,
     organizadores: null,
@@ -184,7 +184,7 @@ function procesarDescripcionEvento(texto) {
       break;
     }
   }
-  console.log(precioMatch);
+  //console.log(precioMatch);
 
   // if (precioMatch) {
   //   resultado.precio = Number(precioMatch[1]);
@@ -231,7 +231,7 @@ function procesarDescripcionEvento(texto) {
       resultado.moneda = "USD";
     }
   }
-  console.log(moneda);
+  //console.log(moneda);
   // =========================
   // COMIDA
   // =========================
@@ -377,7 +377,7 @@ async function cargarEventosGoogle(url) {
     const res = await fetch(url);
 
     const data = await res.json();
-    console.log(data.items);
+    //console.log(data.items);
 
     eventosCalen.length = 0;
     eventosCalen.push(data);
@@ -448,7 +448,7 @@ async function cargarEventosGoogle(url) {
       const nomCli = ev?.summary;
 
       const descrip = procesarDescripcionEvento(ev?.description) || null;
-      console.log(descrip);
+      //console.log(descrip);
 
       const detalle = ev?.description || null;
 
@@ -1418,7 +1418,7 @@ function agruparPorFecha(datos) {
 // y para formatear las fechas correctamente
 // ================================================================================
 function mostrarDatosGoogle(d, index = 0) {
-  console.log(d);
+  //console.log(d);
   //console.log(d.cliente.toLowerCase());
 
   // reservas.forEach((el) => {
@@ -1684,11 +1684,11 @@ function mostrarDatosGoogle(d, index = 0) {
 // Función para procesar un evento de Google Calendar y extraer los datos relevantes
 // ================================================================================
 function procesarEventoGoogle(ev) {
-  console.log(ev);
+  //console.log(ev);
   const descripcion = ev?.description || ev?.descripcion || "";
 
   const datosExtraidos = procesarDescripcionEvento(descripcion);
-  console.log(datosExtraidos);
+  //console.log(datosExtraidos);
   const fechaInicio = ev?.start?.dateTime || ev?.start?.date || ev?.fecha;
   const fechaFin = ev?.end?.dateTime || ev?.end?.date || ev?.fechaFin;
 
@@ -2265,7 +2265,7 @@ function mostrarFechas(eventos) {
 
       // procesar
       const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-      console.log(datosProcesados);
+      //console.log(datosProcesados);
 
       // normalizar
       const cliente = datosProcesados.cliente
@@ -2279,7 +2279,7 @@ function mostrarFechas(eventos) {
         .toLowerCase();
 
       const nuevoPrecio = String(datosProcesados?.precio);
-      console.log(nuevoPrecio);
+      //console.log(nuevoPrecio);
 
       // buscar en reservas
       const reservaExistente = reservas.find(
