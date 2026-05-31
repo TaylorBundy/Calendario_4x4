@@ -91,19 +91,6 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-9",
-    "cliente": "Mingo",
-    "fechaInicio": "2026-06-24",
-    "fechaFin": "2026-06-24",
-    "vc": "9",
-    "vo": "",
-    "comida": false,
-    "precio": "60",
-    "moneda": "USD",
-    "sena": false,
-    "senaRecibida": ""
-  },
-  {
     "id": "card-10",
     "cliente": "La huella",
     "fechaInicio": "2026-07-24",
