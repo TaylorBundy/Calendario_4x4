@@ -67,6 +67,7 @@ let idcCalendar = null;
 let estado = null;
 let numeroIDSelect = null;
 let origen = null;
+let origenJSON = null;
 let comidaCheck = false;
 let señaCheck = false;
 let idCard = null;
@@ -713,11 +714,14 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
   if (!domain.includes("github.io")) {
     urlJSON = "data/data.json";
+    origenJSON = urlJSON;
     // urlJSON =
     //   "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json";
   } else {
     urlJSON =
       "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json";
+    const resultado = urlJSON.substring(urlJSON.indexOf("TaylorBundy"));
+    origenJSON = resultado;
   }
   cargarDatosDesde(urlJSON);
   setTimeout(() => {
@@ -2172,7 +2176,7 @@ function mostrarFechas(eventos) {
     eventos.forEach((ev, index) => {
       //console.log(ev);
       const datos = procesarEventoGoogle(ev);
-      console.log(datos);
+      //console.log(datos);
       const cliente = datos.cliente;
       const fecha = datos.fechaInicio.toLowerCase();
       //const fecha = normalizarFecha(datos.fechaInicio.toLowerCase());
@@ -3742,11 +3746,17 @@ function crearModalJSON() {
         select.innerHTML = "";
         delete select.dataset.placeholderAgregado;
         if (tipo === "local") {
+          urlJSON = "data/data.json";
+          origenJSON = urlJSON;
           await cargarDatosDesde("data/data.json");
           await cargarEventosGoogle(url);
         }
 
         if (tipo === "github") {
+          urlJSON =
+            "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json";
+          const resultado = urlJSON.substring(urlJSON.indexOf("TaylorBundy"));
+          origenJSON = resultado;
           await cargarDatosDesde(
             "https://raw.githubusercontent.com/TaylorBundy/Calendario_4x4/main/data/data.json",
           );
@@ -3805,8 +3815,13 @@ async function cargarDatosDesde(url) {
 
   totalReservas.innerHTML = `
     <span class="reservasTitulos">
-      <strong>Total de reservas:</strong>
+      <strong>Total reservas:</strong>
       <span class="reservasVisibles">${total}</span>
+    </span>
+    <br>
+    <span class="reservasTitulos">
+      <strong>Archivo cargado:</strong>
+      <span class="reservasVisibles">${origenJSON}</span>
     </span>
   `;
 
