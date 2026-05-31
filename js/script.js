@@ -108,7 +108,7 @@ const API_KEY = "AIzaSyAVearlKR2iIcQd2eeS8zXqiKB2OITgIxU";
 const CALENDAR_ID = "diegomartinbarbosa2@gmail.com";
 
 const url = `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?key=${API_KEY}`;
-let precioMatch;
+let precioMatch = null;
 let moneda;
 
 // ================================================================================
@@ -116,7 +116,7 @@ let moneda;
 // ================================================================================
 function procesarDescripcionEvento(texto) {
   if (!texto || texto == null) return;
-  //console.log(texto);
+  console.log(texto);
   const resultado = {
     vehiculos: null,
     organizadores: null,
@@ -130,9 +130,13 @@ function procesarDescripcionEvento(texto) {
   // =========================
   // VEHÍCULOS
   // =========================
+  // const vehiculosMatch = texto.match(
+  //   /(\d+)\s*veh[ií]culos?(?!\s*organizadores)|vehiculos/i,
+  // );
   const vehiculosMatch = texto.match(
-    /(\d+)\s*veh[ií]culos?(?!\s*organizadores)|vehiculos/i,
+    /(\d+)\s*(?:veh[ií]culos?|camionetas?|chatas?)(?!\s*organizadores)/i,
   );
+  //console.log(vehiculosMatch);
 
   if (vehiculosMatch) {
     resultado.vehiculos = Number(vehiculosMatch[1]);
@@ -154,22 +158,56 @@ function procesarDescripcionEvento(texto) {
   // =========================
   const precioRegex =
     /(?:precio\s*pactado|precio\s*por\s*veh[ií]culo)?[\s:]*\$?\s*(\d+)\s*(usd|u\$s|d[oó]lares?|dolares|pesos?)?(?:\s*por\s*veh[ií]culo)?/i;
+  // const patronesPrecio = [
+  //   /(\d+)\s*(usd|u\$s|d[oó]lares?|dolares|pesos?)\s*por\s*veh[ií]culo/i,
+
+  //   /precio\s*(?:pactado|por\s*veh[ií]culo)?[:\s]*\$?\s*(\d+)/i,
+
+  //   /\$\s*(\d+)/i,
+  // ];
   const patronesPrecio = [
+    /(\d+)\s*(?:cada\s*uno|c\/u|por\s*persona|por\s*veh[ií]culo)/i,
+
     /(\d+)\s*(usd|u\$s|d[oó]lares?|dolares|pesos?)\s*por\s*veh[ií]culo/i,
 
     /precio\s*(?:pactado|por\s*veh[ií]culo)?[:\s]*\$?\s*(\d+)/i,
 
     /\$\s*(\d+)/i,
   ];
+  precioMatch = null;
 
   for (const regex of patronesPrecio) {
     const match = texto.match(regex);
 
     if (match) {
       precioMatch = match;
+      break;
     }
   }
+  console.log(precioMatch);
 
+  // if (precioMatch) {
+  //   resultado.precio = Number(precioMatch[1]);
+
+  //   if (precioMatch[2]) {
+  //     moneda = precioMatch[2].toLowerCase();
+
+  //     if (
+  //       moneda.includes("usd") ||
+  //       moneda.includes("u$s") ||
+  //       moneda.includes("dólar") ||
+  //       moneda.includes("dolar") ||
+  //       moneda.includes("dolares") ||
+  //       moneda.includes("dólares")
+  //     ) {
+  //       moneda = "USD";
+  //       resultado.moneda = "USD";
+  //     } else if (moneda.includes("peso")) {
+  //       moneda = "ARS";
+  //       resultado.moneda = "ARS";
+  //     }
+  //   }
+  // }
   if (precioMatch) {
     resultado.precio = Number(precioMatch[1]);
 
@@ -181,16 +219,19 @@ function procesarDescripcionEvento(texto) {
         moneda.includes("u$s") ||
         moneda.includes("dólar") ||
         moneda.includes("dolar") ||
-        moneda.includes("dolares")
+        moneda.includes("dolares") ||
+        moneda.includes("dólares")
       ) {
-        moneda = "USD";
         resultado.moneda = "USD";
       } else if (moneda.includes("peso")) {
-        moneda = "ARS";
         resultado.moneda = "ARS";
       }
+    } else if (/cada\s*uno|c\/u|por\s*persona|por\s*veh[ií]culo/i.test(texto)) {
+      // Si no se especificó moneda, asumimos USD
+      resultado.moneda = "USD";
     }
   }
+  console.log(moneda);
   // =========================
   // COMIDA
   // =========================
@@ -336,7 +377,7 @@ async function cargarEventosGoogle(url) {
     const res = await fetch(url);
 
     const data = await res.json();
-    //console.log(data);
+    console.log(data.items);
 
     eventosCalen.length = 0;
     eventosCalen.push(data);
@@ -407,6 +448,7 @@ async function cargarEventosGoogle(url) {
       const nomCli = ev?.summary;
 
       const descrip = procesarDescripcionEvento(ev?.description) || null;
+      console.log(descrip);
 
       const detalle = ev?.description || null;
 
@@ -1642,11 +1684,11 @@ function mostrarDatosGoogle(d, index = 0) {
 // Función para procesar un evento de Google Calendar y extraer los datos relevantes
 // ================================================================================
 function procesarEventoGoogle(ev) {
-  //console.log(ev);
+  console.log(ev);
   const descripcion = ev?.description || ev?.descripcion || "";
 
   const datosExtraidos = procesarDescripcionEvento(descripcion);
-  //console.log(datosExtraidos);
+  console.log(datosExtraidos);
   const fechaInicio = ev?.start?.dateTime || ev?.start?.date || ev?.fecha;
   const fechaFin = ev?.end?.dateTime || ev?.end?.date || ev?.fechaFin;
 
@@ -1662,7 +1704,7 @@ function procesarEventoGoogle(ev) {
     vc: datosExtraidos?.vehiculos,
     vo: datosExtraidos?.organizadores,
     comida: datosExtraidos?.comida || false,
-    precio: datosExtraidos?.precio,
+    precio: datosExtraidos?.precio || null,
     moneda: datosExtraidos?.moneda,
 
     sena: false,
@@ -2130,7 +2172,7 @@ function mostrarFechas(eventos) {
     eventos.forEach((ev, index) => {
       //console.log(ev);
       const datos = procesarEventoGoogle(ev);
-      //console.log(datos);
+      console.log(datos);
       const cliente = datos.cliente;
       const fecha = datos.fechaInicio.toLowerCase();
       //const fecha = normalizarFecha(datos.fechaInicio.toLowerCase());
@@ -2223,7 +2265,7 @@ function mostrarFechas(eventos) {
 
       // procesar
       const datosProcesados = procesarEventoGoogle(eventoSeleccionado);
-      //console.log(datosProcesados.id);
+      console.log(datosProcesados);
 
       // normalizar
       const cliente = datosProcesados.cliente
@@ -2237,6 +2279,7 @@ function mostrarFechas(eventos) {
         .toLowerCase();
 
       const nuevoPrecio = String(datosProcesados?.precio);
+      console.log(nuevoPrecio);
 
       // buscar en reservas
       const reservaExistente = reservas.find(
