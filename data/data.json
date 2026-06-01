@@ -169,5 +169,32 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "4 veh\u00edculos, 100 d\u00f3lares por vehiculo"
+  },
+  {
+    "id": "card-9",
+    "cardID": "card-13",
+    "cliente": "Van Moya",
+    "fechaInicio": "2026-08-01",
+    "fechaFin": "2026-08-02",
+    "vc": 3,
+    "vo": null,
+    "comida": "No",
+    "precio": "75",
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "3 camioneta \n75 USD por vehiculo"
+  },
+  {
+    "id": "card-4",
+    "cardID": "card-13",
+    "cliente": "Norberto Nicolas ver",
+    "fechaInicio": "2026-09-01",
+    "fechaFin": "2026-09-04",
+    "comida": "No",
+    "precio": "null",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": ""
   }
 ]
