@@ -35,26 +35,57 @@
         </div>
         <h2 class="clienteNuevo">Crear Cliente Nuevo:</h2>
         <label>Cliente/Organizador:</label>
-        <input type="text" id="cliente" placeholder="Cliente" />
+        <input
+          type="text"
+          id="cliente"
+          placeholder="Cliente"
+          onmouseover="
+            agregarTitulo(this, 'Ingrese el nombre del cliente u organizador')
+          "
+        />
 
         <label>Fecha Inicio:</label>
-        <input type="date" id="fechaInicio" />
+        <input
+          type="date"
+          id="fechaInicio"
+          onmouseover="
+            agregarTitulo(this, `Ingrese la fecha de inicio de la excursión.`)
+          "
+        />
         <label>Fecha Fin:</label>
-        <input type="date" id="fechaFin" />
+        <input
+          type="date"
+          id="fechaFin"
+          onmouseover="
+            agregarTitulo(this, `Ingrese la fecha final de la excursión.`)
+          "
+        />
         <label>Total Vehículos:</label>
         <input
           type="number"
           id="vehiculosClientes"
           placeholder="Vehículos clientes"
+          onmouseover="agregarTitulo(this, `Ingrese la cantidad de vehículos.`)"
         />
         <label>Total Vehículos organizadores:</label>
         <input
           type="number"
           id="vehiculosOrg"
           placeholder="Vehículos organizadores"
+          onmouseover="
+            agregarTitulo(
+              this,
+              `Ingrese la cantidad de vehículos organizadores.`,
+            )
+          "
         />
         <label>Precio Acordado:</label>
-        <input type="number" id="precio" placeholder="Precio acordado" />
+        <input
+          type="number"
+          id="precio"
+          placeholder="Precio acordado"
+          onmouseover="agregarTitulo(this, `Ingrese el precio acordado.`)"
+        />
         <label class="seña"
           >Deja seña: <input type="checkbox" id="seña"
         /></label>
@@ -65,7 +96,11 @@
           >Incluye comida: <input type="checkbox" id="comida"
         /></label>
 
-        <button class="guardar" type="button">
+        <button
+          class="guardar"
+          type="button"
+          onmouseover="agregarTitulo(this, `Click para guardar cliente nuevo.`)"
+        >
           <img class="imgElimina" src="images/salvar.avif" />Guardar
         </button>
       </div>
@@ -75,7 +110,17 @@
         </div>
         <h2 class="clienteSel">Editar Cliente Seleccionado:</h2>
         <label>Cliente/Organizador:</label>
-        <input type="text" id="editaCliente" placeholder="Cliente" />
+        <input
+          type="text"
+          id="editaCliente"
+          placeholder="Cliente"
+          onmouseover="
+            agregarTitulo(
+              this,
+              `Introduzca el nombre nuevo del cliente para actualizar.`,
+            )
+          "
+        />
 
         <label>Fecha Inicio:</label>
         <input type="date" id="editaFechaInicio" />

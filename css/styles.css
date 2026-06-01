@@ -105,12 +105,12 @@ button {
   cursor: pointer;
 }
 
-.actualizar.active {
+.active {
   background: #28a745;
   cursor: pointer;
 }
 
-.actualizar.desactive {
+.desactive {
   background: #888;
   cursor: wait;
 }
@@ -142,6 +142,7 @@ button {
 .datosTitulos {
   color: #152ed9;
   font-size: 0.8em;
+  z-index: 9;
 }
 .reservasVisibles {
   /* color: #c04005; */
@@ -182,6 +183,7 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 10;
 }
 .imgElimina {
   width: 16px;
@@ -224,6 +226,9 @@ button {
   order: 2;
   margin-bottom: 10px;
 }
+.reservasContainer {
+  cursor: default;
+}
 
 .fechasGoogle {
   order: 3;
@@ -249,6 +254,19 @@ button {
 .imgContainer img {
   /* position: relative; */
   width: 40%;
+}
+
+.imgContainerLista {
+  position: absolute;
+  display: flex;
+  /* justify-content: right; */
+  /* align-items: center; */
+  height: 30%;
+  /* width: 30%; */
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
 }
 
 .cargaClientes .imgContainer,
@@ -602,6 +620,8 @@ label {
   }
   #fechas {
     font-size: 2.5em;
+    text-align: center;
+    width: inherit;
   }
   .fechasGoogle {
     display: flex;
@@ -610,7 +630,7 @@ label {
     order: 0;
   }
   #formFechas {
-    width: 80%;
+    width: 70%;
     text-align: center;
   }
   .top {

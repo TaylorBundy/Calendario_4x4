@@ -21,6 +21,7 @@ const lala = editaPrecio.split(" ");
 const btnModal = document.querySelector("#btnModal");
 const btnOcultas = document.querySelector("#btnOcultas");
 select.selectedIndex = -1;
+const todasCards = lista.querySelectorAll("#card");
 
 const plataforma = navigator.userAgent;
 const urlObj = new URL(window.location.toString());
@@ -84,6 +85,7 @@ let elID;
 let elementoEliminar = null;
 let timerRecarga = null;
 let tarjetaSeleccionada = null;
+let textoTooltip = null;
 const visibles = [];
 const ocultas = [];
 let a = "";
@@ -211,9 +213,11 @@ function procesarDescripcionEvento(texto) {
   // }
   if (precioMatch) {
     resultado.precio = Number(precioMatch[1]);
+    //console.log(precioMatch[2]);
 
     if (precioMatch[2]) {
       moneda = precioMatch[2].toLowerCase();
+      //console.log(moneda);
 
       if (
         moneda.includes("usd") ||
@@ -221,10 +225,11 @@ function procesarDescripcionEvento(texto) {
         moneda.includes("dólar") ||
         moneda.includes("dolar") ||
         moneda.includes("dolares") ||
-        moneda.includes("dólares")
+        moneda.includes("dólares") ||
+        moneda.includes("USD")
       ) {
         resultado.moneda = "USD";
-      } else if (moneda.includes("peso")) {
+      } else if (moneda.includes("peso") || moneda.includes("pesos")) {
         resultado.moneda = "ARS";
       }
     } else if (/cada\s*uno|c\/u|por\s*persona|por\s*veh[ií]culo/i.test(texto)) {
@@ -232,7 +237,7 @@ function procesarDescripcionEvento(texto) {
       resultado.moneda = "USD";
     }
   }
-  //console.log(moneda);
+  //console.log(resultado.moneda);
   // =========================
   // COMIDA
   // =========================
@@ -474,6 +479,9 @@ async function cargarEventosGoogle(url) {
 
         fechaFin = formatearFecha(fechaFn);
       }
+      // console.log(
+      //   `Cliente: ${nomCli} - Precio: ${descrip?.precio} - Moneda: ${descrip?.moneda}`,
+      // );
 
       clientesCalendar.push({
         id: ev?.id.toLowerCase().trim(),
@@ -633,6 +641,14 @@ function preguntarContinuarMonitor() {
   `;
 
   document.body.appendChild(overlay);
+  // ⏱️ Temporizador de 30 segundos
+  const timeoutMonitor = setTimeout(() => {
+    console.log("No hubo respuesta en 30 segundos. Deteniendo monitoreo...");
+
+    detenerMonitorCalendario();
+
+    overlay.remove();
+  }, 30000);
 
   document.querySelector("#btnContinuar").addEventListener("click", () => {
     overlay.remove();
@@ -701,11 +717,15 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   reconstruirReservasDesdeDOM();
 
-  document.querySelectorAll("#card").forEach((card) => {
-    card.addEventListener("click", () => {
-      compararCards(card);
-    });
-  });
+  // document.querySelectorAll("#card").forEach((card) => {
+  //   console.log(card);
+  //   card.addEventListener("click", () => {
+  //     compararCards(card);
+  //     if (!card.dataset.selected === "true") {
+  //       select.selectedIndex = 0;
+  //     }
+  //   });
+  // });
   if (plataforma.includes("Android")) {
     creaTop();
     window.onscroll = function () {
@@ -728,11 +748,20 @@ window.addEventListener("DOMContentLoaded", async () => {
     const numeros = obtenerNumeros();
     numeroInicial = numeros.mayor;
     lista2.style.display = "none";
+    document.querySelectorAll("#card").forEach((card) => {
+      //console.log(card);
+      card.addEventListener("click", () => {
+        compararCards(card);
+        // if (!card.dataset.selected === "true") {
+        //   select.selectedIndex = 0;
+        // }
+      });
+    });
     //muestraBoton();
   }, 1000);
 
   //console.log(reservas);
-
+  validarFormulario();
   const ele = eleEdita.querySelectorAll("input");
   ele.forEach((el) => {
     if (el.type === "text" || el.type === "number") {
@@ -740,12 +769,79 @@ window.addEventListener("DOMContentLoaded", async () => {
         //console.log(el);
         actualizar.disabled = true;
         actualizar.classList.add("desactive");
+        //agregarTooltip(actualizar, "Guardar cambios");
         //actualizar.style.background = "#888";
         //actualizar.style.cursor = "wait";
       }
     }
   });
+  const ele2 = eleCarga.querySelectorAll("input");
+  ele2.forEach((el) => {
+    el.addEventListener("input", validarFormulario);
+    el.addEventListener("change", validarFormulario);
+    // el.addEventListener("change", (e) => {
+    //   console.log(e.target.value);
+    // });
+    // if (el.type === "text" || el.type === "number") {
+    //   if (el.value === "") {
+    //     //console.log(el);
+    //     guarda.disabled = true;
+    //     guarda.classList.add("desactive");
+    //     //actualizar.style.background = "#888";
+    //     //actualizar.style.cursor = "wait";
+    //   }
+    // }
+  });
 });
+
+// ================================================================================
+// Función para validar el formulario de carga de reservas, habilitando o deshabilitando
+// el botón de guardar según si todos los campos requeridos están completos
+// ================================================================================
+function validarFormulario() {
+  const cliente = document.getElementById("cliente").value.trim();
+  const fechaInicio = document.getElementById("fechaInicio").value.trim();
+  const fechaFin = document.getElementById("fechaFin").value.trim();
+  const precio = document.getElementById("precio").value.trim();
+
+  const habilitado = cliente && fechaInicio && fechaFin && precio;
+
+  guarda.disabled = !habilitado;
+  if (habilitado) {
+    guarda.classList.remove("desactive");
+    guarda.classList.add("active");
+  } else {
+    guarda.classList.add("desactive");
+    guarda.classList.remove("active");
+    //guarda.title = "Completa todos los campos para habilitar el botón";
+  }
+
+  //guarda.disabled = !(cliente && fechaInicio && fechaFin && precio);
+  //guarda.classList.add("desactive");
+}
+
+// ================================================================================
+// Función para agregar un tooltip a un elemento, mostrando un texto al pasar el mouse por encima
+// ================================================================================
+function agregarTooltip(elemento, texto) {
+  //console.log(texto);
+  if (!elemento) return;
+
+  elemento.addEventListener("mouseover", () => {
+    elemento.title = texto;
+  });
+}
+
+// ================================================================================
+// Función para agregar un tooltip permanente a un elemento, estableciendo el atributo title
+// con el texto proporcionado
+// ================================================================================
+function agregarTitulo(elemento, texto) {
+  //console.log(texto);
+  if (!elemento) return;
+
+  elemento.title = texto;
+}
 
 // ================================================================================
 // Función para contar el total de registros visibles (no ocultos) en el array de datos
@@ -845,6 +941,9 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
   actualizar.classList.remove("desactive");
   actualizar.classList.add("active");
   actualizar.disabled = false;
+  // guarda.classList.remove("desactive");
+  // guarda.classList.add("active");
+  // guarda.disabled = false;
   //cambiarImagen(actualizar);
   //console.log(idSeleccionado);
 
@@ -860,19 +959,18 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
     <img class="imgElimina" src="">Actualizar`;
     //actualizar.textContent = "guardar";
     cambiarImagen(actualizar);
+    agregarTooltip(actualizar, "Click para actualizar la reserva");
   } else if (buscamosbtneliminar.textContent.includes("Guardar" || "guardar")) {
     actualizar.innerHTML = `
-    <img class="imgElimina" src="">guardar
-    
-    `;
+    <img class="imgElimina" src="">guardar`;
     //actualizar.textContent = "guardar";
+    agregarTooltip(actualizar, "Click para guardar los cambios");
     cambiarImagen(actualizar);
   } else if (buscamosbtneliminar.textContent === "Eliminar") {
     actualizar.innerHTML = `
-    <img class="imgElimina" src="">Actualizar
-    
-    `;
+    <img class="imgElimina" src="">Actualizar`;
     //actualizar.textContent = "guardar";
+    agregarTooltip(actualizar, "Click para actualizar la reserva");
     cambiarImagen(actualizar);
   }
   if (origen === "select") {
@@ -971,7 +1069,7 @@ function mostrarDatos() {
       const divContainer = document.createElement("div");
       divContainer.className = "divcontainer";
       const imgContainer = document.createElement("div");
-      imgContainer.className = "imgContainer";
+      imgContainer.className = "imgContainerLista";
       const imgDiv = document.createElement("img");
       imgDiv.className = "img";
       imgDiv.src = "images/fondo-transparente.webp";
@@ -1028,6 +1126,7 @@ function mostrarDatos() {
         1,
       );
       const fechafinal = d.fechaInicio || d.fecha;
+      //console.log(fechafinal);
 
       divContainer.innerHTML = `
     <!-- <button class="btnelimina" id="${d.id}"> Eliminar </button> -->
@@ -1043,6 +1142,16 @@ function mostrarDatos() {
       <span class="datosTitulos"><strong>Seña Recibida:</strong> <span class="datosVisibles" id="señaRecibida">${d.senaRecibida}</span></span>
       <!-- </div> -->
     `;
+      const tituloCliente = divContainer.querySelector(".elCliente");
+      tituloCliente.addEventListener("mouseover", () => {
+        agregarTitulo(tituloCliente, tituloCliente.textContent.trim());
+      });
+      divContainer.querySelectorAll(".datosTitulos").forEach((el) => {
+        el.addEventListener("mouseover", () => {
+          //el.title = el.textContent;
+          agregarTitulo(el, el.textContent.trim());
+        });
+      });
       // 👉 CLICK PARA EDITAR
       divContainer.addEventListener("click", (e) => {
         // console.log(comidaCheck);
@@ -1064,6 +1173,8 @@ function mostrarDatos() {
           actualizar.textContent = "Actualizar";
         }
         seleccionarCard(card, eleEdita);
+        verificarCardYSelect();
+        seleccionarOptionPorCard(d);
         const clases = div.className;
         const numero = parseInt(clases.match(/card-(\d+)/)[1]);
         // console.log(numero);
@@ -1099,6 +1210,13 @@ function mostrarDatos() {
       contenedorActual.appendChild(div);
 
       const btnElimina = div.querySelector(`.btnelimina`);
+
+      if (btnElimina.textContent == "Eliminar") {
+        textoTooltip = "Click para eliminar la reserva";
+      } else if (btnElimina.textContent == "Actualizar") {
+        textoTooltip = "Click para actualizar la reserva";
+      }
+      agregarTooltip(btnElimina, textoTooltip);
       btnElimina.addEventListener("click", (e) => {
         const option = select.options[select.selectedIndex];
         const lala = document.getElementById("editaPrecio").value.split(" ");
@@ -1210,7 +1328,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       const divContainer = document.createElement("div");
       divContainer.className = "divcontainer";
       const imgContainer = document.createElement("div");
-      imgContainer.className = "imgContainer";
+      imgContainer.className = "imgContainerLista";
       const imgDiv = document.createElement("img");
       imgDiv.className = "img";
       imgDiv.src = "images/fondo-transparente.webp";
@@ -1219,6 +1337,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       div.className = `card-${globalIndex}`;
       div.id = "card";
       div.dataset.id = `card-${globalIndex}`;
+      div.dataset.cardId = `card-${globalIndex}`;
       //div.appendChild(divContainer);
       div.innerHTML = `
     <button class="btnelimina" id="${d.id}"><img class="imgElimina" src="images/eliminar.avif">Eliminar</button>
@@ -1272,6 +1391,16 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
       <span class="datosTitulos"><strong>Seña Recibida:</strong> <span class="datosVisibles" id="señaRecibida">${d.senaRecibida}</span></span>
       <!-- </div> -->
     `;
+      const tituloCliente = divContainer.querySelector(".elCliente");
+      tituloCliente.addEventListener("mouseover", () => {
+        agregarTitulo(tituloCliente, tituloCliente.textContent.trim());
+      });
+      divContainer.querySelectorAll(".datosTitulos").forEach((el) => {
+        el.addEventListener("mouseover", () => {
+          //el.title = el.textContent;
+          agregarTitulo(el, el.textContent.trim());
+        });
+      });
       // 👉 CLICK PARA EDITAR
       divContainer.addEventListener("click", (e) => {
         idSeleccionado = d.id;
@@ -1283,6 +1412,8 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
         const form = document.querySelector(".editaClientes");
         // console.log(form);
         seleccionarCard(card, eleEdita);
+        verificarCardYSelect();
+        seleccionarOptionPorCard(d);
         tarjetaSeleccionada = card;
         // if (card.dataset.selected === "true") {
         //   eleEdita.style.background = "#888";
@@ -1331,6 +1462,12 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
 
       const btnElimina = document.querySelector(`#${d.id}`);
       //console.log(btnElimina);
+      if (btnElimina.textContent == "Eliminar") {
+        textoTooltip = "Click para eliminar la reserva";
+      } else if (btnElimina.textContent == "Actualizar") {
+        textoTooltip = "Click para actualizar la reserva";
+      }
+      agregarTooltip(btnElimina, textoTooltip);
       btnElimina.addEventListener("click", (e) => {
         const option = select.options[select.selectedIndex];
         const lala = document.getElementById("editaPrecio").value.split(" ");
@@ -1458,6 +1595,7 @@ function mostrarDatosGoogle(d, index = 0) {
     fechaFin = restarDias(d.fechaInicio, d.fechaFin.replace("end: ", ""), 1);
   }
   const fecha2 = formatearFecha(d.fechaInicio);
+  //console.log(fecha2);
 
   const div = document.createElement("div");
   const divContainer = document.createElement("div");
@@ -1465,7 +1603,7 @@ function mostrarDatosGoogle(d, index = 0) {
   divContainer.className = "divcontainer";
 
   const imgContainer = document.createElement("div");
-  imgContainer.className = "imgContainer";
+  imgContainer.className = "imgContainerLista";
 
   const imgDiv = document.createElement("img");
   imgDiv.className = "img";
@@ -1475,14 +1613,13 @@ function mostrarDatosGoogle(d, index = 0) {
 
   div.classList.add("nuevo");
   div.dataset.id = `card-${nuevoNumero}`;
+  div.dataset.cardId = `card-${nuevoNumero}`;
   div.id = "card";
   //div.dataset.selected = div.dataset.selected === "true" ? "false" : "true";
   const nuevoPrecio = String(d?.precio);
 
   div.innerHTML = `
-    <button class="btnelimina" id="card-${numeroMayor}">
-      Eliminar
-    </button>
+    <button class="btnelimina" id="card-${numeroMayor}"><img class="imgElimina" src="images/eliminar.avif">Eliminar</button>
   `;
 
   divContainer.innerHTML = `
@@ -1491,61 +1628,48 @@ function mostrarDatosGoogle(d, index = 0) {
       </h2><br>
 
       <span class="datosTitulos">
-        <strong>Fecha Inicio:</strong>
-        <span class="datosVisibles" id="fechaInicio">
-          ${fecha2 || ""}
-        </span>
+        <strong>Fecha Inicio:</strong> <span class="datosVisibles" id="fechaInicio">${fecha2}</span>
       </span>
 
       <span class="datosTitulos">
-        <strong>Fecha Fin:</strong>
-        <span class="datosVisibles" id="fechaFin">
-          ${fechaFin || ""}
-        </span>
+        <strong>Fecha Fin:</strong> <span class="datosVisibles" id="fechaFin">${fechaFin || ""}</span>
       </span>
 
       <span class="datosTitulos">
-        <strong>Vehículos clientes:</strong>
-        <span class="datosVisibles" id="vc">
-          ${d.vc || ""}
-        </span>
+        <strong>Vehículos clientes:</strong> <span class="datosVisibles" id="vc">${d.vc || ""}</span>
       </span>
 
       <span class="datosTitulos">
-        <strong>Vehículos org:</strong>
-        <span class="datosVisibles" id="vo">
-          ${d.vo || ""}
-        </span>
+        <strong>Vehículos org:</strong> <span class="datosVisibles" id="vo">${d.vo || ""}</span>
       </span>
 
       <span class="datosTitulos">
-        <strong>Comida:</strong>
-        <span class="datosVisibles" id="comida">
-          ${comidaCheck}
-        </span>
+        <strong>Comida:</strong> <span class="datosVisibles" id="comida">${comidaCheck}</span>
       </span>
 
       <span class="datosTitulos">
-        <strong>Precio:</strong>
-        <span class="datosVisibles" id="precio">
-          ${d.moneda || "ARS"} ${nuevoPrecio || "0"}
-        </span>
+        <strong>Precio:</strong> <span class="datosVisibles" id="precio">${d.moneda || "ARS"} ${nuevoPrecio || "0"}</span>
       </span>
 
       <span class="datosTitulos">
-        <strong>Seña:</strong>
-        <span class="datosVisibles" id="seña">
-          ${señaCheck}
-        </span>
+        <strong>Seña:</strong> <span class="datosVisibles" id="seña">${señaCheck}</span>
       </span>
 
       <span class="datosTitulos">
-        <strong>Seña Recibida:</strong>
-        <span class="datosVisibles" id="señaRecibida">
-          ${d.senaRecibida || ""}
-        </span>
+        <strong>Seña Recibida:</strong> <span class="datosVisibles" id="señaRecibida">${d.senaRecibida || ""}</span>
       </span>
   `;
+  const tituloCliente = divContainer.querySelector(".elCliente");
+  tituloCliente.addEventListener("mouseover", () => {
+    agregarTitulo(tituloCliente, tituloCliente.textContent.trim());
+  });
+
+  divContainer.querySelectorAll(".datosTitulos").forEach((el) => {
+    el.addEventListener("mouseover", () => {
+      //el.title = el.textContent.trim();
+      agregarTitulo(el, el.textContent.trim());
+    });
+  });
 
   // CLICK EN LA CARD
   divContainer.addEventListener("click", (e) => {
@@ -1558,6 +1682,9 @@ function mostrarDatosGoogle(d, index = 0) {
     //const form = document.querySelector(".editaClientes");
     tarjetaSeleccionada = card;
     seleccionarCard(card, eleEdita);
+    verificarCardYSelect();
+    seleccionarOptionPorCard(d);
+    //verificarSeleccionCards();
     //console.log(idSeleccionado);
 
     //div.dataset.selected = div.dataset.selected === "true" ? "false" : "true";
@@ -1604,14 +1731,20 @@ function mostrarDatosGoogle(d, index = 0) {
   document.querySelectorAll("#card").forEach((card) => {
     if (card.className.includes("nuevo")) {
       //btnElimina.textContent = "Guardar";
-      btnElimina.innerHTML = `
-    <img class="imgElimina" src="">Guardar
-    
-    `;
+      btnElimina.innerHTML = `<img class="imgElimina" src="">Guardar`;
       //actualizar.textContent = "guardar";
       cambiarImagen(btnElimina);
     }
   });
+
+  if (btnElimina.textContent == "Eliminar") {
+    textoTooltip = "Click para eliminar la reserva";
+  } else if (btnElimina.textContent == "Guardar") {
+    textoTooltip = "Click para guardar la reserva";
+  } else if (btnElimina.textContent == "Actualizar") {
+    textoTooltip = "Click para actualizar la reserva";
+  }
+  agregarTooltip(btnElimina, textoTooltip);
   btnElimina.addEventListener("click", (e) => {
     const card = e.target.closest("#card");
     idSeleccionado = d.id;
@@ -1645,7 +1778,14 @@ function mostrarDatosGoogle(d, index = 0) {
   // const botonEliminar = document.querySelector(`#card-${nuevoNumero}`);
   // console.log(btnElimina);
   const card = document.querySelector(`#card[data-id="card-${nuevoNumero}"]`);
+  //console.log(card);
   if (!card) return;
+  card.addEventListener("click", () => {
+    compararCards(card);
+    // if (!card.dataset.selected === "true") {
+    //   select.selectedIndex = 0;
+    // }
+  });
 
   idCard = card.dataset.id;
   //console.log(idCard);
@@ -1958,7 +2098,7 @@ async function eliminar() {
 // Función para limpiar los campos de un formulario, restableciendo su estado inicial
 // ================================================================================
 function limpiarFormulario(contenedor) {
-  console.log("Limpiando formulario:", contenedor);
+  //console.log("Limpiando formulario:", contenedor);
   if (!contenedor) return;
 
   const inputs = contenedor.querySelectorAll("input");
@@ -1976,7 +2116,7 @@ function limpiarFormulario(contenedor) {
 // Función para eliminar una card del DOM, con validación y manejo de errores
 // ================================================================================
 function eliminarCard(card) {
-  console.log("Eliminando card:", card);
+  //console.log("Eliminando card:", card);
   card.remove();
 }
 
@@ -2352,6 +2492,7 @@ function mostrarFechas(eventos) {
         }
         //console.log(fechaFin);
         const fecha2 = formatearFecha(datosProcesados.fechaInicio);
+        //console.log(fecha2);
 
         //datosNuevos.push(nuevo);
         // reservas.push({
@@ -2396,6 +2537,7 @@ function mostrarFechas(eventos) {
         tarjetaAnterior = `card-${nuevoNumero}`;
         mostrarDatosGoogle(datosProcesados, nuevoNumero);
         cargarEnFormulario(datosProcesados, idCalendar, numero);
+        verificarCardYSelect();
         reservas.push(
           nuevo,
           //desc: datosProcesados,
@@ -2494,10 +2636,15 @@ function mostrarFechas(eventos) {
           // console.log(card);
           const form = document.querySelector("editaClientes");
           seleccionarCard(card2, eleEdita);
+          verificarCardYSelect();
           tarjetaSeleccionada = card2;
           elementoEliminar = card2;
 
-          botonEliminar.textContent = "Actualizar";
+          //botonEliminar.textContent = "Actualizar";
+          //botonEliminar.innerHTML = `<img class="imgElimina" src="">Actualizar`;
+          botonEliminar.innerHTML = `<img class="imgElimina" src="">Actualizar`;
+          cambiarImagen(botonEliminar);
+          agregarTooltip(botonEliminar, "Click para actualizar la reserva");
           actualizar.textContent = "Actualizar";
 
           // scroll automático
@@ -2562,7 +2709,12 @@ function mostrarFechas(eventos) {
           // console.log(card2);
           const form = document.querySelector(".editaClientes");
           seleccionarCard(card2, eleEdita);
-          botonEliminar.textContent = "Actualizar";
+          //verificarSeleccionCards();
+          verificarCardYSelect();
+          //botonEliminar.textContent = "Actualizar";
+          botonEliminar.innerHTML = `<img class="imgElimina" src="">Actualizar`;
+          cambiarImagen(botonEliminar);
+          agregarTooltip(botonEliminar, "Click para actualizar la reserva");
           actualizar.textContent = "Actualizar";
           elementoEliminar = card2;
           tarjetaSeleccionada = card2;
@@ -2773,7 +2925,7 @@ function compararReservas(reserva, calendar) {
 // con opciones para deshabilitar, seleccionar, agregar clases, y dataset personalizado
 // ================================================================================
 function agregarOption(select, texto, valor, idc, options = {}) {
-  //console.log(valor);
+  //console.log(texto.split(" - "));
   // agregar placeholder solo una vez
   if (!select.dataset.placeholderAgregado) {
     const placeholder = document.createElement("option");
@@ -2788,10 +2940,12 @@ function agregarOption(select, texto, valor, idc, options = {}) {
     select.dataset.placeholderAgregado = "true";
   }
   const option = document.createElement("option");
+  const cliente = texto.split(" - ")[1];
 
   option.textContent = texto;
   option.value = valor;
   option.id = idc;
+  option.dataset.cliente = cliente;
 
   // opcionales
   if (options.disabled) {
@@ -2824,6 +2978,7 @@ function agregarOption(select, texto, valor, idc, options = {}) {
 // ================================================================================
 function seleccionarCard(card, formulario) {
   if (!card) return;
+  //console.log(card);
 
   // si ya estaba seleccionada → deseleccionar
   if (card.dataset.selected === "true") {
@@ -2842,7 +2997,10 @@ function seleccionarCard(card, formulario) {
     cambiarImagen(actualizar);
     //console.log(eleEdita);
     tarjetaSeleccionada = null;
-
+    //delete select.dataset.placeholderAgregado;
+    //verificarSeleccionCards();
+    verificarCardYSelect();
+    //select.selectedIndex = 0;
     document.querySelector(`.clienteSel`).textContent =
       `Editar Cliente Seleccionado:`;
     return;
@@ -2852,11 +3010,95 @@ function seleccionarCard(card, formulario) {
   document.querySelectorAll("#card.selected").forEach((c) => {
     c.dataset.selected = "false";
     c.classList.remove("selected");
+    //select.selectedIndex = 0;
   });
 
   // seleccionar nueva
   card.dataset.selected = "true";
   card.classList.add("selected");
+  //verificarSeleccionCards();
+  //select.selectedIndex = 0;
+}
+
+// ================================================================================
+// Funcion para verificar si alguna card está seleccionada, y si no lo está,
+// restablecer el select a su estado inicial
+// con validación para evitar errores si no se encuentran las cards,
+// y para manejar el estado del select
+// ================================================================================
+// function verificarSeleccionCards2() {
+//   const cards = document.querySelectorAll("[data-card-id]");
+
+//   const algunaSeleccionada = [...cards].some(
+//     (card) => card.dataset.selected === "true",
+//   );
+
+//   if (!algunaSeleccionada) {
+//     select.selectedIndex = 0;
+//   }
+// }
+
+// function verificarSeleccionCards() {
+//   const cards = document.querySelectorAll("[data-card-id]");
+
+//   const algunaSeleccionada = [...cards].some(
+//     (card) => card.dataset.selected === "true",
+//   );
+
+//   if (!algunaSeleccionada) {
+//     select.selectedIndex = 0;
+//   }
+// }
+
+function verificarCardYSelect() {
+  const cardSeleccionada = document.querySelector('[data-selected="true"]');
+  const cards = document.querySelectorAll("[data-card-id]");
+  //console.log(cardSeleccionada);
+  const algunaSeleccionada = [...cards].some(
+    (card) => card.dataset.selected === "true",
+  );
+  //console.log(algunaSeleccionada);
+  if (!algunaSeleccionada) {
+    select.selectedIndex = 0;
+  }
+
+  // if (!cardSeleccionada) {
+  //   select.selectedIndex = 0;
+  //   return;
+  // }
+
+  // const clienteCard = cardSeleccionada
+  //   .querySelector(".elCliente")
+  //   .textContent.trim()
+  //   .toLowerCase();
+  // console.log(clienteCard);
+  // const index = [...select.options].findIndex((opt) =>
+  //   opt.textContent.toLowerCase().includes(clienteCard)
+  // );
+
+  // const option = select.options[select.selectedIndex];
+
+  // if (!option || option.dataset.cliente?.toLowerCase() !== clienteCard) {
+  //   select.selectedIndex = 0;
+  // }
+}
+
+function seleccionarOptionPorCard(dato) {
+  //console.log(dato);
+  const cliente = dato?.cliente || dato?.titulo;
+  const cards = document.querySelectorAll("[data-card-id]");
+  const algunaSeleccionada = [...cards].some(
+    (card) => card.dataset.selected === "true",
+  );
+
+  const index = [...select.options].findIndex((opt) =>
+    opt.textContent.includes(cliente),
+  );
+  if (!algunaSeleccionada) {
+    select.selectedIndex = 0;
+  } else {
+    select.selectedIndex = index !== -1 ? index : 0;
+  }
 }
 
 // ================================================================================
@@ -3046,7 +3288,6 @@ function compararCards(cardActual) {
     cardNueva = clienteNuevo.trim();
     if (clienteAnterior.trim() !== clienteNuevo.trim()) {
       //cardAnterior = clienteAnterior.trim();
-
       console.log("Cambió de cliente");
       return { anterior: cardAnterior, nueva: cardNueva };
     }
@@ -3255,6 +3496,7 @@ function renderizarCards({
         //   block: "center",
         // });
         seleccionarCard(cardOriginal, eleEdita);
+        seleccionarOptionPorCard(data);
         tarjetaSeleccionada = cardOriginal;
         cardOriginal.scrollIntoView({
           behavior: "smooth",
