@@ -184,17 +184,5 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "3 camioneta \n75 USD por vehiculo"
-  },
-  {
-    "id": "card-16",
-    "cardID": "card-13",
-    "cliente": "Norberto Nicolas ver",
-    "fecha": "2026-09-01",
-    "fechaFin": "2026-09-04",
-    "comida": "No",
-    "precio": "null",
-    "sena": "No",
-    "senaRecibida": "",
-    "descripcion": ""
   }
 ]
