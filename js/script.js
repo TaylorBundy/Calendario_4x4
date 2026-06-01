@@ -50,6 +50,7 @@ const clientesCalendar = [];
 const reservas = [];
 const modificados = [];
 let nuevo;
+let idFaltante;
 const datosNuevos = [];
 let fechaFin = null;
 let existe = null;
@@ -1540,8 +1541,11 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
 // Funcion para agrupar por fecha
 // ================================================================================
 function agruparPorFecha(datos) {
+  //console.log(datos);
   return datos.reduce((acc, item) => {
     const fecha = item.fechaInicio;
+    //const fecha2 = formatearFecha(item.fechaInicio);
+    //console.log(fecha2);
 
     if (!acc[fecha]) {
       acc[fecha] = [];
@@ -2516,13 +2520,18 @@ function mostrarFechas(eventos) {
           nuevoNumero = total;
           numeroMayor = numeroMayor + 1;
         }
+        if (idFaltante) {
+          numeroMayor = idFaltante.split("-")[1];
+          idCard2 = `card-${numeroMayor}`;
+        }
+        //console.log(idCard2);
 
         // console.log(nuevoPrecio);
         nuevo = {
           id: idCard2,
           cardID: `card-${nuevoNumero}`,
           cliente: datosProcesados?.cliente,
-          fecha: fecha2,
+          fechaInicio: fecha2,
           fechaFin: fechaFin,
           vc: datosProcesados?.vc,
           vo: datosProcesados?.vo,
@@ -2535,6 +2544,13 @@ function mostrarFechas(eventos) {
         };
         //console.log(nuevo);
         tarjetaAnterior = `card-${nuevoNumero}`;
+        // const nuevoItem = obtenerSiguienteId(eventos);
+        // console.log(nuevoItem);
+        //reordenarIds(eventos);
+        // const nuevosss = {id: obtenerIdLibre(eventos)};
+        // console.log(nuevosss);
+        //console.log(idFaltante);
+
         mostrarDatosGoogle(datosProcesados, nuevoNumero);
         cargarEnFormulario(datosProcesados, idCalendar, numero);
         verificarCardYSelect();
@@ -3986,6 +4002,7 @@ function crearModalJSON() {
       try {
         reservas.length = 0;
         select.innerHTML = "";
+        lista.innerHTML = "";
         delete select.dataset.placeholderAgregado;
         if (tipo === "local") {
           urlJSON = "data/data.json";
@@ -4051,6 +4068,12 @@ async function cargarDatosDesde(url) {
 
   datos = await res.json();
   //console.log(datos);
+  // datos.forEach((item) => {
+  //   console.log(item);
+  // });
+  const nuevosss = { id: obtenerIdLibre(datos) };
+  idFaltante = nuevosss.id;
+  //console.log(nuevosss);
   reservas.push(...datos);
 
   const total = contarRegistrosVisibles(datos);
@@ -4126,4 +4149,36 @@ function cambiarImagen(boton) {
   img.src = imagenes[texto] || "img/default.jpg";
   // document.getElementById("miImagen").src =
   //   imagenes[texto] || "img/default.jpg";
+}
+
+// function obtenerSiguienteId(datos) {
+//   const maxId = Math.max(
+//     ...datos.map(item => Number(item.id.replace("card-", "")))
+//   );
+
+//   return `card-${maxId + 1}`;
+// }
+
+// function reordenarIds(datos) {
+//   datos.forEach((item, index) => {
+//     item.id = `card-${index + 1}`;
+//     console.log(`ID actualizado: ${item.id}`);
+//   });
+// }
+
+function obtenerIdLibre(datos) {
+  const ids = datos
+    .map((item) => Number(item.id.replace("card-", "")))
+    .sort((a, b) => a - b);
+
+  let esperado = 1;
+
+  for (const id of ids) {
+    if (id !== esperado) {
+      return `card-${esperado}`;
+    }
+    esperado++;
+  }
+
+  return `card-${esperado}`;
 }
