@@ -211,5 +211,20 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "75 d\u00f3lares por veh\u00edculo"
+  },
+  {
+    "id": "card-16",
+    "cardID": "card-15",
+    "cliente": "Prueba alerta",
+    "fechaInicio": "2026-06-04",
+    "fechaFin": "2026-06-04",
+    "vc": 4,
+    "vo": 2,
+    "comida": "S\u00ed",
+    "precio": "100000",
+    "moneda": "ARS",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "Posiblemente 4 vehiculos, 2 vehiculos organizadores, 100000 pesos por veh\u00edculo. Incluye comida"
   }
 ]
