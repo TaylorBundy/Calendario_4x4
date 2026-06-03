@@ -22,6 +22,7 @@ const btnModal = document.querySelector("#btnModal");
 const btnOcultas = document.querySelector("#btnOcultas");
 select.selectedIndex = -1;
 const todasCards = lista.querySelectorAll("#card");
+const contenedorReservas = document.querySelector(".reservasContainer");
 
 const plataforma = navigator.userAgent;
 const urlObj = new URL(window.location.toString());
@@ -750,15 +751,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   reconstruirReservasDesdeDOM();
 
-  // document.querySelectorAll("#card").forEach((card) => {
-  //   console.log(card);
-  //   card.addEventListener("click", () => {
-  //     compararCards(card);
-  //     if (!card.dataset.selected === "true") {
-  //       select.selectedIndex = 0;
-  //     }
-  //   });
-  // });
   if (plataforma.includes("Android")) {
     creaTop();
     window.onscroll = function () {
@@ -796,36 +788,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         agregarTitulo(input, TITULOS[input.id]);
       });
     });
-
+    //if (plataforma.includes("Android")) {
+      contenedorReservas.click();
+    //}
     //muestraBoton();
   }, 1000);
   audioHabilitado = true;
-  // document.addEventListener(
-  //   "click",
-  //   () => {
-  //     audioHabilitado = true;
-  //     console.log("Audio habilitado");
-  //   },
-  //   { once: true },
-  // );
-  // document.addEventListener(
-  //   "click",
-  //   async () => {
-  //     try {
-  //       //audioAlerta.volume = 0;
-  //       await audioAlerta.play();
-  //       //audioAlerta.pause();
-  //       audioAlerta.currentTime = 0;
-  //       audioAlerta.volume = 1;
-
-  //       console.log("Audio desbloqueado");
-  //       audioHabilitado = true;
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //   },
-  //   { once: true },
-  // );
 
   //console.log(reservas);
   validarFormulario();
@@ -846,18 +814,6 @@ window.addEventListener("DOMContentLoaded", async () => {
   ele2.forEach((el) => {
     el.addEventListener("input", validarFormulario);
     el.addEventListener("change", validarFormulario);
-    // el.addEventListener("change", (e) => {
-    //   console.log(e.target.value);
-    // });
-    // if (el.type === "text" || el.type === "number") {
-    //   if (el.value === "") {
-    //     //console.log(el);
-    //     guarda.disabled = true;
-    //     guarda.classList.add("desactive");
-    //     //actualizar.style.background = "#888";
-    //     //actualizar.style.cursor = "wait";
-    //   }
-    // }
   });
 });
 
@@ -3899,6 +3855,7 @@ function cerrarModalEventos() {
       btnModal.addEventListener("click", () => {
         abrirModalEventos();
       });
+      //contenedorReservas.click();
     }
 
     document.addEventListener("keydown", (e) => {
@@ -4139,6 +4096,7 @@ async function cargarDatosDesde(url) {
   `;
 
   mostrarDatos();
+  //contenedorReservas.click();
   //mostrarDatos2(lista2, true);
   reconstruirReservasDesdeDOM();
   setTimeout(() => {
