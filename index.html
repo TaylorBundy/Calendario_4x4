@@ -35,14 +35,7 @@
         </div>
         <h2 class="clienteNuevo">Crear Cliente Nuevo:</h2>
         <label>Cliente/Organizador:</label>
-        <input
-          type="text"
-          id="cliente"
-          placeholder="Cliente"
-          onmouseover="
-            agregarTitulo(this, 'Ingrese el nombre del cliente u organizador')
-          "
-        />
+        <input type="text" id="cliente" placeholder="Cliente" />
 
         <label>Fecha Inicio:</label>
         <input
@@ -187,6 +180,21 @@
         ocultas
       </button>
     </div>
+    <!-- <audio id="alarma">
+      <source src="sounds/alarma.ogg" type="audio/ogg" id="alerta" />
+      <source src="sounds/alarma.mp3" type="audio/mp3" id="alerta" />
+      <source src="sounds/notify.ogg" type="audio/ogg" id="alertaGoogle" />
+      <source src="sounds/notify.mp3" type="audio/mp3" id="alertaGoogle" />
+    </audio> -->
+    <audio id="alertaReserva" preload="auto">
+      <source src="sounds/alarma.ogg" type="audio/ogg" />
+      <source src="sounds/alarma.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="alertaGoogle" preload="auto">
+      <source src="sounds/notify.ogg" type="audio/ogg" />
+      <source src="sounds/notify.mp3" type="audio/mpeg" />
+    </audio>
 
     <script src="js/script.js"></script>
   </body>

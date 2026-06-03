@@ -43,7 +43,7 @@ let urlJSON = null;
 let urlImgGuardar =
   "https://cdn-user-icons.flaticon.com/233151/233151078/1780043782244.svg?token=exp=1780044694~hmac=d74b04b0362edc479cfa0013111c5e51";
 
-let clientes = null;
+let clientes = [];
 let fechasInicio = null;
 //const cambios2 = [];
 const clientesCalendar = [];
@@ -97,10 +97,11 @@ const target = 20;
 let final = "";
 let alertaEmitida = false;
 let audioHabilitado = false;
-const audioAlerta = new Audio("sounds/alarma.mp3");
+const audioAlerta = document.querySelector("#alerta"); //new Audio("sounds/alarma.ogg");
 const audioAlertaGoogle = new Audio("sounds/notify.mp3");
 let intervaloAlarma = null;
 let alarmaRepetida = 0;
+const reservasManana = [];
 //const TargetHeight = document.documentElement.offsetHeight - screen.height;
 const TargetHeight = document.documentElement.offsetHeight - window.innerHeight;
 const ahora = new Date();
@@ -120,6 +121,28 @@ const CALENDAR_ID = "diegomartinbarbosa2@gmail.com";
 const url = `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?key=${API_KEY}`;
 let precioMatch = null;
 let moneda;
+const TITULOS = {
+  cliente: "Ingrese el nombre del cliente u organizador.",
+  fechaInicio: `Ingrese la fecha de inicio de la excursión.`,
+  fechaFin: `Ingrese la fecha final de la excursión.`,
+  vehiculosClientes: `Ingrese la cantidad de vehículos.`,
+  vehiculosOrg: `Ingrese la cantidad de vehículos organizadores.`,
+  precio: `Ingrese el precio acordado.`,
+  importeSeña: `Ingrese el importe de la seña recibida.`,
+  comida: `Seleccionar si incluye comida.`,
+  seña: `Seleccionar si deja seña.`,
+  guardar: `Click para guardar cliente nuevo.`,
+  editaCliente: `Introduzca el nombre nuevo del cliente para actualizar.`,
+  editaFechaInicio: `Ingrese la fecha de inicio de la excursión.`,
+  editaFechaFin: `Ingrese la fecha final de la excursión.`,
+  editaVehiculosClientes: `Ingrese la cantidad de vehículos. Si no hay cambios, deje el mismo número que antes.`,
+  editaVehiculosOrg: `Ingrese la cantidad de vehículos. Si no hay cambios, deje el mismo número que antes.`,
+  editaPrecio: `Ingrese el precio acordado. Si no hay cambios, deje el mismo número que antes.`,
+  editaComida: `Seleccionar si incluye comida. Si no hay cambios, deje la misma opción que antes.`,
+  editaSeña: `Seleccionar si deja seña. Si no hay cambios, deje la misma opción que antes.`,
+  editaImporteSeña: `Ingrese el importe de la seña recibida. Si no hay cambios, deje el mismo número que antes.`,
+  editaElimina: `Click para eliminar esta reserva. Se eliminará permanentemente del calendario y no se podrá recuperar. Use esta opción solo si está seguro de que desea eliminar la reserva.`,
+};
 
 // ================================================================================
 // Funcion para procesar la descripción del evento y extraer información relevante
@@ -496,7 +519,7 @@ async function cargarEventosGoogle(url) {
 
         cliente: `cliente: ${nomCli}`,
 
-        fecha: fechaFormateada,
+        fechaInicio: fechaFormateada,
 
         fechaFin: fechaFin,
 
@@ -689,7 +712,9 @@ function reconstruirReservasDesdeDOM() {
 
       cliente: card.querySelector("h2")?.textContent.trim(),
 
-      fecha: card.querySelector("#fechaInicio")?.textContent.toLowerCase(),
+      fechaInicio: card
+        .querySelector("#fechaInicio")
+        ?.textContent.toLowerCase(),
 
       fechaFin: card.querySelector("#fechaFin")?.textContent.toLowerCase(),
 
@@ -763,6 +788,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         // if (!card.dataset.selected === "true") {
         //   select.selectedIndex = 0;
         // }
+      });
+    });
+    const inputCliente = document.querySelectorAll("input");
+    inputCliente.forEach((input) => {
+      input.addEventListener("mouseover", () => {
+        agregarTitulo(input, TITULOS[input.id]);
       });
     });
 
@@ -1615,21 +1646,37 @@ function mostrarDatosGoogle(d, index = 0) {
     if (clientes === "patagonia 4x4") {
     } else {
       if (estado === "NO EXISTE") return;
-      const resultados = reservas.filter((r) => r.cliente.includes(clientes));
-      const resultados3 = reservas.some((r) => r.cliente.includes(clientes));
+      const resultados = reservas.filter((r) =>
+        r.cliente.includes(nuevo.cliente),
+      );
+      //       const resultados = reservas.filter((r) =>
+      //   clientes.some((cliente) =>
+      //     r.cliente.toLowerCase().includes(cliente)
+      //   )
+      // );
+      //const cliente = clientes.find(c => c.cliente.toLowerCase() === nuevo.cliente.toLowerCase());
+      //console.log(cliente);
+      //const resultados = reservas.filter((r) => clientes.some((c) => c.cliente.toLowerCase() === r.cliente.toLowerCase()));
+      console.log(resultados);
+      //const resultados3 = reservas.some((r) => r.cliente.includes(clientes));
+      const resultados3 = reservas.some((r) =>
+        clientes.some((cliente) => r.cliente.toLowerCase().includes(cliente)),
+      );
       if (resultados) {
-        const clienteExiste = resultados[0].cliente;
-        const fechaExiste = resultados[0].fecha;
-        //console.log(clienteExiste);
-        //console.log(fechaExiste);
+        const clienteExiste = clientes.find(
+          (c) => c.cliente.toLowerCase() === nuevo.cliente.toLowerCase(),
+        );
+        const fechaExiste = resultados[0].fechaInicio;
+        // console.log(clienteExiste);
+        // console.log(fechaExiste);
         estado = "EXISTE";
         if (clienteExiste && fechaExiste) return;
       }
-      if (resultados3) {
-        const clienteExiste = reservas.has(resultados3.toLowerCase().trim());
-        const fechaExiste = resultados[0].fecha;
-        if (clienteExiste && fechaExiste) return;
-      }
+      // if (resultados3) {
+      //   const clienteExiste = reservas.has(resultados3.toLowerCase().trim());
+      //   const fechaExiste = resultados[0].fecha;
+      //   if (clienteExiste && fechaExiste) return;
+      // }
     }
   }, 3000);
   // const fechaFin = restarDias(
@@ -2216,7 +2263,7 @@ function mostrarFechas(eventos) {
         cliente: c.cliente.replace("cliente:", "").trim(),
 
         //fecha: c.fecha.replace("start:", "").trim().toLowerCase(),
-        fecha: c.fecha,
+        fechaInicio: c.fechaInicio,
         fechaFin: c.fechaFin,
 
         precio: c.precio.replace("precio: ", "").trim().toLowerCase(),
@@ -2232,7 +2279,7 @@ function mostrarFechas(eventos) {
     const clientesCards3 = reservas.map((c) => ({
       cliente: c.cliente.trim(),
 
-      fecha: c.fecha.replace("fecha:", "").trim().toLowerCase(),
+      fechaInicio: c.fechaInicio.replace("fecha:", "").trim().toLowerCase(),
       fechaFin: c.fechaFin,
 
       //precio: c.precio.replace(`${moneda} `, "").trim().toLowerCase(),
@@ -2256,7 +2303,7 @@ function mostrarFechas(eventos) {
       // );
       const reserva2 = clientesCards3.find(
         (card) =>
-          card.fecha === calendar.fecha &&
+          card.fechaInicio === calendar.fechaInicio &&
           card.fechaFin === calendar.fechaFin &&
           card.cliente === calendar.cliente &&
           card.comida === calendar.comida,
@@ -2274,7 +2321,7 @@ function mostrarFechas(eventos) {
       if (!reserva2) {
         cambios2.push({
           cliente: calendar.cliente,
-          fecha: calendar.fecha,
+          fechaInicio: calendar.fechaInicio,
           fechaFin: calendar.fechaFin,
           id: calendar.id,
           comida: calendar.comida,
@@ -2302,7 +2349,7 @@ function mostrarFechas(eventos) {
 
       cambios2.push({
         cliente: calendar.cliente,
-        fecha: calendar.fecha,
+        fechaInicio: calendar.fechaInicio,
         fechaFin: calendar.fechaFin,
         comida: calendar.comida,
         id: calendar.id,
@@ -2318,7 +2365,7 @@ function mostrarFechas(eventos) {
       cambios2.forEach((cambio, index) => {
         //console.log(cambio);
         //cambio.fecha = formatearFecha(cambio.fecha.trim());
-        const fechaComparada = compararFechas(cambio.fecha, fechaHoy);
+        const fechaComparada = compararFechas(cambio.fechaInicio, fechaHoy);
 
         // menor a hoy → ignorar
         if (fechaComparada === -1) {
@@ -2327,7 +2374,7 @@ function mostrarFechas(eventos) {
         idcCalendar = cambio.id;
         agregarOption(
           select,
-          `${cambio.fecha} - ${cambio.cliente}`,
+          `${cambio.fechaInicio} - ${cambio.cliente}`,
           index,
           idcCalendar,
         );
@@ -2341,19 +2388,21 @@ function mostrarFechas(eventos) {
         !clientesCards3.some(
           (card) =>
             card.cliente === calendar.cliente &&
-            card.fecha === calendar.fecha &&
+            card.fechaInicio === calendar.fechaInicio &&
             card.fechaFin === calendar.fechaFin,
         ),
     );
     faltantes.forEach((ev, index) => {
-      clientes = ev.cliente;
+      clientes.push({
+        cliente: ev.cliente,
+      });
     });
     const existeFaltante = clientesCalendar2.some(
       (calendar) =>
         !clientesCards3.some(
           (card) =>
             card.cliente === calendar.cliente &&
-            card.fecha === calendar.fecha &&
+            card.fechaInicio === calendar.fechaInicio &&
             card.fechaFin === calendar.fechaFin,
         ),
     );
@@ -2376,7 +2425,8 @@ function mostrarFechas(eventos) {
       // verificar si existe
       const existe = clientesCards3.some(
         (card) =>
-          (card.cliente === cliente && normalizarFecha(card.fecha) === fecha) ||
+          (card.cliente === cliente &&
+            normalizarFecha(card.fechaInicio) === fecha) ||
           card.precio === precio,
       );
       //console.log(existe);
@@ -2476,7 +2526,7 @@ function mostrarFechas(eventos) {
         (r) =>
           r.cliente.trim().toLowerCase() === cliente &&
           normalizarFecha(
-            r.fecha.replace("fecha:", "").trim().toLowerCase(),
+            r.fechaInicio.replace("fecha:", "").trim().toLowerCase(),
           ) === fecha,
       );
       //console.log(reservaExistente);
@@ -3084,30 +3134,6 @@ function seleccionarCard(card, formulario) {
 // con validación para evitar errores si no se encuentran las cards,
 // y para manejar el estado del select
 // ================================================================================
-// function verificarSeleccionCards2() {
-//   const cards = document.querySelectorAll("[data-card-id]");
-
-//   const algunaSeleccionada = [...cards].some(
-//     (card) => card.dataset.selected === "true",
-//   );
-
-//   if (!algunaSeleccionada) {
-//     select.selectedIndex = 0;
-//   }
-// }
-
-// function verificarSeleccionCards() {
-//   const cards = document.querySelectorAll("[data-card-id]");
-
-//   const algunaSeleccionada = [...cards].some(
-//     (card) => card.dataset.selected === "true",
-//   );
-
-//   if (!algunaSeleccionada) {
-//     select.selectedIndex = 0;
-//   }
-// }
-
 function verificarCardYSelect() {
   const cardSeleccionada = document.querySelector('[data-selected="true"]');
   const cards = document.querySelectorAll("[data-card-id]");
@@ -3119,26 +3145,6 @@ function verificarCardYSelect() {
   if (!algunaSeleccionada) {
     select.selectedIndex = 0;
   }
-
-  // if (!cardSeleccionada) {
-  //   select.selectedIndex = 0;
-  //   return;
-  // }
-
-  // const clienteCard = cardSeleccionada
-  //   .querySelector(".elCliente")
-  //   .textContent.trim()
-  //   .toLowerCase();
-  // console.log(clienteCard);
-  // const index = [...select.options].findIndex((opt) =>
-  //   opt.textContent.toLowerCase().includes(clienteCard)
-  // );
-
-  // const option = select.options[select.selectedIndex];
-
-  // if (!option || option.dataset.cliente?.toLowerCase() !== clienteCard) {
-  //   select.selectedIndex = 0;
-  // }
 }
 
 function seleccionarOptionPorCard(dato) {
@@ -3795,7 +3801,7 @@ function cerrarModalEventos() {
           transformar: (d) => ({
             titulo: d.cliente,
 
-            fechaInicio: d.fecha,
+            fechaInicio: d.fechaInicio,
 
             fechaFin: d.fechaFin,
 
@@ -3837,7 +3843,7 @@ function cerrarModalEventos() {
           transformar: (d) => ({
             titulo: d.cliente,
 
-            fechaInicio: d.fecha,
+            fechaInicio: d.fechaInicio,
 
             fechaFin: d.fechaFin,
 
@@ -4215,91 +4221,6 @@ function obtenerIdLibre(datos) {
   return `card-${esperado}`;
 }
 
-// function verificarAlertaReserva3(fechaInicio) {
-//   if (!fechaInicio) return false;
-
-//   const hoy = new Date();
-//   hoy.setHours(0, 0, 0, 0);
-
-//   const inicio = new Date(fechaInicio);
-//   inicio.setHours(0, 0, 0, 0);
-
-//   const diaAnterior = new Date(inicio);
-//   diaAnterior.setDate(diaAnterior.getDate() - 1);
-
-//   const esDiaAnterior = hoy.getTime() === diaAnterior.getTime();
-
-//   if (esDiaAnterior) {
-//     mostrarAlertaVisual(`⚠️ Mañana comienza una reserva (${fechaInicio})`);
-
-//     reproducirAlertaSonora();
-
-//     return true;
-//   }
-
-//   return false;
-// }
-
-// function verificarAlertaReserva2(fechaInicio, card) {
-//   console.log("Verificando alerta para fecha:", fechaInicio);
-//   console.log(card);
-//   const hoy = new Date();
-//   hoy.setHours(0, 0, 0, 0);
-
-//   const inicio = new Date(fechaInicio);
-//   inicio.setHours(0, 0, 0, 0);
-
-//   inicio.setDate(inicio.getDate() - 1);
-
-//   if (hoy.getTime() === inicio.getTime()) {
-//     card.classList.add("alerta-manana");
-//     mostrarAlertaVisual(`⚠️ Mañana comienza una reserva (${fechaInicio})`);
-
-//     reproducirAlertaSonora();
-
-//     return true;
-//   }
-
-//   return false;
-// }
-
-// function verificarAlertaReserva2(fechaInicio, fechaFin, card) {
-//   //console.log(card);
-//   const ahora = new Date();
-//   const nombreCliente = card.querySelector(".elCliente").textContent;
-//   const nuevoNombreCliente = card.querySelector(".elCliente");
-
-//   const alerta = new Date(fechaInicio);
-//   alerta.setDate(alerta.getDate() - 1);
-//   alerta.setHours(13, 47, 0, 0);
-
-//   if (ahora >= alerta) {
-//     card.classList.add("alerta-manana");
-//     if (!alertaEmitida) {
-//       alertaEmitida = true;
-//       mostrarAlertaVisual(
-//         `⚠️ Mañana comienza una reserva❗<br>
-//         <br>
-//         👨‍🔧 Cliente: "${nombreCliente}"<br>
-//         📅 FechaInicio: ${fechaInicio}<br>
-//         🕒 FechaFin: ${fechaFin}<br>
-//         `,
-//       );
-//       nuevoNombreCliente.innerHTML = `🚙📅${nombreCliente}`;
-//       //setInterval(() => {
-//       //(async () => {
-//       if (audioHabilitado) {
-//         reproducirAlertaSonora();
-//       }
-//       //})();
-//       //}, 5000);
-//     }
-//     return true;
-//   }
-
-//   return false;
-// }
-const reservasManana = [];
 // ================================================================================
 // Función para verificar si una reserva comienza mañana, comparando la fecha de inicio con la fecha actual,
 // para agregar una clase de alerta a la card correspondiente, para mostrar una alerta visual con los detalles de la reserva,
@@ -4353,7 +4274,7 @@ function verificarAlertaReserva(fechaInicio, fechaFin, card) {
   const titulo = card.querySelector(".elCliente");
 
   if (!titulo.textContent.includes("🚙📅")) {
-    titulo.textContent = `🚙📅 ${titulo.textContent}`;
+    //titulo.textContent = `🚙📅 ${titulo.textContent}`;
   }
 
   return true;
@@ -4420,38 +4341,18 @@ async function reproducirAlertaSonora(origen) {
 
     // pequeño delay adicional
     await new Promise((resolve) => setTimeout(resolve, 500));
+    const audio =
+      origen === "reserva"
+        ? document.getElementById("alertaReserva")
+        : document.getElementById("alertaGoogle");
 
-    if (origen === "reserva") {
-      audioAlerta.preload = "auto";
+    audio.currentTime = 0;
 
-      await audioAlerta.play();
-    } else {
-      audioAlertaGoogle.preload = "auto";
-
-      await audioAlertaGoogle.play();
-    }
+    await audio.play();
   } catch (error) {
     console.warn("Audio bloqueado:", error);
   }
 }
-
-// function mostrarAlertaReserva(fechaInicio, fechaFin, nombreCliente) {
-//   mostrarAlertaVisual(`
-//     ⚠️ Reserva próxima
-//     <br><br>
-//     👨‍🔧 Cliente: ${nombreCliente}
-//     <br>
-//     📅 Inicio: ${fechaInicio}
-//     <br>
-//     🕒 Fin: ${fechaFin}
-//   `);
-
-//   if (audioHabilitado) {
-//     reproducirAlertaSonora();
-//   }
-
-//   preguntarContinuarAlarma();
-// }
 
 // ================================================================================
 // Función para preguntar al usuario si desea continuar recibiendo recordatorios de una reserva próxima,
