@@ -1210,6 +1210,9 @@ function mostrarDatos() {
       //lista.appendChild(div);
       contenedorActual.appendChild(div);
 
+      // Verificar si la reserva comienza mañana
+      verificarAlertaReserva(fechafinal, div);
+
       const btnElimina = div.querySelector(`.btnelimina`);
 
       if (btnElimina.textContent == "Eliminar") {
@@ -4181,4 +4184,69 @@ function obtenerIdLibre(datos) {
   }
 
   return `card-${esperado}`;
+}
+
+function verificarAlertaReserva2(fechaInicio) {
+  if (!fechaInicio) return false;
+
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const inicio = new Date(fechaInicio);
+  inicio.setHours(0, 0, 0, 0);
+
+  const diaAnterior = new Date(inicio);
+  diaAnterior.setDate(diaAnterior.getDate() - 1);
+
+  const esDiaAnterior = hoy.getTime() === diaAnterior.getTime();
+
+  if (esDiaAnterior) {
+    mostrarAlertaVisual(`⚠️ Mañana comienza una reserva (${fechaInicio})`);
+
+    reproducirAlertaSonora();
+
+    return true;
+  }
+
+  return false;
+}
+
+function verificarAlertaReserva(fechaInicio, card) {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const inicio = new Date(fechaInicio);
+  inicio.setHours(0, 0, 0, 0);
+
+  inicio.setDate(inicio.getDate() - 1);
+
+  if (hoy.getTime() === inicio.getTime()) {
+    card.classList.add("alerta-manana");
+    mostrarAlertaVisual(`⚠️ Mañana comienza una reserva (${fechaInicio})`);
+
+    reproducirAlertaSonora();
+
+    return true;
+  }
+
+  return false;
+}
+
+function mostrarAlertaVisual(mensaje) {
+  const alerta = document.createElement("div");
+
+  alerta.className = "alerta-reserva";
+  alerta.textContent = mensaje;
+
+  document.body.appendChild(alerta);
+
+  setTimeout(() => {
+    alerta.remove();
+  }, 10000);
+}
+
+function reproducirAlertaSonora() {
+  const audio = new Audio("sounds/alerta.mp3");
+
+  audio.play().catch(console.error);
 }

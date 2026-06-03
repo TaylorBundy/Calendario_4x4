@@ -437,6 +437,16 @@ label {
   text-align: center;
   font-size: 1em;
 }
+.alerta-manana {
+  border: 3px solid orange;
+  animation: parpadear 1s infinite;
+}
+
+@keyframes parpadear {
+  50% {
+    opacity: 0.6;
+  }
+}
 @media only screen and (min-width: 360px) and (max-width: 1154px) {
   header {
     margin-bottom: 10px;

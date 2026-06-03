@@ -192,7 +192,7 @@
     "fechaInicio": "2026-09-01",
     "fechaFin": "2026-09-04",
     "comida": "No",
-    "precio": "null",
+    "precio": "",
     "sena": "No",
     "senaRecibida": "",
     "descripcion": ""
