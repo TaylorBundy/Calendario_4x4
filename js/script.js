@@ -95,6 +95,8 @@ let scrolll = "";
 const inicios = 85;
 const target = 20;
 let final = "";
+let alertaEmitida = false;
+let audioHabilitado = false;
 //const TargetHeight = document.documentElement.offsetHeight - screen.height;
 const TargetHeight = document.documentElement.offsetHeight - window.innerHeight;
 const ahora = new Date();
@@ -758,8 +760,10 @@ window.addEventListener("DOMContentLoaded", async () => {
         // }
       });
     });
+
     //muestraBoton();
   }, 1000);
+  audioHabilitado = true;
 
   //console.log(reservas);
   validarFormulario();
@@ -1211,7 +1215,11 @@ function mostrarDatos() {
       contenedorActual.appendChild(div);
 
       // Verificar si la reserva comienza mañana
-      verificarAlertaReserva(fechafinal, div);
+
+      //setInterval(() => {
+      verificarAlertaReserva(fechafinal, d.fechaFin, div);
+      //reproducirAlertaSonora();
+      //}, 5000);
 
       const btnElimina = div.querySelector(`.btnelimina`);
 
@@ -4186,57 +4194,157 @@ function obtenerIdLibre(datos) {
   return `card-${esperado}`;
 }
 
-function verificarAlertaReserva2(fechaInicio) {
-  if (!fechaInicio) return false;
+// function verificarAlertaReserva3(fechaInicio) {
+//   if (!fechaInicio) return false;
 
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
+//   const hoy = new Date();
+//   hoy.setHours(0, 0, 0, 0);
 
-  const inicio = new Date(fechaInicio);
-  inicio.setHours(0, 0, 0, 0);
+//   const inicio = new Date(fechaInicio);
+//   inicio.setHours(0, 0, 0, 0);
 
-  const diaAnterior = new Date(inicio);
-  diaAnterior.setDate(diaAnterior.getDate() - 1);
+//   const diaAnterior = new Date(inicio);
+//   diaAnterior.setDate(diaAnterior.getDate() - 1);
 
-  const esDiaAnterior = hoy.getTime() === diaAnterior.getTime();
+//   const esDiaAnterior = hoy.getTime() === diaAnterior.getTime();
 
-  if (esDiaAnterior) {
-    mostrarAlertaVisual(`⚠️ Mañana comienza una reserva (${fechaInicio})`);
+//   if (esDiaAnterior) {
+//     mostrarAlertaVisual(`⚠️ Mañana comienza una reserva (${fechaInicio})`);
 
-    reproducirAlertaSonora();
+//     reproducirAlertaSonora();
 
+//     return true;
+//   }
+
+//   return false;
+// }
+
+// function verificarAlertaReserva2(fechaInicio, card) {
+//   console.log("Verificando alerta para fecha:", fechaInicio);
+//   console.log(card);
+//   const hoy = new Date();
+//   hoy.setHours(0, 0, 0, 0);
+
+//   const inicio = new Date(fechaInicio);
+//   inicio.setHours(0, 0, 0, 0);
+
+//   inicio.setDate(inicio.getDate() - 1);
+
+//   if (hoy.getTime() === inicio.getTime()) {
+//     card.classList.add("alerta-manana");
+//     mostrarAlertaVisual(`⚠️ Mañana comienza una reserva (${fechaInicio})`);
+
+//     reproducirAlertaSonora();
+
+//     return true;
+//   }
+
+//   return false;
+// }
+
+function verificarAlertaReserva2(fechaInicio, fechaFin, card) {
+  //console.log(card);
+  const ahora = new Date();
+  const nombreCliente = card.querySelector(".elCliente").textContent;
+  const nuevoNombreCliente = card.querySelector(".elCliente");
+
+  const alerta = new Date(fechaInicio);
+  alerta.setDate(alerta.getDate() - 1);
+  alerta.setHours(13, 47, 0, 0);
+
+  if (ahora >= alerta) {
+    card.classList.add("alerta-manana");
+    if (!alertaEmitida) {
+      alertaEmitida = true;
+      mostrarAlertaVisual(
+        `⚠️ Mañana comienza una reserva❗<br>
+        <br>
+        👨‍🔧 Cliente: "${nombreCliente}"<br>
+        📅 FechaInicio: ${fechaInicio}<br>
+        🕒 FechaFin: ${fechaFin}<br>
+        `,
+      );
+      nuevoNombreCliente.innerHTML = `🚙📅${nombreCliente}`;
+      //setInterval(() => {
+      //(async () => {
+      if (audioHabilitado) {
+        reproducirAlertaSonora();
+      }
+      //})();
+      //}, 5000);
+    }
     return true;
   }
 
   return false;
 }
+const reservasManana = [];
+function verificarAlertaReserva(fechaInicio, fechaFin, card) {
+  const ahora = new Date();
 
-function verificarAlertaReserva(fechaInicio, card) {
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
+  const alerta = new Date(fechaInicio);
+  alerta.setDate(alerta.getDate() - 1);
+  alerta.setHours(13, 47, 0, 0);
 
-  const inicio = new Date(fechaInicio);
-  inicio.setHours(0, 0, 0, 0);
+  if (ahora < alerta) return false;
 
-  inicio.setDate(inicio.getDate() - 1);
+  card.classList.add("alerta-manana");
 
-  if (hoy.getTime() === inicio.getTime()) {
-    card.classList.add("alerta-manana");
-    mostrarAlertaVisual(`⚠️ Mañana comienza una reserva (${fechaInicio})`);
-
-    reproducirAlertaSonora();
-
+  if (card.dataset.alertaMostrada === "true") {
     return true;
   }
 
-  return false;
+  card.dataset.alertaMostrada = "true";
+
+  const nombreCliente = card.querySelector(".elCliente").textContent;
+  reservasManana.push({
+    cliente: nombreCliente,
+    fechaInicio,
+    fechaFin,
+  });
+
+  // mostrarAlertaVisual(`
+  //   ⚠️ Mañana comienza una reserva❗
+  //   <br><br>
+  //   👨‍🔧 Cliente: "${nombreCliente}"<br>
+  //   📅 Fecha Inicio: ${fechaInicio}<br>
+  //   🕒 Fecha Fin: ${fechaFin}<br>
+  // `);
+  if (reservasManana.length > 0) {
+    mostrarAlertaVisual(
+      reservasManana
+        .map(
+          (r) => `
+          ⚠️ Mañana comienza una reserva❗
+          <br><br>
+          👨‍🔧 Cliente: "${r.cliente}"<br>
+          📅 Fecha Inicio: ${r.fechaInicio}<br>
+          🕒 Fecha Fin: ${r.fechaFin}<br>
+        `,
+        )
+        .join("<br>"),
+    );
+  }
+
+  const titulo = card.querySelector(".elCliente");
+
+  if (!titulo.textContent.includes("🚙📅")) {
+    titulo.textContent = `🚙📅 ${titulo.textContent}`;
+  }
+
+  if (audioHabilitado) {
+    reproducirAlertaSonora();
+  }
+
+  return true;
 }
 
 function mostrarAlertaVisual(mensaje) {
   const alerta = document.createElement("div");
 
   alerta.className = "alerta-reserva";
-  alerta.textContent = mensaje;
+  //alerta.textContent = mensaje;
+  alerta.innerHTML = mensaje;
 
   document.body.appendChild(alerta);
 
@@ -4245,8 +4353,38 @@ function mostrarAlertaVisual(mensaje) {
   }, 10000);
 }
 
-function reproducirAlertaSonora() {
-  const audio = new Audio("sounds/alerta.mp3");
+function esperarCargaCompleta() {
+  return new Promise((resolve) => {
+    if (document.readyState === "complete") {
+      resolve();
+    } else {
+      window.addEventListener("load", resolve, {
+        once: true,
+      });
+    }
+  });
+}
 
-  audio.play().catch(console.error);
+async function reproducirAlertaSonora() {
+  if (!audioHabilitado) {
+    console.warn("El usuario aún no interactuó con la página");
+    return false;
+  }
+  // const audio = new Audio("sounds/notify.mp3");
+
+  // await audio.play().catch(console.error);
+  try {
+    await esperarCargaCompleta();
+
+    // pequeño delay adicional
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const audio = new Audio("sounds/notify.mp3");
+
+    audio.preload = "auto";
+
+    await audio.play();
+  } catch (error) {
+    console.warn("Audio bloqueado:", error);
+  }
 }

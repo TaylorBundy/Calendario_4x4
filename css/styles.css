@@ -442,6 +442,22 @@ label {
   animation: parpadear 1s infinite;
 }
 
+.alerta-reserva {
+  display: flex;
+  margin: auto;
+  border: 2px solid red;
+  padding: 10px;
+  border-radius: 8px;
+  animation: parpadear 1s infinite;
+  /* background: #333; */
+  background: #0929c9;
+  width: max-content;
+  font-weight: bold;
+  position: fixed;
+  left: 0;
+  right: 0;
+}
+
 @keyframes parpadear {
   50% {
     opacity: 0.6;
@@ -503,6 +519,20 @@ label {
     border: 1px solid #888;
     /* margin: auto; */
     font-size: 2em;
+  }
+  #lista .alerta-manana {
+    border: 3px solid orange;
+    animation: parpadear 1s 5;
+  }
+  .alerta-reserva {
+    width: fit-content;
+    font-size: 2.5em;
+    /* text-align: center; */
+    font-weight: bold;
+    /* word-wrap: break-word; */
+    /* word-break: break-word; */
+    top: 300px;
+    animation: parpadear 1s 5;
   }
   #lista2 #card {
     font-size: 1.5em;
