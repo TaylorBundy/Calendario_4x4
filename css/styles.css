@@ -437,9 +437,10 @@ label {
   text-align: center;
   font-size: 1em;
 }
-.alerta-manana {
-  border: 3px solid orange;
+#lista .alerta-manana {
+  border: 3px solid red;
   animation: parpadear 1s infinite;
+  border-radius: 10px;
 }
 
 .alerta-reserva {
@@ -521,8 +522,9 @@ label {
     font-size: 2em;
   }
   #lista .alerta-manana {
-    border: 3px solid orange;
-    animation: parpadear 1s 5;
+    border: 8px solid red;
+    animation: parpadear 1s infinite;
+    border-radius: 25px;
   }
   .alerta-reserva {
     width: fit-content;
@@ -532,7 +534,7 @@ label {
     /* word-wrap: break-word; */
     /* word-break: break-word; */
     top: 300px;
-    animation: parpadear 1s 5;
+    animation: parpadear 1s infinite;
   }
   #lista2 #card {
     font-size: 1.5em;

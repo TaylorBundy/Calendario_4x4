@@ -97,6 +97,10 @@ const target = 20;
 let final = "";
 let alertaEmitida = false;
 let audioHabilitado = false;
+const audioAlerta = new Audio("sounds/alarma.mp3");
+const audioAlertaGoogle = new Audio("sounds/notify.mp3");
+let intervaloAlarma = null;
+let alarmaRepetida = 0;
 //const TargetHeight = document.documentElement.offsetHeight - screen.height;
 const TargetHeight = document.documentElement.offsetHeight - window.innerHeight;
 const ahora = new Date();
@@ -415,6 +419,7 @@ async function cargarEventosGoogle(url) {
       } else {
         let mensaje = "";
         verificacionesSinCambios = 0;
+        reproducirAlertaSonora("google");
 
         if (cambios.agregados.length) {
           mensaje += `➕ Agregados: ${cambios.agregados.length}<br>`;
@@ -764,6 +769,32 @@ window.addEventListener("DOMContentLoaded", async () => {
     //muestraBoton();
   }, 1000);
   audioHabilitado = true;
+  // document.addEventListener(
+  //   "click",
+  //   () => {
+  //     audioHabilitado = true;
+  //     console.log("Audio habilitado");
+  //   },
+  //   { once: true },
+  // );
+  // document.addEventListener(
+  //   "click",
+  //   async () => {
+  //     try {
+  //       //audioAlerta.volume = 0;
+  //       await audioAlerta.play();
+  //       //audioAlerta.pause();
+  //       audioAlerta.currentTime = 0;
+  //       audioAlerta.volume = 1;
+
+  //       console.log("Audio desbloqueado");
+  //       audioHabilitado = true;
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   },
+  //   { once: true },
+  // );
 
   //console.log(reservas);
   validarFormulario();
@@ -4162,21 +4193,11 @@ function cambiarImagen(boton) {
   //   imagenes[texto] || "img/default.jpg";
 }
 
-// function obtenerSiguienteId(datos) {
-//   const maxId = Math.max(
-//     ...datos.map(item => Number(item.id.replace("card-", "")))
-//   );
-
-//   return `card-${maxId + 1}`;
-// }
-
-// function reordenarIds(datos) {
-//   datos.forEach((item, index) => {
-//     item.id = `card-${index + 1}`;
-//     console.log(`ID actualizado: ${item.id}`);
-//   });
-// }
-
+// ================================================================================
+// Función para obtener un ID libre para una nueva reserva,
+// analizando los IDs existentes en los datos,
+// y para devolver un ID en formato "card-X" donde X es el número más bajo disponible
+// ================================================================================
 function obtenerIdLibre(datos) {
   const ids = datos
     .map((item) => Number(item.id.replace("card-", "")))
@@ -4242,43 +4263,48 @@ function obtenerIdLibre(datos) {
 //   return false;
 // }
 
-function verificarAlertaReserva2(fechaInicio, fechaFin, card) {
-  //console.log(card);
-  const ahora = new Date();
-  const nombreCliente = card.querySelector(".elCliente").textContent;
-  const nuevoNombreCliente = card.querySelector(".elCliente");
+// function verificarAlertaReserva2(fechaInicio, fechaFin, card) {
+//   //console.log(card);
+//   const ahora = new Date();
+//   const nombreCliente = card.querySelector(".elCliente").textContent;
+//   const nuevoNombreCliente = card.querySelector(".elCliente");
 
-  const alerta = new Date(fechaInicio);
-  alerta.setDate(alerta.getDate() - 1);
-  alerta.setHours(13, 47, 0, 0);
+//   const alerta = new Date(fechaInicio);
+//   alerta.setDate(alerta.getDate() - 1);
+//   alerta.setHours(13, 47, 0, 0);
 
-  if (ahora >= alerta) {
-    card.classList.add("alerta-manana");
-    if (!alertaEmitida) {
-      alertaEmitida = true;
-      mostrarAlertaVisual(
-        `⚠️ Mañana comienza una reserva❗<br>
-        <br>
-        👨‍🔧 Cliente: "${nombreCliente}"<br>
-        📅 FechaInicio: ${fechaInicio}<br>
-        🕒 FechaFin: ${fechaFin}<br>
-        `,
-      );
-      nuevoNombreCliente.innerHTML = `🚙📅${nombreCliente}`;
-      //setInterval(() => {
-      //(async () => {
-      if (audioHabilitado) {
-        reproducirAlertaSonora();
-      }
-      //})();
-      //}, 5000);
-    }
-    return true;
-  }
+//   if (ahora >= alerta) {
+//     card.classList.add("alerta-manana");
+//     if (!alertaEmitida) {
+//       alertaEmitida = true;
+//       mostrarAlertaVisual(
+//         `⚠️ Mañana comienza una reserva❗<br>
+//         <br>
+//         👨‍🔧 Cliente: "${nombreCliente}"<br>
+//         📅 FechaInicio: ${fechaInicio}<br>
+//         🕒 FechaFin: ${fechaFin}<br>
+//         `,
+//       );
+//       nuevoNombreCliente.innerHTML = `🚙📅${nombreCliente}`;
+//       //setInterval(() => {
+//       //(async () => {
+//       if (audioHabilitado) {
+//         reproducirAlertaSonora();
+//       }
+//       //})();
+//       //}, 5000);
+//     }
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
 const reservasManana = [];
+// ================================================================================
+// Función para verificar si una reserva comienza mañana, comparando la fecha de inicio con la fecha actual,
+// para agregar una clase de alerta a la card correspondiente, para mostrar una alerta visual con los detalles de la reserva,
+// para reproducir un sonido de alerta, y para manejar casos donde la alerta ya ha sido mostrada o está activa
+// ================================================================================
 function verificarAlertaReserva(fechaInicio, fechaFin, card) {
   const ahora = new Date();
 
@@ -4302,14 +4328,12 @@ function verificarAlertaReserva(fechaInicio, fechaFin, card) {
     fechaInicio,
     fechaFin,
   });
+  if (!card.dataset.alertaActiva) {
+    card.dataset.alertaActiva = "true";
 
-  // mostrarAlertaVisual(`
-  //   ⚠️ Mañana comienza una reserva❗
-  //   <br><br>
-  //   👨‍🔧 Cliente: "${nombreCliente}"<br>
-  //   📅 Fecha Inicio: ${fechaInicio}<br>
-  //   🕒 Fecha Fin: ${fechaFin}<br>
-  // `);
+    iniciarAlarmaReserva(fechaInicio, fechaFin, nombreCliente);
+  }
+
   if (reservasManana.length > 0) {
     mostrarAlertaVisual(
       reservasManana
@@ -4332,13 +4356,14 @@ function verificarAlertaReserva(fechaInicio, fechaFin, card) {
     titulo.textContent = `🚙📅 ${titulo.textContent}`;
   }
 
-  if (audioHabilitado) {
-    reproducirAlertaSonora();
-  }
-
   return true;
 }
 
+// ================================================================================
+// Función para mostrar una alerta visual en la página, creando un elemento con el mensaje de alerta,
+// para agregarlo al DOM, para programar la reproducción de un sonido de alerta después de unos segundos,
+// y para eliminar la alerta después de un tiempo determinado, con opciones para manejar alarmas repetidas
+// ================================================================================
 function mostrarAlertaVisual(mensaje) {
   const alerta = document.createElement("div");
 
@@ -4349,10 +4374,25 @@ function mostrarAlertaVisual(mensaje) {
   document.body.appendChild(alerta);
 
   setTimeout(() => {
+    if (audioHabilitado) {
+      reproducirAlertaSonora("reserva");
+    }
+  }, 5000);
+  setTimeout(() => {
     alerta.remove();
+    if (alarmaRepetida === 0) {
+      alarmaRepetida++;
+    } else {
+      preguntarContinuarAlarma();
+    }
   }, 10000);
 }
 
+// ================================================================================
+// Función para esperar a que la página esté completamente cargada antes de reproducir un sonido de alerta,
+// para manejar casos donde el usuario aún no ha interactuado con la página y el audio está bloqueado,
+// y para manejar errores de reproducción de audio
+// ================================================================================
 function esperarCargaCompleta() {
   return new Promise((resolve) => {
     if (document.readyState === "complete") {
@@ -4365,26 +4405,157 @@ function esperarCargaCompleta() {
   });
 }
 
-async function reproducirAlertaSonora() {
+// ================================================================================
+// Función para reproducir un sonido de alerta, con validación para verificar si el audio está habilitado, para esperar a que la página esté completamente cargada antes de reproducir el sonido,
+// y para manejar errores de reproducción de audio, como bloqueos por parte del navegador
+// ================================================================================
+async function reproducirAlertaSonora(origen) {
   if (!audioHabilitado) {
     console.warn("El usuario aún no interactuó con la página");
     return false;
   }
-  // const audio = new Audio("sounds/notify.mp3");
 
-  // await audio.play().catch(console.error);
   try {
     await esperarCargaCompleta();
 
     // pequeño delay adicional
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const audio = new Audio("sounds/notify.mp3");
+    if (origen === "reserva") {
+      audioAlerta.preload = "auto";
 
-    audio.preload = "auto";
+      await audioAlerta.play();
+    } else {
+      audioAlertaGoogle.preload = "auto";
 
-    await audio.play();
+      await audioAlertaGoogle.play();
+    }
   } catch (error) {
     console.warn("Audio bloqueado:", error);
   }
+}
+
+// function mostrarAlertaReserva(fechaInicio, fechaFin, nombreCliente) {
+//   mostrarAlertaVisual(`
+//     ⚠️ Reserva próxima
+//     <br><br>
+//     👨‍🔧 Cliente: ${nombreCliente}
+//     <br>
+//     📅 Inicio: ${fechaInicio}
+//     <br>
+//     🕒 Fin: ${fechaFin}
+//   `);
+
+//   if (audioHabilitado) {
+//     reproducirAlertaSonora();
+//   }
+
+//   preguntarContinuarAlarma();
+// }
+
+// ================================================================================
+// Función para preguntar al usuario si desea continuar recibiendo recordatorios de una reserva próxima,
+// creando un modal con opciones para continuar o detener la alarma, para programar la eliminación del modal después de un tiempo determinado,
+// y para manejar los eventos de los botones para continuar o detener la alarma, con validación para evitar múltiples modales
+// ================================================================================
+function preguntarContinuarAlarma() {
+  const overlay = document.createElement("div");
+
+  overlay.innerHTML = `
+    <div class="modalPregunta">
+
+      <h3>
+        🔔 Alarma de reserva activa
+      </h3>
+
+      <p>
+        ¿Deseás seguir recibiendo
+        recordatorios cada 15 minutos?
+      </p>
+
+      <button id="btnContinuarAlarma">
+        Continuar
+      </button>
+
+      <button id="btnDetenerAlarma">
+        Detener
+      </button>
+
+    </div>
+  `;
+
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+  `;
+
+  document.body.appendChild(overlay);
+
+  // si no responde en 30 segundos, sigue sonando
+  const timeoutAlarma = setTimeout(() => {
+    overlay.remove();
+  }, 30000);
+
+  document
+    .querySelector("#btnContinuarAlarma")
+    .addEventListener("click", () => {
+      clearTimeout(timeoutAlarma);
+
+      overlay.remove();
+
+      console.log("Continuando recordatorios cada 15 minutos...");
+    });
+
+  document.querySelector("#btnDetenerAlarma").addEventListener("click", () => {
+    clearTimeout(timeoutAlarma);
+
+    detenerAlarmaReserva();
+
+    overlay.remove();
+  });
+}
+
+// ================================================================================
+// Función para iniciar una alarma de reserva, programando una alerta inmediata y luego repitiendo la alerta cada 15 minutos, con validación para manejar casos donde la alarma ya está activa, y para mostrar una alerta visual con los detalles de la reserva cada vez que se active la alarma
+// ================================================================================
+function iniciarAlarmaReserva(fechaInicio, fechaFin, nombreCliente) {
+  // primera alerta inmediata
+  //mostrarAlertaReserva(fechaInicio, fechaFin, nombreCliente);
+  // repetir cada 15 minutos
+  intervaloAlarma = setInterval(
+    () => {
+      //mostrarAlertaReserva(fechaInicio, fechaFin, nombreCliente);
+      mostrarAlertaVisual(
+        reservasManana
+          .map(
+            (r) => `
+          ⚠️ Mañana comienza una reserva❗
+          <br><br>
+          👨‍🔧 Cliente: "${r.cliente}"<br>
+          📅 Fecha Inicio: ${r.fechaInicio}<br>
+          🕒 Fecha Fin: ${r.fechaFin}<br>
+        `,
+          )
+          .join("<br>"),
+      );
+    },
+    15 * 60 * 1000,
+  );
+}
+
+// ================================================================================
+// Función para detener la alarma de reserva, limpiando el intervalo programado para las alertas repetidas, y para mostrar un mensaje en la consola indicando que la alarma ha sido detenida
+// ================================================================================
+function detenerAlarmaReserva() {
+  if (intervaloAlarma) {
+    clearInterval(intervaloAlarma);
+    intervaloAlarma = null;
+  }
+
+  console.log("Alarma detenida");
 }
