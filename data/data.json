@@ -226,5 +226,18 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "Posiblemente 4 vehiculos, 2 vehiculos organizadores, 100000 pesos por veh\u00edculo. Incluye comida"
+  },
+  {
+    "id": "card-17",
+    "cliente": "Prueba fecha pasada",
+    "fechaInicio": "2026-06-02",
+    "fechaFin": "2026-06-03",
+    "vc": "",
+    "vo": "",
+    "comida": false,
+    "precio": "75",
+    "moneda": "USD",
+    "sena": false,
+    "senaRecibida": ""
   }
 ]
