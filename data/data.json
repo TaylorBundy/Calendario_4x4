@@ -85,8 +85,8 @@
     "vc": "2",
     "vo": "",
     "comida": false,
-    "precio": "",
-    "moneda": "",
+    "precio": "100",
+    "moneda": "USD",
     "sena": false,
     "senaRecibida": ""
   },
