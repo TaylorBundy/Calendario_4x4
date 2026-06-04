@@ -21,7 +21,7 @@ const lala = editaPrecio.split(" ");
 const btnModal = document.querySelector("#btnModal");
 const btnOcultas = document.querySelector("#btnOcultas");
 select.selectedIndex = -1;
-const todasCards = lista.querySelectorAll("#card");
+const todasCards = document.querySelectorAll("#card");
 const contenedorReservas = document.querySelector(".reservasContainer");
 
 const plataforma = navigator.userAgent;
@@ -103,6 +103,7 @@ const audioAlertaGoogle = new Audio("sounds/notify.mp3");
 let intervaloAlarma = null;
 let alarmaRepetida = 0;
 const reservasManana = [];
+let volvemosVerificar = false;
 //const TargetHeight = document.documentElement.offsetHeight - screen.height;
 const TargetHeight = document.documentElement.offsetHeight - window.innerHeight;
 const ahora = new Date();
@@ -395,6 +396,12 @@ function formatearFecha(fecha) {
   const day = String(f.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+}
+
+function crearFechaLocal(fechaStr) {
+  const [anio, mes, dia] = fechaStr.split("-").map(Number);
+
+  return new Date(anio, mes - 1, dia);
 }
 
 // ================================================================================
@@ -768,6 +775,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const resultado = urlJSON.substring(urlJSON.indexOf("TaylorBundy"));
     origenJSON = resultado;
   }
+  volvemosVerificar = true;
   cargarDatosDesde(urlJSON);
   setTimeout(() => {
     const numeros = obtenerNumeros();
@@ -789,7 +797,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       });
     });
     //if (plataforma.includes("Android")) {
-      contenedorReservas.click();
+    contenedorReservas.click();
     //}
     //muestraBoton();
   }, 1000);
@@ -1054,11 +1062,30 @@ function cargarEnFormulario(dato, index, indiceAnteriors) {
 // ================================================================================
 // Funcion para mostrar datos en el DOM
 // ================================================================================
-function mostrarDatos() {
+function mostrarDatos(ejecutarAlertas = true) {
+  // console.log(globalIndex);
+  // if (ocultas.length > 0) {
+  //   globalIndex = globalIndex--;
+  // }
+  //globalIndex = 0;
   lista.innerHTML = "";
 
   datos.sort((a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio));
-  const agrupados = agruparPorFecha(datos);
+  const ahora = new Date();
+
+  const datosVisibles = datos.filter((d) => {
+    //const fechaFin = new Date(d.fechaFin);
+    const fechaFin = crearFechaLocal(d.fechaFin);
+
+    fechaFin.setHours(23, 59, 0, 0);
+    //console.log(formatearFecha(ahora));
+    //console.log(formatearFecha(fechaFin));
+
+    return ahora < fechaFin;
+  });
+  //console.log(datosVisibles);
+  const agrupados = agruparPorFecha(datosVisibles);
+  //const agrupados = agruparPorFecha(datos);
 
   Object.entries(agrupados).forEach(([fechaGrupo, items]) => {
     let contenedorActual = lista;
@@ -1087,7 +1114,7 @@ function mostrarDatos() {
       contenedorActual = cardsGrupo;
     }
 
-    items.forEach((d, index) => {
+    items.forEach((d) => {
       const div = document.createElement("div");
       const divContainer = document.createElement("div");
       divContainer.className = "divcontainer";
@@ -1233,11 +1260,7 @@ function mostrarDatos() {
       contenedorActual.appendChild(div);
 
       // Verificar si la reserva comienza mañana
-
-      //setInterval(() => {
       verificarAlertaReserva(fechafinal, d.fechaFin, div);
-      //reproducirAlertaSonora();
-      //}, 5000);
 
       const btnElimina = div.querySelector(`.btnelimina`);
 
@@ -1305,6 +1328,7 @@ function mostrarDatos() {
     });
     //lista.appendChild(contenedorActual);
     ordenarPorFecha();
+    //globalIndex = 0;
   });
 }
 
@@ -1314,6 +1338,11 @@ function mostrarDatos() {
 // ================================================================================
 function mostrarDatos2(listaDestino, mostrarOcultas = false) {
   //console.log(listaDestino);
+  
+  const card22 = document.querySelectorAll("#card");
+  console.log(card22.length);
+  globalIndex = card22.length + 1;
+  console.log(globalIndex);
   listaDestino.innerHTML = "";
   let contenedorActual = listaDestino;
 
@@ -1592,6 +1621,8 @@ function agruparPorFecha(datos) {
 // y para formatear las fechas correctamente
 // ================================================================================
 function mostrarDatosGoogle(d, index = 0) {
+  const todasCards = document.querySelectorAll("#card");
+  console.log(todasCards.length);
   //console.log(d);
   //console.log(d.cliente.toLowerCase());
 
@@ -1870,6 +1901,7 @@ function mostrarDatosGoogle(d, index = 0) {
   tarjetaSeleccionada = card;
 
   seleccionarCard(card, eleEdita);
+  globalIndex = nuevoNumero + 1;
   ordenarPorFecha();
 }
 
@@ -1965,7 +1997,10 @@ actualizar.addEventListener("click", (e) => {
     sena: document.getElementById("editaSeña").checked,
     senaRecibida: document.getElementById("editaImporteSeña").value,
   };
-  if (actualizar.textContent === "guardar") {
+  // if (actualizar.innerHTML.includes("guardar")) {
+  //   console.log("si");
+  // }
+  if (actualizar.innerHTML.includes("guardar")) {
     // console.log(idSeleccionado);
     //guardar(nuevo);
     (async () => {
@@ -2051,6 +2086,7 @@ async function guardar(contenido) {
       throw new Error(data?.message || `Respuesta inesperada: ${data.status}`);
     }
 
+    volvemosVerificar = false;
     await cargarDatosDesde(urlJSON);
 
     console.log("Guardado correctamente");
@@ -2086,6 +2122,7 @@ async function editar(contenido) {
     });
     const data = await res.json();
     if (res.ok) {
+      volvemosVerificar = false;
       await cargarDatosDesde(urlJSON);
     }
 
@@ -2136,6 +2173,7 @@ async function eliminar() {
     elementoEliminar.remove();
 
     //await esperarBackend(`${API}/health`);
+    volvemosVerificar = false;
 
     await cargarDatosDesde(urlJSON);
   } catch (err) {
@@ -2834,17 +2872,23 @@ function ordenarPorFecha() {
   const ahora = new Date();
 
   const cards = Array.from(lista.children).filter((card) => {
+
     const fechaFinTexto = card.querySelector("#fechaFin").textContent;
+    //console.log(fechaFinTexto);
 
     // crear fecha fin
     const fechaFin = new Date(fechaFinTexto);
-    //console.log(fechaFin);
+    const fechaFin2 = crearFechaLocal(fechaFinTexto);
+    fechaFin2.setHours(23, 59, 59, 999);
+    //const fechaFin2 = crearFechaLocal(fechaFin);
+    //console.log(fechaFin2);
 
     // ✅ poner hora límite
     fechaFin.setHours(23, 59, 0, 0);
+    //console.log(formatearFecha(fechaFin));
 
     // mostrar mientras NO haya pasado
-    return ahora < fechaFin;
+    return ahora < fechaFin2;
   });
 
   cards.sort((a, b) => {
@@ -3786,8 +3830,12 @@ function cerrarModalEventos() {
           contenedorCards.appendChild(tituloContenedorCards);
           //lista.appendChild(cardContainer);
           nuevo = null;
+        } //else {
+        //return;
+        //}
+        if (ocultas.length > 0) {
+          lista.appendChild(contenedorCards);
         }
-        lista.appendChild(contenedorCards);
         renderizarCards({
           datos: ocultas,
 
@@ -4006,8 +4054,14 @@ function crearModalJSON() {
 
       try {
         reservas.length = 0;
+        ocultas.length = 0;
+        visibles.length = 0;
+        clientes.length = 0;
+        descripciones.length = 0;
+        reservasManana.length = 0;
         select.innerHTML = "";
         lista.innerHTML = "";
+        volvemosVerificar = false;
         delete select.dataset.placeholderAgregado;
         if (tipo === "local") {
           urlJSON = "data/data.json";
@@ -4026,6 +4080,7 @@ function crearModalJSON() {
           );
           await cargarEventosGoogle(url);
         }
+
         modal.remove();
       } catch (error) {
         console.error(error);
@@ -4095,6 +4150,7 @@ async function cargarDatosDesde(url) {
     </span>
   `;
 
+  globalIndex = 0;
   mostrarDatos();
   //contenedorReservas.click();
   //mostrarDatos2(lista2, true);
@@ -4121,6 +4177,7 @@ function recargarEn5Minutos() {
 
   timerRecarga = setTimeout(
     () => {
+      volvemosVerificar = false;
       console.log("Recargando...");
       //location.reload();
       select.innerHTML = "";
@@ -4185,11 +4242,20 @@ function obtenerIdLibre(datos) {
 // para reproducir un sonido de alerta, y para manejar casos donde la alerta ya ha sido mostrada o está activa
 // ================================================================================
 function verificarAlertaReserva(fechaInicio, fechaFin, card) {
-  const ahora = new Date();
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const inicio = new Date(fechaInicio);
+  inicio.setHours(0, 0, 0, 0);
+  // Si la reserva ya comenzó o ya pasó, no alertar
+  if (inicio < hoy) {
+    return false;
+  }
 
   const alerta = new Date(fechaInicio);
   alerta.setDate(alerta.getDate() - 1);
-  alerta.setHours(13, 47, 0, 0);
+  alerta.setHours(0, 0, 0, 0);
+  const ahora = new Date();
 
   if (ahora < alerta) return false;
 
@@ -4207,34 +4273,35 @@ function verificarAlertaReserva(fechaInicio, fechaFin, card) {
     fechaInicio,
     fechaFin,
   });
-  if (!card.dataset.alertaActiva) {
-    card.dataset.alertaActiva = "true";
+  if (volvemosVerificar) {
+    if (!card.dataset.alertaActiva) {
+      card.dataset.alertaActiva = "true";
 
-    iniciarAlarmaReserva(fechaInicio, fechaFin, nombreCliente);
-  }
+      iniciarAlarmaReserva(fechaInicio, fechaFin, nombreCliente);
+    }
 
-  if (reservasManana.length > 0) {
-    mostrarAlertaVisual(
-      reservasManana
-        .map(
-          (r) => `
+    if (reservasManana.length > 0) {
+      mostrarAlertaVisual(
+        reservasManana
+          .map(
+            (r) => `
           ⚠️ Mañana comienza una reserva❗
           <br><br>
           👨‍🔧 Cliente: "${r.cliente}"<br>
           📅 Fecha Inicio: ${r.fechaInicio}<br>
           🕒 Fecha Fin: ${r.fechaFin}<br>
         `,
-        )
-        .join("<br>"),
-    );
+          )
+          .join("<br>"),
+      );
+    }
+
+    const titulo = card.querySelector(".elCliente");
+
+    if (!titulo.textContent.includes("🚙📅")) {
+      //titulo.textContent = `🚙📅 ${titulo.textContent}`;
+    }
   }
-
-  const titulo = card.querySelector(".elCliente");
-
-  if (!titulo.textContent.includes("🚙📅")) {
-    //titulo.textContent = `🚙📅 ${titulo.textContent}`;
-  }
-
   return true;
 }
 
