@@ -211,18 +211,5 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "75 d\u00f3lares por veh\u00edculo"
-  },
-  {
-    "id": "card-18",
-    "cliente": "Prueba fecha pasada",
-    "fechaInicio": "2026-06-02",
-    "fechaFin": "2026-06-02",
-    "vc": "",
-    "vo": "",
-    "comida": false,
-    "precio": "75",
-    "moneda": "USD",
-    "sena": false,
-    "senaRecibida": ""
   }
 ]
