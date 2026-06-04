@@ -52,6 +52,7 @@ const reservas = [];
 const modificados = [];
 let nuevo;
 let idFaltante;
+let ultimoID;
 const datosNuevos = [];
 let fechaFin = null;
 let existe = null;
@@ -1340,9 +1341,9 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
   //console.log(listaDestino);
   
   const card22 = document.querySelectorAll("#card");
-  console.log(card22.length);
+  //console.log(card22.length);
   globalIndex = card22.length + 1;
-  console.log(globalIndex);
+  //console.log(globalIndex);
   listaDestino.innerHTML = "";
   let contenedorActual = listaDestino;
 
@@ -1621,8 +1622,15 @@ function agruparPorFecha(datos) {
 // y para formatear las fechas correctamente
 // ================================================================================
 function mostrarDatosGoogle(d, index = 0) {
-  const todasCards = document.querySelectorAll("#card");
-  console.log(todasCards.length);
+  // const todasCards = document.querySelectorAll("#card");
+  // console.log(todasCards.length);
+  // console.log(ocultas);
+  // if (ocultas) {
+  //   nuevoNumero = ocultas.length + visibles.length;
+  // } else {
+  //   nuevoNumero = nuevoNumero;
+  // }
+  //console.log(nuevoNumero);
   //console.log(d);
   //console.log(d.cliente.toLowerCase());
 
@@ -1644,7 +1652,7 @@ function mostrarDatosGoogle(d, index = 0) {
       //const cliente = clientes.find(c => c.cliente.toLowerCase() === nuevo.cliente.toLowerCase());
       //console.log(cliente);
       //const resultados = reservas.filter((r) => clientes.some((c) => c.cliente.toLowerCase() === r.cliente.toLowerCase()));
-      console.log(resultados);
+      //console.log(resultados);
       //const resultados3 = reservas.some((r) => r.cliente.includes(clientes));
       const resultados3 = reservas.some((r) =>
         clientes.some((cliente) => r.cliente.toLowerCase().includes(cliente)),
@@ -4128,6 +4136,13 @@ async function cargarDatosDesde(url) {
 
   datos = await res.json();
   //console.log(datos);
+  const ids = datos
+    .map((item) => Number(item.id.replace("card-", "")))
+    .sort((a, b) => a - b);
+  const ultimoId = ids[ids.length - 1];
+  ultimoID = ultimoId;
+
+  //console.log(ultimoId);
   // datos.forEach((item) => {
   //   console.log(item);
   // });
