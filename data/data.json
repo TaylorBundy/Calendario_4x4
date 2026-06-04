@@ -213,8 +213,8 @@
     "descripcion": "75 d\u00f3lares por veh\u00edculo"
   },
   {
-    "id": "card-16",
-    "cardID": "card-15",
+    "id": "card-17",
+    "cardID": "card-16",
     "cliente": "Prueba alerta",
     "fechaInicio": "2026-06-04",
     "fechaFin": "2026-06-04",
@@ -228,7 +228,7 @@
     "descripcion": "Posiblemente 4 vehiculos, 2 vehiculos organizadores, 100000 pesos por veh\u00edculo. Incluye comida"
   },
   {
-    "id": "card-17",
+    "id": "card-18",
     "cliente": "Prueba fecha pasada",
     "fechaInicio": "2026-06-02",
     "fechaFin": "2026-06-02",
@@ -241,7 +241,7 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-18",
+    "id": "card-19",
     "cardID": "card-17",
     "cliente": "Hahahah",
     "fechaInicio": "2026-06-05",
