@@ -1339,7 +1339,7 @@ function mostrarDatos(ejecutarAlertas = true) {
 // ================================================================================
 function mostrarDatos2(listaDestino, mostrarOcultas = false) {
   //console.log(listaDestino);
-  
+
   const card22 = document.querySelectorAll("#card");
   //console.log(card22.length);
   globalIndex = card22.length + 1;
@@ -1522,9 +1522,9 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
 
       const btnElimina = document.querySelector(`#${d.id}`);
       //console.log(btnElimina);
-      if (btnElimina.textContent == "Eliminar") {
+      if (btnElimina.innerHTML.includes("Eliminar")) {
         textoTooltip = "Click para eliminar la reserva";
-      } else if (btnElimina.textContent == "Actualizar") {
+      } else if (btnElimina.innerHTML.includes("Actualizar")) {
         textoTooltip = "Click para actualizar la reserva";
       }
       agregarTooltip(btnElimina, textoTooltip);
@@ -1537,7 +1537,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
         idSeleccionado = d.id;
         idCard = idSeleccionado;
         idCard2 = btnElimina.id;
-        if (btnElimina.textContent == "Eliminar") {
+        if (btnElimina.innerHTML.includes("Eliminar")) {
           elementoEliminar = card;
           (async () => {
             await eliminar();
@@ -1555,7 +1555,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
           (async () => {
             await cargarEventosGoogle(url);
           })();
-        } else if (btnElimina.textContent == "Actualizar") {
+        } else if (btnElimina.innerHTML.includes("Actualizar")) {
           nuevo = {
             id: idCard2,
             cliente: document.getElementById("editaCliente").value,
@@ -1825,11 +1825,11 @@ function mostrarDatosGoogle(d, index = 0) {
     }
   });
 
-  if (btnElimina.textContent == "Eliminar") {
+  if (btnElimina.innerHTML.includes("Eliminar")) {
     textoTooltip = "Click para eliminar la reserva";
-  } else if (btnElimina.textContent == "Guardar") {
+  } else if (btnElimina.innerHTML.includes("Guardar")) {
     textoTooltip = "Click para guardar la reserva";
-  } else if (btnElimina.textContent == "Actualizar") {
+  } else if (btnElimina.innerHTML.includes("Actualizar")) {
     textoTooltip = "Click para actualizar la reserva";
   }
   agregarTooltip(btnElimina, textoTooltip);
@@ -1837,7 +1837,7 @@ function mostrarDatosGoogle(d, index = 0) {
     const card = e.target.closest("#card");
     idSeleccionado = d.id;
     //console.log(idCard2);
-    if (btnElimina.textContent == "Eliminar") {
+    if (btnElimina.innerHTML.includes("Eliminar")) {
       (async () => {
         await eliminar();
         recargarEn5Minutos();
@@ -1847,7 +1847,7 @@ function mostrarDatosGoogle(d, index = 0) {
       (async () => {
         await cargarEventosGoogle(url);
       })();
-    } else if (btnElimina.textContent == "Guardar") {
+    } else if (btnElimina.innerHTML.includes("Guardar")) {
       //console.log(nuevo);
       //guardar(nuevo);
       (async () => {
@@ -2880,7 +2880,6 @@ function ordenarPorFecha() {
   const ahora = new Date();
 
   const cards = Array.from(lista.children).filter((card) => {
-
     const fechaFinTexto = card.querySelector("#fechaFin").textContent;
     //console.log(fechaFinTexto);
 
