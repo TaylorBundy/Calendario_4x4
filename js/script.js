@@ -2370,9 +2370,9 @@ function mostrarFechas(eventos) {
         const fechaComparada = compararFechas(cambio.fechaInicio, fechaHoy);
 
         // menor a hoy → ignorar
-        if (fechaComparada === -1) {
-          return;
-        }
+        // if (fechaComparada === -1) {
+        //   return;
+        // }
         idcCalendar = cambio.id;
         agregarOption(
           select,
