@@ -255,18 +255,5 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "100 d\u00f3lares por veh\u00edculo"
-  },
-  {
-    "id": "card-21",
-    "cliente": "Hoy",
-    "fechaInicio": "2026-06-05",
-    "fechaFin": "2026-06-05",
-    "vc": "",
-    "vo": "",
-    "comida": false,
-    "precio": "100",
-    "moneda": "USD",
-    "sena": false,
-    "senaRecibida": ""
   }
 ]
