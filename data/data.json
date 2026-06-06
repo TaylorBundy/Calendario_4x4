@@ -227,36 +227,6 @@
     "descripcion": "2 camionetas, 100 d\u00f3lares por veh\u00edculo"
   },
   {
-    "id": "card-14",
-    "cardID": "card-17",
-    "cliente": "Prueba ma\u00f1ana",
-    "fechaInicio": "2026-06-07",
-    "fechaFin": "2026-06-07",
-    "vc": null,
-    "vo": null,
-    "comida": "No",
-    "precio": "100",
-    "moneda": "USD",
-    "sena": "No",
-    "senaRecibida": "",
-    "descripcion": "100 d\u00f3lares por veh\u00edculo"
-  },
-  {
-    "id": "card-14",
-    "cardID": "card-17",
-    "cliente": "Alex y raul",
-    "fechaInicio": "2026-08-18",
-    "fechaFin": "2026-08-18",
-    "vc": null,
-    "vo": null,
-    "comida": "No",
-    "precio": "100",
-    "moneda": "USD",
-    "sena": "No",
-    "senaRecibida": "",
-    "descripcion": "100 d\u00f3lares por veh\u00edculo"
-  },
-  {
     "id": "card-15",
     "cardID": "card-19",
     "cliente": "Alex y raul",
