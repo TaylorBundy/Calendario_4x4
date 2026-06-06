@@ -240,5 +240,20 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "100 d\u00f3lares por veh\u00edculo"
+  },
+  {
+    "id": "card-14",
+    "cardID": "card-17",
+    "cliente": "Alex y raul",
+    "fechaInicio": "2026-08-18",
+    "fechaFin": "2026-08-18",
+    "vc": null,
+    "vo": null,
+    "comida": "No",
+    "precio": "100",
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "100 d\u00f3lares por veh\u00edculo"
   }
 ]
