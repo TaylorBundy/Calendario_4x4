@@ -223,20 +223,5 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": ""
-  },
-  {
-    "id": "card-18",
-    "cardID": "card-17",
-    "cliente": "Juan Carlos peruano confirmar",
-    "fechaInicio": "2026-08-18",
-    "fechaFin": "2026-08-20",
-    "vc": 2,
-    "vo": null,
-    "comida": "No",
-    "precio": "100",
-    "moneda": "USD",
-    "sena": "No",
-    "senaRecibida": "",
-    "descripcion": "2 chatas\nVer precio quiz\u00e1s 100 USD por vehiculo"
   }
 ]
