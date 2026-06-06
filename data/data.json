@@ -143,19 +143,6 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-14",
-    "cliente": "Marcelo Lomm",
-    "fechaInicio": "2026-08-09",
-    "fechaFin": "2026-08-12",
-    "vc": "3",
-    "vo": "",
-    "comida": false,
-    "precio": "75",
-    "moneda": "USD",
-    "sena": false,
-    "senaRecibida": ""
-  },
-  {
     "id": "card-15",
     "cardID": "card-14",
     "cliente": "Alberto toti",
@@ -211,5 +198,62 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "75 d\u00f3lares por veh\u00edculo"
+  },
+  {
+    "id": "card-17",
+    "cardID": "card-16",
+    "cliente": "La huella 2",
+    "fechaInicio": "2026-07-28",
+    "fechaFin": "2026-07-30",
+    "comida": "No",
+    "precio": "null",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": ""
+  },
+  {
+    "id": "card-18",
+    "cardID": "card-17",
+    "cliente": "Marcelo long",
+    "fechaInicio": "2026-08-24",
+    "fechaFin": "2026-08-24",
+    "vc": 2,
+    "vo": null,
+    "comida": "No",
+    "precio": "100",
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "2 camionetas, 100 d\u00f3lares por veh\u00edculo"
+  },
+  {
+    "id": "card-15",
+    "cardID": "card-19",
+    "cliente": "Alex y raul",
+    "fechaInicio": "2026-08-20",
+    "fechaFin": "2026-08-20",
+    "vc": null,
+    "vo": null,
+    "comida": "No",
+    "precio": "100",
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "100 d\u00f3lares por veh\u00edculo"
+  },
+  {
+    "id": "card-14",
+    "cardID": "card-18",
+    "cliente": "Prueba ma\u00f1ana",
+    "fechaInicio": "2026-06-07",
+    "fechaFin": "2026-06-07",
+    "vc": null,
+    "vo": null,
+    "comida": "No",
+    "precio": "100",
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "100 d\u00f3lares por veh\u00edculo"
   }
 ]
