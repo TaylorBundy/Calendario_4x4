@@ -223,5 +223,20 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": ""
+  },
+  {
+    "id": "card-18",
+    "cardID": "card-17",
+    "cliente": "Marcelo long",
+    "fechaInicio": "2026-08-24",
+    "fechaFin": "2026-08-24",
+    "vc": 2,
+    "vo": null,
+    "comida": "No",
+    "precio": "100",
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "2 camionetas, 100 d\u00f3lares por veh\u00edculo"
   }
 ]
