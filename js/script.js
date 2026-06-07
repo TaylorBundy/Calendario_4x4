@@ -7,6 +7,7 @@ const lista2 = document.getElementById("lista2");
 const elementos = lista.children;
 const cards = Array.from(lista.children);
 const totalReservas = document.querySelector(".totalReservas");
+const totalReservas2 = document.querySelector(".totalReservas2");
 const guarda = document.querySelector(".guardar");
 const actualizar = document.querySelector(".actualizar");
 const botones = document.querySelectorAll("button");
@@ -99,6 +100,7 @@ const target = 20;
 let final = "";
 let alertaEmitida = false;
 let audioHabilitado = false;
+let totalGeneral = 0;
 const audioAlerta = document.querySelector("#alerta"); //new Audio("sounds/alarma.ogg");
 const audioAlertaGoogle = new Audio("sounds/notify.mp3");
 let intervaloAlarma = null;
@@ -109,6 +111,12 @@ let volvemosVerificar = false;
 const TargetHeight = document.documentElement.offsetHeight - window.innerHeight;
 const ahora = new Date();
 const fechaHoy =
+  ahora.getFullYear() +
+  "-" +
+  String(ahora.getMonth() + 1).padStart(2, "0") +
+  "-" +
+  String(ahora.getDate()).padStart(2, "0");
+const fechaManana =
   ahora.getFullYear() +
   "-" +
   String(ahora.getMonth() + 1).padStart(2, "0") +
@@ -146,6 +154,23 @@ const TITULOS = {
   editaImporteSeña: `Ingrese el importe de la seña recibida. Si no hay cambios, deje el mismo número que antes.`,
   editaElimina: `Click para eliminar esta reserva. Se eliminará permanentemente del calendario y no se podrá recuperar. Use esta opción solo si está seguro de que desea eliminar la reserva.`,
 };
+
+const datosEjemplo = [
+  {
+    id: "card-1",
+    cliente: "Reserva Prueva",
+    fechaInicio: fechaHoy,
+    fechaFin: fechaManana,
+    vc: "",
+    vo: "",
+    comida: false,
+    precio: "",
+    moneda: "",
+    sena: false,
+    senaRecibida: "",
+    descripcion: "",
+  },
+];
 
 // ================================================================================
 // Funcion para procesar la descripción del evento y extraer información relevante
@@ -777,7 +802,13 @@ window.addEventListener("DOMContentLoaded", async () => {
     origenJSON = resultado;
   }
   volvemosVerificar = true;
-  cargarDatosDesde(urlJSON);
+  await cargarDatosDesde(urlJSON);
+  //   const cargado = cargarDatosDesde(urlJSON);
+
+  // if (!cargado) {
+  //   console.log("No hay datos para cargar");
+  //   return;
+  // }
   setTimeout(() => {
     const numeros = obtenerNumeros();
     numeroInicial = numeros.mayor;
@@ -878,7 +909,7 @@ function agregarTitulo(elemento, texto) {
 // ================================================================================
 // Función para contar el total de registros visibles (no ocultos) en el array de datos
 // ================================================================================
-function contarRegistrosVisibles(datos) {
+function contarRegistrosVisibles2(datos) {
   const ahora = new Date();
 
   return datos.filter((item) => {
@@ -898,6 +929,31 @@ function contarRegistrosVisibles(datos) {
 
     return ahora <= fechaFin;
   }).length;
+}
+
+function contarRegistrosVisibles(datos) {
+  const ahora = new Date();
+
+  //const visibles = [];
+  //const ocultas = [];
+
+  datos.forEach((item) => {
+    const [anio, mes, dia] = item.fechaFin.split("-");
+
+    const fechaFin = new Date(anio, mes - 1, dia);
+    fechaFin.setHours(23, 59, 59, 999);
+
+    if (ahora <= fechaFin) {
+      visibles.push(item);
+    } else {
+      ocultas.push(item);
+    }
+  });
+
+  return {
+    visibles: visibles.length,
+    ocultas: ocultas.length,
+  };
 }
 
 // ================================================================================
@@ -1220,7 +1276,7 @@ function mostrarDatos(ejecutarAlertas = true) {
         const btnElimina = div.querySelector(`.btnelimina`);
         //console.log(btnElimina);
         // console.log(form);
-        if (btnElimina.textContent == "Actualizar") {
+        if (btnElimina.innerHTML.includes("Actualizar")) {
           actualizar.textContent = "Actualizar";
         }
         seleccionarCard(card, eleEdita);
@@ -1265,9 +1321,9 @@ function mostrarDatos(ejecutarAlertas = true) {
 
       const btnElimina = div.querySelector(`.btnelimina`);
 
-      if (btnElimina.textContent == "Eliminar") {
+      if (btnElimina.innerHTML.includes("Eliminar")) {
         textoTooltip = "Click para eliminar la reserva";
-      } else if (btnElimina.textContent == "Actualizar") {
+      } else if (btnElimina.innerHTML.includes("Actualizar")) {
         textoTooltip = "Click para actualizar la reserva";
       }
       agregarTooltip(btnElimina, textoTooltip);
@@ -1279,7 +1335,7 @@ function mostrarDatos(ejecutarAlertas = true) {
         idSeleccionado = d.id;
         idCard = idSeleccionado;
         idCard2 = btnElimina.id;
-        if (btnElimina.textContent == "Eliminar") {
+        if (btnElimina.innerHTML.includes("Eliminar")) {
           elementoEliminar = card;
           //eliminar();
           (async () => {
@@ -1295,7 +1351,7 @@ function mostrarDatos(ejecutarAlertas = true) {
           (async () => {
             await cargarEventosGoogle(url);
           })();
-        } else if (btnElimina.textContent == "Actualizar") {
+        } else if (btnElimina.innerHTML.includes("Actualizar")) {
           nuevo = {
             id: idCard2,
             cliente: document.getElementById("editaCliente").value,
@@ -1339,7 +1395,7 @@ function mostrarDatos(ejecutarAlertas = true) {
 // ================================================================================
 function mostrarDatos2(listaDestino, mostrarOcultas = false) {
   //console.log(listaDestino);
-
+  totalGeneral = totalGeneral - visibles.length;
   const card22 = document.querySelectorAll("#card");
   //console.log(card22.length);
   globalIndex = card22.length + 1;
@@ -1350,7 +1406,7 @@ function mostrarDatos2(listaDestino, mostrarOcultas = false) {
   // 👉 Título solo para la lista de fechas finalizadas
   if (mostrarOcultas) {
     const titulo = document.createElement("h2");
-    titulo.textContent = "Fechas finalizadas";
+    titulo.textContent = `Fechas finalizadas: ${totalGeneral}`;
     titulo.className = "titulo-fecha"; // opcional para CSS
     const grupo = document.createElement("div");
     grupo.className = "grupo-fecha";
@@ -2215,13 +2271,13 @@ function eliminarCard(card) {
   card.remove();
 }
 
-setInterval(async () => {
-  const res = await fetch(`${API}/logs`);
-  const logs = await res.json();
+// setInterval(async () => {
+//   const res = await fetch(`${API}/logs`);
+//   const logs = await res.json();
 
-  //console.clear();
-  logs.forEach((l) => console.log(l));
-}, 5000);
+//   //console.clear();
+//   logs.forEach((l) => console.log(l));
+// }, 5000);
 
 // ================================================================================
 // Función para comparar dos fechas sin considerar las horas,
@@ -2413,7 +2469,6 @@ function mostrarFechas(eventos) {
     eventos.forEach((ev, index) => {
       //console.log(ev);
       const datos = procesarEventoGoogle(ev);
-      //console.log(datos);
       const cliente = datos.cliente;
       const fecha = datos.fechaInicio.toLowerCase();
       //const fecha = normalizarFecha(datos.fechaInicio.toLowerCase());
@@ -2495,7 +2550,6 @@ function mostrarFechas(eventos) {
         idCalendar = datos[index].id;
         numero = parseInt(idCalendar.match(/card-(\d+)/)[1]);
       }
-      //console.log(idCalendar);
       idSeleccionado = idCalendar;
 
       if (index === "") return;
@@ -2531,7 +2585,6 @@ function mostrarFechas(eventos) {
             r.fechaInicio.replace("fecha:", "").trim().toLowerCase(),
           ) === fecha,
       );
-      //console.log(reservaExistente);
       //const valorComida = String(datosProcesados.comida).trim().toLowerCase();
       const valorComida =
         datosProcesados.comida === null ||
@@ -4122,19 +4175,83 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+// function obtenerIdsOrdenados(datos) {
+//   return datos
+//     .map((item) => item.id)
+//     .sort((a, b) => {
+//       const numA = Number(a.replace("card-", ""));
+//       const numB = Number(b.replace("card-", ""));
+//       return numA - numB;
+//     });
+// }
+
+// ================================================================================
+// Funcion para obtener el id disponible en el archivo data.json
+// ================================================================================
+function obtenerIdDisponible(datos, prefijo = "card-") {
+  const ids = [
+    ...new Set(datos.map((item) => Number(item.id.replace(prefijo, "")))),
+  ].sort((a, b) => a - b);
+
+  let idDisponible = 1;
+
+  for (const id of ids) {
+    if (id === idDisponible) {
+      idDisponible++;
+    } else if (id > idDisponible) {
+      break;
+    }
+  }
+
+  return `${prefijo}${idDisponible}`;
+}
+
 // ================================================================================
 // Función para cargar datos desde un JSON, con validación para manejar errores de carga,
 // para actualizar el contador de reservas visibles, y para mostrar los datos en el DOM
 // ================================================================================
 async function cargarDatosDesde(url) {
-  const res = await fetch(url);
+  // const res = await fetch(url);
 
-  if (!res.ok) {
-    throw new Error("No se pudo cargar el JSON");
+  // if (!res.ok) {
+  //   throw new Error("No se pudo cargar el JSON");
+  // }
+
+  // datos = await res.json();
+
+  try {
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      throw new Error();
+    }
+
+    datos = await res.json();
+  } catch (error) {
+    console.warn("No existe data.json, cargando datos de ejemplo");
+    datos = datosEjemplo;
   }
-
-  datos = await res.json();
   //console.log(datos);
+
+  // const idsOrdenados = datos
+  //   .map((item) => Number(item.id.replace("card-", "")))
+  //   .sort((a, b) => a - b);
+
+  //console.log(idsOrdenados);
+
+  // const idsOrdenados2 = datos
+  //   .map((item) => item.id)
+  //   .sort((a, b) => {
+  //     const numA = Number(a.replace("card-", ""));
+  //     const numB = Number(b.replace("card-", ""));
+  //     return numA - numB;
+  //   });
+
+  // console.log(idsOrdenados2);
+  const idNuevo = obtenerIdDisponible(datos);
+
+  //console.log(idNuevo); // 3 si faltaba card-3
+
   const ids = datos
     .map((item) => Number(item.id.replace("card-", "")))
     .sort((a, b) => a - b);
@@ -4145,17 +4262,31 @@ async function cargarDatosDesde(url) {
   // datos.forEach((item) => {
   //   console.log(item);
   // });
-  const nuevosss = { id: obtenerIdLibre(datos) };
-  idFaltante = nuevosss.id;
-  //console.log(nuevosss);
+  // const nuevosss = { id: obtenerIdLibre(datos) };
+  // console.log(nuevosss.id);
+  idFaltante = idNuevo;
+  //console.log(idFaltante);
   reservas.push(...datos);
 
   const total = contarRegistrosVisibles(datos);
+  let totalVisibles;
+  let totalOcultas;
+  //console.log(ocultas.length);
+  if (ocultas.length > 0) {
+    totalVisibles = total.visibles;
+    totalOcultas = total.ocultas;
+    totalGeneral = totalVisibles + totalOcultas;
+    //totalGeneral = totalGeneral - ocultas.length;
+  } else {
+    totalVisibles = total.visibles;
+    totalOcultas = total.ocultas;
+    totalGeneral = totalVisibles;
+  }
 
   totalReservas.innerHTML = `
     <span class="reservasTitulos">
       <strong>Total reservas:</strong>
-      <span class="reservasVisibles">${total}</span>
+      <span class="reservasVisibles">${totalGeneral - totalOcultas}</span>
     </span>
     <br>
     <span class="reservasTitulos">
@@ -4233,22 +4364,42 @@ function cambiarImagen(boton) {
 // analizando los IDs existentes en los datos,
 // y para devolver un ID en formato "card-X" donde X es el número más bajo disponible
 // ================================================================================
-function obtenerIdLibre(datos) {
-  const ids = datos
-    .map((item) => Number(item.id.replace("card-", "")))
-    .sort((a, b) => a - b);
+// function obtenerIdLibre2(datos) {
+//   const ids = datos
+//     .map((item) => Number(item.id.replace("card-", "")))
+//     .sort((a, b) => a - b);
 
-  let esperado = 1;
+//   let esperado = 1;
 
-  for (const id of ids) {
-    if (id !== esperado) {
-      return `card-${esperado}`;
-    }
-    esperado++;
-  }
+//   for (const id of ids) {
+//     if (id !== esperado) {
+//       return `card-${esperado}`;
+//     }
+//     esperado++;
+//   }
 
-  return `card-${esperado}`;
-}
+//   return `card-${esperado}`;
+// }
+// function obtenerIdLibre(datos) {
+//   if (!Array.isArray(datos) || datos.length === 0) {
+//     return "card-1";
+//   }
+
+//   const ids = [
+//     ...new Set(datos.map((item) => Number(item.id.replace("card-", "")))),
+//   ].sort((a, b) => a - b);
+
+//   let esperado = 1;
+
+//   for (const id of ids) {
+//     if (id !== esperado) {
+//       return `card-${esperado}`;
+//     }
+//     esperado++;
+//   }
+
+//   return `card-${esperado}`;
+// }
 
 // ================================================================================
 // Función para verificar si una reserva comienza mañana, comparando la fecha de inicio con la fecha actual,
