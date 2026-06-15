@@ -255,5 +255,20 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "100 d\u00f3lares por veh\u00edculo"
+  },
+  {
+    "id": "card-20",
+    "cardID": "card-19",
+    "cliente": "Matias Basaldua",
+    "fechaInicio": "2026-08-27",
+    "fechaFin": "2026-08-29",
+    "vc": null,
+    "vo": null,
+    "comida": "No",
+    "precio": "100",
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "100 dolares por vehiculo"
   }
 ]
