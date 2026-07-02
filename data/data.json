@@ -270,5 +270,20 @@
     "sena": "No",
     "senaRecibida": "",
     "descripcion": "100 dolares por vehiculo"
+  },
+  {
+    "id": "card-21",
+    "cardID": "card-20",
+    "cliente": "Luis",
+    "fechaInicio": "2026-07-06",
+    "fechaFin": "2026-07-07",
+    "vc": 4,
+    "vo": null,
+    "comida": "No",
+    "precio": "100",
+    "moneda": "USD",
+    "sena": "No",
+    "senaRecibida": "",
+    "descripcion": "4 camionetas, 100 dolares por vehiculo"
   }
 ]
