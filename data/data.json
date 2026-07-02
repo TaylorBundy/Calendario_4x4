@@ -26,19 +26,6 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-3",
-    "cliente": "Sabastano",
-    "fechaInicio": "2026-07-04",
-    "fechaFin": "2026-07-06",
-    "vc": "4",
-    "vo": "2",
-    "comida": true,
-    "precio": "100000",
-    "moneda": "ARS",
-    "sena": false,
-    "senaRecibida": ""
-  },
-  {
     "id": "card-5",
     "cliente": "Tecof",
     "fechaInicio": "2026-07-09",
