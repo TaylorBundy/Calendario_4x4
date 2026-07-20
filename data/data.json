@@ -174,18 +174,6 @@
     "descripcion": "75 d\u00f3lares por veh\u00edculo"
   },
   {
-    "id": "card-17",
-    "cardID": "card-16",
-    "cliente": "La huella 2",
-    "fechaInicio": "2026-07-28",
-    "fechaFin": "2026-07-30",
-    "comida": "No",
-    "precio": "null",
-    "sena": "No",
-    "senaRecibida": "",
-    "descripcion": ""
-  },
-  {
     "id": "card-18",
     "cardID": "card-17",
     "cliente": "Marcelo long",
