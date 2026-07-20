@@ -78,19 +78,6 @@
     "senaRecibida": ""
   },
   {
-    "id": "card-10",
-    "cliente": "La huella",
-    "fechaInicio": "2026-07-24",
-    "fechaFin": "2026-07-26",
-    "vc": "",
-    "vo": "",
-    "comida": true,
-    "precio": "",
-    "moneda": "",
-    "sena": false,
-    "senaRecibida": ""
-  },
-  {
     "id": "card-11",
     "cliente": "Juan Carlos peruano",
     "fechaInicio": "2026-07-22",
